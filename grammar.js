@@ -1561,7 +1561,7 @@ module.exports = grammar({
     _assign_operator: $ => choice(':='),
 
     indexing_operator: $ => token(
-      seq(/[!$%&*+\-/:=>?@^|~]/, repeat(OP_CHAR))
+      seq(/[!$%&*+\-/:=>?@^|]/, repeat(OP_CHAR))
     ),
 
     indexing_operator_path: $ => choice(
