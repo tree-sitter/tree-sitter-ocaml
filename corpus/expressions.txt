@@ -156,11 +156,11 @@ x.%(0).M.%(0) <- x;;
     (array_get_expression
       (array_get_expression
         (value_path (value_name))
-        (dot_operator_path (dot_operator))
+        (indexing_operator_path (indexing_operator))
         (number))
-      (dot_operator_path
+      (indexing_operator_path
         (module_name)
-        (dot_operator_path (dot_operator)))
+        (indexing_operator_path (indexing_operator)))
       (number))
     (value_path (value_name))))
 

@@ -1022,7 +1022,7 @@ module.exports = grammar({
     array_get_expression: $ => prec(PREC.dot, seq(
       $._simple_expression,
       '.',
-      optional($.dot_operator_path),
+      optional($.indexing_operator_path),
       '(',
       $._seq_expression,
       ')'
@@ -1031,7 +1031,7 @@ module.exports = grammar({
     string_get_expression: $ => prec(PREC.dot, seq(
       $._simple_expression,
       '.',
-      optional($.dot_operator_path),
+      optional($.indexing_operator_path),
       '[',
       $._seq_expression,
       ']'
@@ -1040,7 +1040,7 @@ module.exports = grammar({
     bigarray_get_expression: $ => prec(PREC.dot, seq(
       $._simple_expression,
       '.',
-      optional($.dot_operator_path),
+      optional($.indexing_operator_path),
       '{',
       $._seq_expression,
       '}'
@@ -1560,13 +1560,13 @@ module.exports = grammar({
 
     _assign_operator: $ => choice(':='),
 
-    dot_operator: $ => token(
+    indexing_operator: $ => token(
       seq(/[!$%&*+\-/:=>?@^|~]/, repeat(OP_CHAR))
     ),
 
-    dot_operator_path: $ => choice(
-      $.dot_operator,
-      seq($._module_name, '.', $.dot_operator_path)
+    indexing_operator_path: $ => choice(
+      $.indexing_operator,
+      seq($._module_name, '.', $.indexing_operator_path)
     ),
 
     // Names
@@ -1579,7 +1579,7 @@ module.exports = grammar({
         $.infix_operator,
         seq(
           '.',
-          $.dot_operator,
+          $.indexing_operator,
           choice(
             seq('(', ')'),
             seq('[', ']'),
