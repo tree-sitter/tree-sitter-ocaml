@@ -45,11 +45,17 @@ struct Scanner {
 
     if (lexer->lookahead == '#' && lexer->get_column(lexer) == 0) {
       advance(lexer);
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
-        advance(lexer);
-      }
+
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
 
       if (!isdigit(lexer->lookahead)) return false;
+      while (isdigit(lexer->lookahead)) advance(lexer);
+
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
+
+      if (lexer->lookahead != '"') return false;
+      while (lexer->lookahead != '\n' && lexer->lookahead != '\r' && lexer->lookahead != '"') advance(lexer);
+      if (lexer->lookahead != '"') return false;
 
       while (lexer->lookahead != '\n' && lexer->lookahead != '\r') advance(lexer);
 
