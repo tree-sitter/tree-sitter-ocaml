@@ -95,6 +95,7 @@ type t = {
   mutable x : t;
 }
 type t = t constraint 'a = t
+type t = |
 
 ---
 
@@ -149,7 +150,11 @@ type t = t constraint 'a = t
     (type_binding
       (type_constructor)
       (type_constructor_path (type_constructor))
-      (type_constraint (type_variable) (type_constructor_path (type_constructor))))))
+      (type_constraint (type_variable) (type_constructor_path (type_constructor)))))
+  (type_definition
+    (type_binding
+      (type_constructor)
+      (variant_declaration))))
 
 ==============================
 Exception definition

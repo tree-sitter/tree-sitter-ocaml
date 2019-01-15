@@ -216,8 +216,8 @@ module.exports = grammar({
       $._type
     ),
 
-    variant_declaration: $ => seq(
-      optional('|'),
+    variant_declaration: $ => choice(
+      seq('|', sep('|', $.constructor_declaration)),
       sep1('|', $.constructor_declaration)
     ),
 
