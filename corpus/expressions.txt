@@ -130,6 +130,7 @@ Get and set expressions
 x.y.z <- x;;
 x.(0).[0].{0,0} <- x;;
 x.%(0).M.%(0) <- x;;
+1 #? x.%(0);;
 
 ---
 
@@ -162,7 +163,14 @@ x.%(0).M.%(0) <- x;;
         (module_name)
         (indexing_operator_path (indexing_operator)))
       (number))
-    (value_path (value_name))))
+    (value_path (value_name)))
+  (infix_expression
+    (number)
+    (infix_operator)
+    (array_get_expression
+      (value_path (value_name))
+      (indexing_operator_path (indexing_operator))
+      (number))))
 
 ===========================
 Coercions
