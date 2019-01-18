@@ -179,7 +179,7 @@ struct Scanner {
           }
           break;
         case '\0':
-          return true;
+          return false;
         default:
           advance(lexer);
       }
@@ -218,7 +218,7 @@ struct Scanner {
           scan_quoted_string(lexer);
           break;
         case '\0':
-          return true;
+          return false;
         default:
           if (isalpha(lexer->lookahead) || lexer->lookahead == '_') {
             if (last) last = 0; else advance(lexer);
