@@ -1376,10 +1376,10 @@ module.exports = grammar({
 
     array_pattern: $ => seq(
       '[|',
-      optional(
+      optional(seq(
         sep1(';', $._pattern),
         optional(';')
-      ),
+      )),
       '|]'
     ),
 
