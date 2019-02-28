@@ -7874,7 +7874,7 @@
           "members": [
             {
               "type": "PATTERN",
-              "value": "[^\\\\']"
+              "value": "[^\\\\']|\\x00"
             },
             {
               "type": "SYMBOL",
@@ -7902,7 +7902,7 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[^\\\\\"%@]+|%|@"
+                "value": "[^\\\\\"%@]+|%|@|\\x00"
               },
               {
                 "type": "SYMBOL",
