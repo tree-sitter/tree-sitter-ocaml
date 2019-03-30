@@ -7902,7 +7902,7 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[^\\\\\"%@]+|%|@|\\x00"
+                "value": "[^\\\\\"%@]+|%|@"
               },
               {
                 "type": "SYMBOL",
@@ -9312,5 +9312,7 @@
     "_type_constructor",
     "_instance_variable_name",
     "_constructor_name"
-  ]
+  ],
+  "supertypes": []
 }
+
