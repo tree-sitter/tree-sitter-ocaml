@@ -234,6 +234,7 @@ module.exports = grammar({
       choice(
         $._constructor_name,
         seq('[', ']'),
+        seq('(', ')'),
         parenthesize('::')
       ),
       optional(choice(
