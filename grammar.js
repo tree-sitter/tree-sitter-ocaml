@@ -284,6 +284,7 @@ module.exports = grammar({
 
     exception_definition: $ => seq(
       'exception',
+      optional($._extension_attribute),
       $.constructor_declaration,
       repeat($.item_attribute)
     ),
