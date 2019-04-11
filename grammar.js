@@ -237,8 +237,7 @@ module.exports = grammar({
       choice(
         $._constructor_name,
         seq('[', ']'),
-        seq('(', ')'),
-        parenthesize('::')
+        seq('(', ')')
       ),
       optional(choice(
         seq('of', $.constructor_argument),
@@ -1678,7 +1677,10 @@ module.exports = grammar({
 
     _module_name: $ => alias($._capitalized_identifier, $.module_name),
     _module_type_name: $ => alias(choice($._capitalized_identifier, $._identifier), $.module_type_name),
-    _constructor_name: $ => alias($._capitalized_identifier, $.constructor_name),
+    _constructor_name: $ => choice(
+      alias($._capitalized_identifier, $.constructor_name),
+      parenthesize(alias('::', $.constructor_name))
+    ),
 
     _identifier: $ => /[a-z_][a-zA-Z0-9_']*/,
     _capitalized_identifier: $ => /[A-Z][a-zA-Z0-9_']*/,
