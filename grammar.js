@@ -245,7 +245,9 @@ module.exports = grammar({
       choice(
         $._constructor_name,
         seq('[', ']'),
-        seq('(', ')')
+        seq('(', ')'),
+        'true',
+        'false'
       ),
       optional(choice(
         seq('of', $.constructor_argument),
