@@ -74,6 +74,14 @@ module.exports = grammar({
       )
     ),
 
+    _specifications: $ => choice(
+      repeat1(';;'),
+      seq(
+        repeat1(seq(repeat(';;'), $._module_item)),
+        repeat(';;')
+      )
+    ),
+
     // Toplevel
 
     toplevel_directive: $ => seq(
@@ -377,7 +385,7 @@ module.exports = grammar({
     signature: $ => seq(
       'sig',
       repeat($.attribute),
-      optional($._definitions),
+      optional($._specifications),
       'end'
     ),
 
@@ -1439,7 +1447,7 @@ module.exports = grammar({
 
     attribute_payload: $ => choice(
       $._definitions,
-      seq(':', choice($._type, $._module_item)),
+      seq(':', choice($._type, $._specifications)),
       seq('?', $._pattern_or_exception, optional(seq('when', $._seq_expression)))
     ),
 
