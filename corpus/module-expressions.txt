@@ -26,6 +26,7 @@ Structures
 module M = struct
   let x = x
 end
+module M = struct ;; end
 
 ---
 
@@ -37,7 +38,11 @@ end
         (value_definition
           (let_binding
             (value_name)
-            (value_path (value_name))))))))
+            (value_path (value_name)))))))
+  (module_definition
+    (module_binding
+      (module_name)
+      (structure))))
 
 ============================
 Module applications

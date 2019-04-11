@@ -61,14 +61,17 @@ module.exports = grammar({
 
     shebang: $ => /#!.*/,
 
-    _definitions: $ => seq(
-      repeat(';;'),
-      choice($._module_item, $.toplevel_directive, seq($._seq_expression, repeat($.item_attribute))),
-      repeat(choice(
-        seq(repeat(';;'), choice($._module_item, $.toplevel_directive)),
-        seq(repeat1(';;'), seq($._seq_expression, repeat($.item_attribute)))
-      )),
-      repeat(';;')
+    _definitions: $ => choice(
+      repeat1(';;'),
+      seq(
+        repeat(';;'),
+        choice($._module_item, $.toplevel_directive, seq($._seq_expression, repeat($.item_attribute))),
+        repeat(choice(
+          seq(repeat(';;'), choice($._module_item, $.toplevel_directive)),
+          seq(repeat1(';;'), seq($._seq_expression, repeat($.item_attribute)))
+        )),
+        repeat(';;')
+      )
     ),
 
     // Toplevel
