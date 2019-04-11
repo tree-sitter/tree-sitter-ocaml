@@ -460,6 +460,7 @@ module.exports = grammar({
 
     functor: $ => seq(
       'functor',
+      repeat($.attribute),
       repeat($.module_parameter),
       '->',
       $._simple_module_expression
