@@ -1227,7 +1227,7 @@ module.exports = grammar({
       $._module_name,
       '.',
       choice(
-        parenthesize($._seq_expression),
+        parenthesize(optional($._seq_expression)),
         $.list_expression,
         $.array_expression,
         $.record_expression,
@@ -1418,7 +1418,7 @@ module.exports = grammar({
       $._module_name,
       '.',
       choice(
-        parenthesize($._pattern),
+        parenthesize(optional($._pattern)),
         $.list_pattern,
         $.array_pattern,
         $.record_pattern,
