@@ -1488,7 +1488,7 @@ module.exports = grammar({
     character: $ => seq(
       "'",
       choice(
-        /[^\\']|\x00/,
+        /[^\\']/,
         $.escape_sequence
       ),
       "'"
