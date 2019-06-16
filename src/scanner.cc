@@ -1,5 +1,4 @@
 #include <tree_sitter/parser.h>
-#include <cctype>
 #include <string>
 
 namespace {
@@ -10,6 +9,19 @@ enum {
   STRING_DELIM,
   LINE_NUMBER_DIRECTIVE
 };
+
+bool isspace(char c) {
+  switch (c) {
+    case ' ':
+    case '\t':
+    case '\r':
+    case '\n':
+    case '\f':
+      return true;
+    default:
+      return false;
+  }
+}
 
 struct Scanner {
   bool in_string = false;
