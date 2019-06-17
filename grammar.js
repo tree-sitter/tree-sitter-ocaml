@@ -1623,9 +1623,9 @@ module.exports = grammar({
           '.',
           $.indexing_operator,
           choice(
-            seq('(', ')'),
-            seq('[', ']'),
-            seq('{', '}')
+            seq('(', optional(seq(';', '..')), ')'),
+            seq('[', optional(seq(';', '..')), ']'),
+            seq('{', optional(seq(';', '..')), '}')
           ),
           optional('<-')
         ),
