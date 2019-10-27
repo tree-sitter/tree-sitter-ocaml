@@ -8041,8 +8041,13 @@
           "name": "string"
         },
         {
-          "type": "SYMBOL",
-          "name": "quoted_string"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_quoted_string"
+          },
+          "named": true,
+          "value": "quoted_string"
         },
         {
           "type": "SYMBOL",
@@ -8213,7 +8218,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "\\\\."
+          "value": "\\\\[\\\\\"'ntbr ]"
         },
         {
           "type": "PATTERN",
@@ -9629,21 +9634,16 @@
                 "value": "comment"
               },
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "'([^'\\\\]|\\x00|\\\\[\\\\\"'ntbr ]|\\\\[0-9][0-9][0-9]|\\\\x[0-9A-Fa-f][0-9A-Fa-f]|\\\\o[0-3][0-7][0-7])'"
-                },
-                "named": true,
-                "value": "character"
+                "type": "PATTERN",
+                "value": "'([^'\\\\]|\\\\[\\\\\"'ntbr ]|\\\\[0-9][0-9][0-9]|\\\\x[0-9A-Fa-f][0-9A-Fa-f]|\\\\o[0-3][0-7][0-7])'"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\"([^\\\\\"]|\\\\(.|\\n))*\""
               },
               {
                 "type": "SYMBOL",
-                "name": "string"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "quoted_string"
+                "name": "_quoted_string"
               },
               {
                 "type": "PATTERN",
@@ -9700,21 +9700,16 @@
                 "value": "comment"
               },
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "'([^'\\\\]|\\x00|\\\\[\\\\\"'ntbr ]|\\\\[0-9][0-9][0-9]|\\\\x[0-9A-Fa-f][0-9A-Fa-f]|\\\\o[0-3][0-7][0-7])'"
-                },
-                "named": true,
-                "value": "character"
+                "type": "PATTERN",
+                "value": "'([^'\\\\]|\\\\[\\\\\"'ntbr ]|\\\\[0-9][0-9][0-9]|\\\\x[0-9A-Fa-f][0-9A-Fa-f]|\\\\o[0-3][0-7][0-7])'"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\"([^\\\\\"]|\\\\(.|\\n))*\""
               },
               {
                 "type": "SYMBOL",
-                "name": "string"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "quoted_string"
+                "name": "_quoted_string"
               },
               {
                 "type": "PATTERN",
@@ -9781,7 +9776,7 @@
   "externals": [
     {
       "type": "SYMBOL",
-      "name": "quoted_string"
+      "name": "_quoted_string"
     },
     {
       "type": "SYMBOL",

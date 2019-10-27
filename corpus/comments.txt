@@ -32,12 +32,14 @@ Strings and comments
 ==============================
 
 (* "*)" *)
-"(**)"
+"(**)";;
+"(*";;
 
 ---
 
 (compilation_unit
-  (comment (string))
+  (comment)
+  (string)
   (string))
 
 ==============================
@@ -57,12 +59,12 @@ x
 ---
 
 (compilation_unit
-  (comment (character))
-  (comment (character))
   (comment)
-  (comment (character) (character))
-  (comment (character))
-  (comment (string))
-  (comment (string))
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
   (comment)
   (value_path (value_name)))

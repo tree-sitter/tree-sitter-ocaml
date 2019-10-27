@@ -31,12 +31,9 @@ const COMMENT = $ => seq(
   '(*',
   repeat(choice(
     alias($._comment, $.comment),
-    alias(
-      /'([^'\\]|\x00|\\[\\"'ntbr ]|\\[0-9][0-9][0-9]|\\x[0-9A-Fa-f][0-9A-Fa-f]|\\o[0-3][0-7][0-7])'/,
-      $.character
-    ),
-    $.string,
-    $.quoted_string,
+    /'([^'\\]|\\[\\"'ntbr ]|\\[0-9][0-9][0-9]|\\x[0-9A-Fa-f][0-9A-Fa-f]|\\o[0-3][0-7][0-7])'/,
+    /"([^\\"]|\\(.|\n))*"/,
+    $._quoted_string,
     /[A-Za-z_][a-zA-Z0-9_']*/,
     /[^('"{*A-Za-z_]+/,
     '(', "'", '{', '*'
@@ -1528,7 +1525,7 @@ module.exports = grammar({
       $.number,
       $.character,
       $.string,
-      $.quoted_string,
+      alias($._quoted_string, $.quoted_string),
       $.boolean,
       $.unit
     ),
@@ -1561,7 +1558,7 @@ module.exports = grammar({
     ),
 
     escape_sequence: $ => choice(
-      /\\./,
+      /\\[\\"'ntbr ]/,
       /\\[0-9][0-9][0-9]/,
       /\\x[0-9A-Fa-f][0-9A-Fa-f]/,
       /\\o[0-3][0-7][0-7]/
@@ -1770,7 +1767,7 @@ module.exports = grammar({
   ],
 
   externals: $ => [
-    $.quoted_string,
+    $._quoted_string,
     $.line_number_directive
   ]
 })
