@@ -25,7 +25,7 @@ Nested comments
 
 ---
 
-(compilation_unit (comment))
+(compilation_unit (comment (comment)))
 
 ==============================
 Strings and comments
@@ -37,7 +37,7 @@ Strings and comments
 ---
 
 (compilation_unit
-  (comment)
+  (comment (string))
   (string))
 
 ==============================
@@ -57,12 +57,12 @@ x
 ---
 
 (compilation_unit
+  (comment (character))
+  (comment (character))
   (comment)
-  (comment)
-  (comment)
-  (comment)
-  (comment)
-  (comment)
-  (comment)
+  (comment (character) (character))
+  (comment (character))
+  (comment (string))
+  (comment (string))
   (comment)
   (value_path (value_name)))
