@@ -47,8 +47,6 @@ const COMMENT = $ => seq(
   '*)'
 )
 
-const field = (_name, value) => value
-
 module.exports = grammar({
   name: 'ocaml',
 
