@@ -47,6 +47,8 @@ const COMMENT = $ => seq(
   '*)'
 )
 
+const field = (_name, value) => value
+
 module.exports = grammar({
   name: 'ocaml',
 
@@ -114,21 +116,21 @@ module.exports = grammar({
       seq(
         repeat(';;'),
         choice(
-          $._module_item,
-          $.toplevel_directive,
-          $.expression_item
+          field('item', $._module_item),
+          field('directive', $.toplevel_directive),
+          field('item', $.expression_item)
         ),
         repeat(choice(
           seq(
             repeat(';;'),
             choice(
-              $._module_item,
-              $.toplevel_directive
+              field('item', $._module_item),
+              field('directive', $.toplevel_directive)
             )
           ),
           seq(
             repeat1(';;'),
-            $.expression_item
+            field('item', $.expression_item)
           )
         )),
         repeat(';;')
@@ -136,14 +138,14 @@ module.exports = grammar({
     ),
 
     expression_item: $ => seq(
-      $._sequence_expression,
-      repeat($.item_attribute)
+      field('expression', $._sequence_expression),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     _specifications: $ => choice(
       repeat1(';;'),
       seq(
-        repeat1(seq(repeat(';;'), $._module_item)),
+        repeat1(seq(repeat(';;'), field('item', $._module_item))),
         repeat(';;')
       )
     ),
@@ -151,12 +153,12 @@ module.exports = grammar({
     // Toplevel
 
     toplevel_directive: $ => seq(
-      $.directive,
-      optional(choice(
+      field('name', $.directive),
+      optional(field('payload', choice(
         $.constant,
         alias($._value_path, $.value_path),
         $._simple_module_expression
-      ))
+      )))
     ),
 
     // Module items
@@ -180,34 +182,34 @@ module.exports = grammar({
     value_specification: $ => seq(
       'val',
       optional($._extension_attribute),
-      alias($._value_name, $.value_name),
+      field('name', alias($._value_name, $.value_name)),
       ':',
-      $._type,
-      repeat($.item_attribute)
+      field('type', $._type),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     value_definition: $ => seq(
       choice(
         seq('let', optional($._extension_attribute), optional('rec')),
-        $.let_operator
+        field('let', $.let_operator)
       ),
       sep1(
         choice(
-          seq('and', repeat($.attribute)),
-          $.and_operator
+          seq('and', repeat(field('attribute', $.attribute))),
+          field('and', $.and_operator)
         ),
-        $.let_binding
+        field('binding', $.let_binding)
       )
     ),
 
     let_binding: $ => seq(
-      $._pattern_no_exn,
-      repeat($._parameter),
-      optional(seq(':', $._polymorphic_type)),
-      optional(seq(':>', $._type)),
+      field('name', $._pattern_no_exn),
+      repeat(field('parameter', $._parameter)),
+      optional(seq(':', field('type', $._polymorphic_type))),
+      optional(seq(':>', field('coercion', $._type))),
       '=',
-      $._sequence_expression,
-      repeat($.item_attribute)
+      field('body', $._sequence_expression),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     _parameter: $ => choice(
@@ -216,28 +218,28 @@ module.exports = grammar({
     ),
 
     parameter: $ => choice(
-      $._simple_pattern,
-      $.label,
+      field('name', $._simple_pattern),
+      field('label', $.label),
       seq(
-        $.label,
+        field('label', $.label),
         token.immediate(':'),
-        $._simple_pattern
+        field('name', $._simple_pattern)
       ),
       seq(
         choice('~', '?'),
         '(',
-        $._label_name,
-        optional(seq(':', $._type)),
-        optional(seq('=', $._sequence_expression)),
+        field('label', $._label_name),
+        optional(seq(':', field('type', $._type))),
+        optional(seq('=', field('default', $._sequence_expression))),
         ')'
       ),
       seq(
-        $.label,
+        field('label', $.label),
         token.immediate(':'),
         '(',
-        $._pattern,
-        optional(seq(':', $._type)),
-        seq('=', $._sequence_expression),
+        field('name', $._pattern),
+        optional(seq(':', field('type', $._type))),
+        seq('=', field('label', $._sequence_expression)),
         ')'
       )
     ),
@@ -245,12 +247,12 @@ module.exports = grammar({
     external: $ => seq(
       'external',
       optional($._extension_attribute),
-      alias($._value_name, $.value_name),
+      field('name', alias($._value_name, $.value_name)),
       ':',
-      $._type,
+      field('type', $._type),
       '=',
-      repeat1($.string),
-      repeat($.item_attribute)
+      repeat1(field('declaration', $.string)),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     type_definition: $ => seq(
@@ -258,38 +260,38 @@ module.exports = grammar({
       optional($._extension_attribute),
       optional('nonrec'),
       sep1(
-        seq('and', repeat($.attribute)),
-        $.type_binding
+        seq('and', repeat(field('attribute', $.attribute))),
+        field('binding', $.type_binding)
       )
     ),
 
     type_binding: $ => seq(
-      optional($.type_params),
+      optional(field('params', $.type_params)),
       choice(
         seq(
-          $._type_constructor,
+          field('name', $._type_constructor),
           optional($._type_equation),
           optional(seq(
             '=',
             optional('private'),
-            choice(
+            field('body', choice(
               $.variant_declaration,
               $.record_declaration,
               '..'
-            )
+            ))
           )),
-          repeat($.type_constraint)
+          repeat(field('constraint', $.type_constraint))
         ),
         seq(
-          alias($._type_constructor_path, $.type_constructor_path),
+          field('name', alias($._type_constructor_path, $.type_constructor_path)),
           seq(
             '+=',
             optional('private'),
-            $.variant_declaration,
+            field('body', $.variant_declaration),
           )
         )
       ),
-      repeat($.item_attribute)
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     type_params: $ => choice(
@@ -299,123 +301,123 @@ module.exports = grammar({
 
     _type_param: $ => seq(
       optional(choice('+', '-')),
-      choice(
+      field('name', choice(
         alias($._type_variable, $.type_variable),
         alias('_', $.type_variable)
-      )
+      ))
     ),
 
     _type_equation: $ => seq(
       choice('=', ':='),
       optional('private'),
-      $._type
+      field('type', $._type)
     ),
 
     variant_declaration: $ => choice(
-      seq('|', sep('|', $.constructor_declaration)),
-      sep1('|', $.constructor_declaration)
+      seq('|', sep('|', field('constructor', $.constructor_declaration))),
+      sep1('|', field('constructor', $.constructor_declaration))
     ),
 
     constructor_declaration: $ => seq(
-      choice(
+      field('name', choice(
         $._constructor_name,
         seq('[', ']'),
         seq('(', ')'),
         'true',
         'false'
-      ),
-      optional(choice(
-        seq('of', $.constructor_argument),
-        seq(':', $._simple_type),
-        seq(':', $.constructor_argument, '->', $._simple_type),
-        seq('=', alias($._constructor_path, $.constructor_path))
       )),
-      repeat($.attribute)
+      optional(choice(
+        seq('of', field('argument', $.constructor_argument)),
+        seq(':', field('type', $._simple_type)),
+        seq(':', field('argument', $.constructor_argument), '->', field('type', $._simple_type)),
+        seq('=', field('equation', alias($._constructor_path, $.constructor_path)))
+      )),
+      repeat(field('attribute', $.attribute))
     ),
 
     constructor_argument: $ => choice(
-      sep1('*', $._simple_type),
-      $.record_declaration
+      sep1('*', field('type', $._simple_type)),
+      field('record', $.record_declaration)
     ),
 
     record_declaration: $ => seq(
       '{',
-      sep1(seq(';', repeat($.attribute)),
-        $.field_declaration
+      sep1(seq(';', repeat(field('attribute', $.attribute))),
+        field('field', $.field_declaration)
       ),
-      optional(seq(';', repeat($.attribute))),
+      optional(seq(';', repeat(field('attribute', $.attribute)))),
       '}'
     ),
 
     field_declaration: $ => seq(
       optional('mutable'),
-      $._field_name,
+      field('name', $._field_name),
       ':',
-      $._polymorphic_type,
+      field('type', $._polymorphic_type),
     ),
 
     type_constraint: $ => seq(
       'constraint',
-      $._type,
+      field('left', $._type),
       '=',
-      $._type
+      field('right', $._type)
     ),
 
     exception_definition: $ => seq(
       'exception',
       optional($._extension_attribute),
-      $.constructor_declaration,
-      repeat($.item_attribute)
+      field('constructor', $.constructor_declaration),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     module_definition: $ => seq(
       'module', optional($._extension_attribute), optional('rec'),
-      sep1(seq('and', repeat($.attribute)),
-        $.module_binding
+      sep1(seq('and', repeat(field('attribute', $.attribute))),
+        field('binding', $.module_binding)
       )
     ),
 
     module_binding: $ => seq(
-      choice($._module_name, alias('_', $.module_name)),
-      repeat($.module_parameter),
-      optional(seq(':', $._module_type)),
-      optional(seq('=', $._simple_module_expression)),
-      repeat($.item_attribute)
+      field('name', choice($._module_name, alias('_', $.module_name))),
+      repeat(field('parameter', $.module_parameter)),
+      optional(seq(':', field('type', $._module_type))),
+      optional(seq('=', field('body', $._simple_module_expression))),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     module_parameter: $ => parenthesize(optional(seq(
-      choice($._module_name, alias('_', $.module_name)),
+      field('name', choice($._module_name, alias('_', $.module_name))),
       ':',
-      $._module_type
+      field('type', $._module_type)
     ))),
 
     module_type_definition: $ => seq(
       'module', 'type',
       optional($._extension_attribute),
-      $._module_type_name,
-      optional(seq('=', $._module_type)),
-      repeat($.item_attribute)
+      field('name', $._module_type_name),
+      optional(seq('=', field('body', $._module_type))),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     open_statement: $ => seq(
       'open',
       optional('!'),
       optional($._extension_attribute),
-      $._simple_module_expression,
-      repeat($.item_attribute)
+      field('module', $._simple_module_expression),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     include_statement: $ => seq(
       'include',
       optional($._extension_attribute),
-      choice($._module_type, $._simple_module_expression),
-      repeat($.item_attribute)
+      field('module', choice($._module_type, $._simple_module_expression)),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     class_definition: $ => seq(
       'class', optional($._extension_attribute),
-      sep1(seq('and', repeat($.attribute)),
-        $.class_binding
+      sep1(seq('and', repeat(field('attribute', $.attribute))),
+        field('binding', $.class_binding)
       )
     ),
 
@@ -423,20 +425,20 @@ module.exports = grammar({
       optional('virtual'),
       optional(seq(
         '[',
-        sep1(',', alias($._type_variable, $.type_variable)),
+        sep1(',', field('type_parameter', alias($._type_variable, $.type_variable))),
         ']'
       )),
-      $._class_name,
-      repeat($._parameter),
-      optional(seq(':', $._class_type)),
-      optional(seq('=', $._class_expression)),
-      repeat($.item_attribute)
+      field('name', $._class_name),
+      repeat(field('parameter', $._parameter)),
+      optional(seq(':', field('type', $._class_type))),
+      optional(seq('=', field('body', $._class_expression))),
+      repeat(field('item_attribute', $.item_attribute))
     )),
 
     class_type_definition: $ => seq(
       'class', 'type', optional($._extension_attribute),
-      sep1(seq('and', repeat($.attribute)),
-        $.class_type_binding
+      sep1(seq('and', repeat(field('attribute', $.attribute))),
+        field('binding', $.class_type_binding)
       )
     ),
 
@@ -444,13 +446,13 @@ module.exports = grammar({
       optional('virtual'),
       optional(seq(
         '[',
-        sep1(',', alias($._type_variable, $.type_variable)),
+        sep1(',', field('type_parameter', alias($._type_variable, $.type_variable))),
         ']'
       )),
-      $._class_name,
+      field('name', $._class_name),
       '=',
-      $._simple_class_type,
-      repeat($.item_attribute)
+      field('body', $._simple_class_type),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     // Module types
@@ -466,64 +468,64 @@ module.exports = grammar({
     ),
 
     module_type_path: $ => seq(
-      $._module_type_path,
-      repeat($.attribute)
+      field('path', $._module_type_path),
+      repeat(field('attribute', $.attribute))
     ),
 
     signature: $ => seq(
       'sig',
-      repeat($.attribute),
+      repeat(field('attribute', $.attribute)),
       optional($._specifications),
       'end',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     module_type_constraint: $ => prec.right(seq(
-      $._module_type,
+      field('module_type', $._module_type),
       'with',
-      sep1('and', choice(
+      sep1('and', field('contraint', choice(
         $.constrain_type,
         $.constrain_module
-      ))
+      )))
     )),
 
     constrain_type: $ => seq(
       'type',
-      optional($.type_params),
-      alias($._type_constructor_path, $.type_constructor_path),
+      optional(field('params', $.type_params)),
+      field('constructor', alias($._type_constructor_path, $.type_constructor_path)),
       $._type_equation,
-      repeat($.type_constraint)
+      repeat(field('constraint', $.type_constraint))
     ),
 
     constrain_module: $ => seq(
       'module',
-      $._simple_module_expression,
+      field('left', $._simple_module_expression),
       choice('=', ':='),
-      $._simple_module_expression
+      field('right', $._simple_module_expression)
     ),
 
     module_type_of: $ => seq(
       'module', 'type', 'of',
-      repeat($.attribute),
-      $._simple_module_expression
+      repeat(field('attribute', $.attribute)),
+      field('module', $._simple_module_expression)
     ),
 
     functor_type: $ => prec.right(seq(
       choice(
         seq(
           'functor',
-          repeat($.attribute),
-          repeat($.module_parameter)
+          repeat(field('attribute', $.attribute)),
+          repeat(field('parameter', $.module_parameter))
         ),
-        $._module_type
+        field('parameter', $._module_type)
       ),
       '->',
-      $._module_type
+      field('type', $._module_type)
     )),
 
     parenthesized_module_type: $ => seq(
-      parenthesize($._module_type),
-      repeat($.attribute)
+      parenthesize(field('body', $._module_type)),
+      repeat(field('attribute', $.attribute))
     ),
 
     // Module expressions
@@ -545,58 +547,58 @@ module.exports = grammar({
     ),
 
     module_name: $ => prec.dynamic(1, prec.right(seq(
-      $._capitalized_identifier,
-      repeat($.attribute)
+      field('name', $._capitalized_identifier),
+      repeat(field('attribute', $.attribute))
     ))),
 
     structure: $ => prec.right(seq(
       'struct',
-      repeat($.attribute),
+      repeat(field('attribute', $.attribute)),
       optional($._definitions),
       'end',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     functor: $ => seq(
       'functor',
-      repeat($.attribute),
-      repeat1($.module_parameter),
+      repeat(field('attribute', $.attribute)),
+      repeat1(field('parameter', $.module_parameter)),
       '->',
-      $._simple_module_expression,
+      field('body', $._simple_module_expression),
     ),
 
     module_application: $ => prec.right(2, seq(
-      $._simple_module_expression,
-      parenthesize(optional($._module_expression)),
-      repeat($.attribute)
+      field('module', $._simple_module_expression),
+      parenthesize(optional(field('argument', $._module_expression))),
+      repeat(field('attribute', $.attribute))
     )),
 
     submodule: $ => prec.left(1, seq(
-      $._simple_module_expression,
+      field('module', $._simple_module_expression),
       '.',
-      $._simple_module_expression
+      field('submodule', $._simple_module_expression)
     )),
 
     typed_module_expression: $ => prec.right(seq(
       parenthesize(seq(
-        $._simple_module_expression,
+        field('module', $._simple_module_expression),
         ':',
-        $._module_type
+        field('type', $._module_type)
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     packed_module: $ => seq(
       'val',
-      repeat($.attribute),
-      $._expression,
-      optional(seq(':', $._module_type)),
-      optional(seq(':>', $._module_type))
+      repeat(field('attribute', $.attribute)),
+      field('body', $._expression),
+      optional(seq(':', field('type', $._module_type))),
+      optional(seq(':>', field('coercion', $._module_type)))
     ),
 
     parenthesized_module_expression: $ => prec.right(seq(
-      parenthesize($._module_expression),
-      repeat($.attribute)
+      parenthesize(field('body', $._module_expression)),
+      repeat(field('attribute', $.attribute))
     )),
 
     // Class types
@@ -615,27 +617,27 @@ module.exports = grammar({
     ),
 
     class_type_path: $ => seq(
-      $._class_type_path,
-      repeat($.attribute)
+      field('path', $._class_type_path),
+      repeat(field('attribute', $.attribute))
     ),
 
     instantiated_class_type: $ => seq(
       '[',
-      sep1(',', $._type),
+      sep1(',', field('type_argument', $._type)),
       ']',
-      $.class_type_path
+      field('class_type', $.class_type_path)
     ),
 
     class_body_type: $ => seq(
       'object',
-      repeat($.attribute),
-      optional(parenthesize($._type)),
+      repeat(field('attribute', $.attribute)),
+      optional(parenthesize(field('self_type', $._type))),
       repeat(choice(
-        $._class_field_specification,
-        $.floating_attribute
+        field('field', $._class_field_specification),
+        field('floating_attribute', $.floating_attribute)
       )),
       'end',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     _class_field_specification: $ => choice(
@@ -648,56 +650,56 @@ module.exports = grammar({
 
     inheritance_specification: $ => seq(
       'inherit',
-      repeat($.attribute),
-      $._simple_class_type,
-      repeat($.item_attribute)
+      repeat(field('attribute', $.attribute)),
+      field('class_type', $._simple_class_type),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     instance_variable_specification: $ => seq(
       'val',
-      repeat($.attribute),
+      repeat(field('attribute', $.attribute)),
       repeat(choice('mutable', 'virtual')),
-      $._instance_variable_name,
+      field('name', $._instance_variable_name),
       ':',
-      $._type,
-      repeat($.item_attribute)
+      field('type', $._type),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     method_specification: $ => seq(
       'method',
-      repeat($.attribute),
+      repeat(field('attribute', $.attribute)),
       repeat(choice('private', 'virtual')),
-      $._method_name,
+      field('name', $._method_name),
       ':',
-      $._polymorphic_type,
-      repeat($.item_attribute)
+      field('type', $._polymorphic_type),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     type_parameter_constraint: $ => prec.right(seq(
       'constraint',
-      repeat($.attribute),
-      $._type,
+      repeat(field('attribute', $.attribute)),
+      field('left', $._type),
       '=',
-      $._type,
-      repeat($.item_attribute)
+      field('right', $._type),
+      repeat(field('item_attribute', $.item_attribute))
     )),
 
     let_open_class_type: $ => prec.right(PREC.match, seq(
       'let',
-      $.open_statement,
+      field('open', $.open_statement),
       'in',
-      $._simple_class_type
+      field('body', $._simple_class_type)
     )),
 
     class_function_type: $ => prec.right(PREC.seq, seq(
       optional(seq(
         optional('?'),
-        $._label_name,
+        field('label', $._label_name),
         ':'
       )),
-      $._tuple_type,
+      field('parameter', $._tuple_type),
       '->',
-      $._class_type
+      field('class_type', $._class_type)
     )),
 
     // Class expressions
@@ -720,44 +722,44 @@ module.exports = grammar({
     ),
 
     class_path: $ => prec.right(seq(
-      $._class_path,
-      repeat($.attribute)
+      field('path', $._class_path),
+      repeat(field('attribute', $.attribute))
     )),
 
     instantiated_class: $ => seq(
       '[',
-      sep1(',', $._type),
+      sep1(',', field('type_argument', $._type)),
       ']',
-      $.class_path
+      field('class', $.class_path)
     ),
 
     typed_class_expression: $ => seq(
       parenthesize(seq(
-        $._class_expression,
+        field('class', $._class_expression),
         ':',
-        $._class_type
+        field('class_type', $._class_type)
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     class_function: $ => prec.right(PREC.match, seq(
       'fun',
-      repeat($.attribute),
-      repeat1($._parameter),
+      repeat(field('attribute', $.attribute)),
+      repeat1(field('parameter', $._parameter)),
       '->',
-      $._class_expression
+      field('body', $._class_expression)
     )),
 
     class_application: $ => prec.right(PREC.app, seq(
-      $._simple_class_expression,
-      repeat1($._argument),
-      repeat($.attribute)
+      field('class', $._simple_class_expression),
+      repeat1(field('argument', $._argument)),
+      repeat(field('attribute', $.attribute))
     )),
 
     let_class_expression: $ => prec.right(PREC.match, seq(
-      $.value_definition,
+      field('definition', $.value_definition),
       'in',
-      $._class_expression
+      field('body', $._class_expression)
     )),
 
     _class_field: $ => choice(
@@ -772,53 +774,53 @@ module.exports = grammar({
     inheritance_definition: $ => seq(
       'inherit',
       optional('!'),
-      repeat($.attribute),
-      $._class_expression,
-      optional(seq('as', alias($._value_name, $.value_name))),
-      repeat($.item_attribute)
+      repeat(field('attribute', $.attribute)),
+      field('class', $._class_expression),
+      optional(seq('as', field('name', alias($._value_name, $.value_name)))),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     instance_variable_definition: $ => seq(
       'val',
       optional('!'),
-      repeat($.attribute),
+      repeat(field('attribute', $.attribute)),
       repeat(choice('mutable', 'virtual')),
-      $._instance_variable_name,
-      optional(seq(':', $._type)),
-      optional(seq(':>', $._type)),
-      optional(seq('=', $._sequence_expression)),
-      repeat($.item_attribute)
+      field('name', $._instance_variable_name),
+      optional(seq(':', field('type', $._type))),
+      optional(seq(':>', field('coercion', $._type))),
+      optional(seq('=', field('body', $._sequence_expression))),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     method_definition: $ => seq(
       'method',
       optional('!'),
-      repeat($.attribute),
+      repeat(field('attribute', $.attribute)),
       repeat(choice('private', 'virtual')),
-      $._method_name,
-      repeat($._parameter),
-      optional(seq(':', $._polymorphic_type)),
-      optional(seq('=', $._sequence_expression)),
-      repeat($.item_attribute)
+      field('name', $._method_name),
+      repeat(field('parameter', $._parameter)),
+      optional(seq(':', field('type', $._polymorphic_type))),
+      optional(seq('=', field('body', $._sequence_expression))),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     class_initializer: $ => seq(
       'initializer',
-      repeat($.attribute),
-      $._sequence_expression,
-      repeat($.item_attribute)
+      repeat(field('attribute', $.attribute)),
+      field('body', $._sequence_expression),
+      repeat(field('item_attribute', $.item_attribute))
     ),
 
     let_open_class_expression: $ => prec.right(PREC.match, seq(
       'let',
-      $.open_statement,
+      field('open', $.open_statement),
       'in',
-      $._class_expression
+      field('body', $._class_expression)
     )),
 
     parenthesized_class_expression: $ => seq(
-      parenthesize($._class_expression),
-      repeat($.attribute)
+      parenthesize(field('body', $._class_expression)),
+      repeat(field('attribute', $.attribute))
     ),
 
     // Types
@@ -830,16 +832,16 @@ module.exports = grammar({
 
     polymorphic_type: $ => seq(
       choice(
-        repeat1(alias($._type_variable, $.type_variable)),
-        alias($._abstract_type, $.abstract_type)
+        repeat1(field('polymorphic', alias($._type_variable, $.type_variable))),
+        field('abstract', alias($._abstract_type, $.abstract_type))
       ),
       '.',
-      $._type
+      field('type', $._type)
     ),
 
     _abstract_type: $ => seq(
       'type',
-      repeat1($._type_constructor)
+      repeat1(field('type', $._type_constructor))
     ),
 
     _parenthesized_abstract_type: $ => parenthesize($._abstract_type),
@@ -868,60 +870,60 @@ module.exports = grammar({
     ),
 
     type_variable: $ => prec.right(seq(
-      $._type_variable,
-      repeat($.attribute)
+      field('name', $._type_variable),
+      repeat(field('attribute', $.attribute))
     )),
 
     type_constructor_path: $ => prec.right(seq(
-      $._type_constructor_path,
-      repeat($.attribute)
+      field('path', $._type_constructor_path),
+      repeat(field('attribute', $.attribute))
     )),
 
     function_type: $ => prec.right(PREC.seq, seq(
-      choice($.typed_label, $._type),
+      field('parameter', choice($.typed_label, $._type)),
       '->',
-      $._type
+      field('type', $._type)
     )),
 
     typed_label: $ => prec.left(PREC.seq, seq(
       optional('?'),
-      $._label_name,
+      field('label', $._label_name),
       ':',
-      $._type
+      field('type', $._type)
     )),
 
     tuple_type: $ => prec(PREC.prod, seq(
-      choice(
+      field('left', choice(
         $._simple_type,
         $.tuple_type
-      ),
+      )),
       '*',
-      $._simple_type
+      field('right', $._simple_type)
     )),
 
     constructed_type: $ => prec(PREC.app, seq(
       choice(
-        $._simple_type,
-        parenthesize(sep1(',', $._type))
+        field('argument', $._simple_type),
+        parenthesize(sep1(',', field('argument', $._type)))
       ),
-      $.type_constructor_path
+      field('constructor', $.type_constructor_path)
     )),
 
     aliased_type: $ => prec(PREC.match, seq(
-      $._type,
+      field('body', $._type),
       'as',
-      $.type_variable
+      field('name', $.type_variable)
     )),
 
     polymorphic_variant_type: $ => prec.right(seq(
       choice(
-        seq('[', optional('|'), sep1('|', $._tag_spec), ']'),
-        seq('[>', optional('|'), sep('|', $._tag_spec), ']'),
+        seq('[', optional('|'), sep1('|', field('exact', $._tag_spec)), ']'),
+        seq('[>', optional('|'), sep('|', field('open', $._tag_spec)), ']'),
         seq(
-          '[<', optional('|'), sep1('|', $._tag_spec),
-          optional(seq('>', repeat1($.tag))), ']'),
+          '[<', optional('|'), sep1('|', field('closed', $._tag_spec)),
+          optional(seq('>', repeat1(field('open', $.tag)))), ']'),
       ),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     _tag_spec: $ => choice(
@@ -930,22 +932,22 @@ module.exports = grammar({
     ),
 
     tag_specification: $ => seq(
-      $.tag,
+      field('name', $.tag),
       optional(seq(
         'of',
         optional('&'),
-        sep1('&', $._type)
+        sep1('&', field('parameter', $._type))
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     package_type: $ => prec.right(seq(
       parenthesize(seq(
         'module',
         optional($._extension_attribute),
-        $._module_type
+        field('body', $._module_type)
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     object_type: $ => prec.right(seq(
@@ -953,39 +955,39 @@ module.exports = grammar({
       optional(choice(
         seq(
           sep1(';', choice(
-            $.method_type,
-            $._simple_type
+            field('method', $.method_type),
+            field('object', $._simple_type)
           )),
           optional(seq(
             ';',
-            repeat($.attribute),
+            repeat(field('attribute', $.attribute)),
             optional('..')
           ))
         ),
         '..'
       )),
       '>',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     method_type: $ => seq(
-      $._method_name,
+      field('name', $._method_name),
       ':',
-      $._polymorphic_type
+      field('type', $._polymorphic_type)
     ),
 
     hash_type: $ => prec(PREC.hash, seq(
       optional(choice(
-        $._simple_type,
-        parenthesize(sep1(',', $._type))
+        field('argument', $._simple_type),
+        parenthesize(sep1(',', field('argument', $._type)))
       )),
       '#',
-      $.class_path
+      field('class', $.class_path)
     )),
 
     parenthesized_type: $ => prec.right(seq(
-      parenthesize($._type),
-      repeat($.attribute)
+      parenthesize(field('body', $._type)),
+      repeat(field('attribute', $.attribute))
     )),
 
     // Expressions
@@ -1046,80 +1048,80 @@ module.exports = grammar({
     ),
 
     value_path: $ => prec.right(seq(
-      $._value_path,
-      repeat($.attribute)
+      field('path', $._value_path),
+      repeat(field('attribute', $.attribute))
     )),
 
     typed_expression: $ => prec.right(seq(
       parenthesize(seq(
-        $._sequence_expression,
+        field('expression', $._sequence_expression),
         ':',
-        $._type
+        field('type', $._type)
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     constructor_path: $ => prec.right(seq(
-      $._constructor_path,
-      repeat($.attribute)
+      field('path', $._constructor_path),
+      repeat(field('attribute', $.attribute))
     )),
 
     tag: $ => prec.right(seq(
-      $._tag,
-      repeat($.attribute)
+      field('name', $._tag),
+      repeat(field('attribute', $.attribute))
     )),
 
     product_expression: $ => prec.left(PREC.prod, seq(
-      $._expression,
+      field('left', $._expression),
       ',',
-      $._expression
+      field('right', $._expression)
     )),
 
     cons_expression: $ => prec.right(PREC.cons, seq(
-      $._expression,
+      field('left', $._expression),
       '::',
-      $._expression
+      field('right', $._expression)
     )),
 
     list_expression: $ => prec.right(seq(
       '[',
       optional(seq(
-        sep1(';', $._expression),
+        sep1(';', field('item', $._expression)),
         optional(';')
       )),
       ']',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     array_expression: $ => prec.right(seq(
       '[|',
       optional(seq(
-        sep1(';', $._expression),
+        sep1(';', field('item', $._expression)),
         optional(';')
       )),
       '|]',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     record_expression: $ => prec.right(seq(
       '{',
-      optional(seq($._simple_expression, 'with')),
-      sep1(';', $.field_expression),
+      optional(seq(field('object', $._simple_expression), 'with')),
+      sep1(';', field('field', $.field_expression)),
       optional(';'),
       '}',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     field_expression: $ => prec.left(PREC.seq, seq(
-      $.field_path,
-      optional(seq(':', $._type)),
-      optional(seq('=', $._expression))
+      field('name', $.field_path),
+      optional(seq(':', field('type', $._type))),
+      optional(seq('=', field('value', $._expression)))
     )),
 
     application_expression: $ => prec.right(PREC.app, seq(
-      $._simple_expression,
-      repeat1($._argument),
-      repeat($.attribute)
+      field('expression', $._simple_expression),
+      repeat1(field('argument', $._argument)),
+      repeat(field('attribute', $.attribute))
     )),
 
     _argument: $ => choice(
@@ -1129,25 +1131,25 @@ module.exports = grammar({
     ),
 
     labeled_argument: $ => seq(
-      $.label,
+      field('label', $.label),
       token.immediate(':'),
-      $._simple_expression
+      field('argument', $._simple_expression)
     ),
 
     prefix_expression: $ => prec(PREC.prefix, seq(
-      $.prefix_operator,
-      $._simple_expression
+      field('operator', $.prefix_operator),
+      field('expression', $._simple_expression)
     )),
 
     sign_expression: $ => prec(PREC.neg, seq(
-      alias($._sign_operator, $.prefix_operator),
-      $._expression
+      field('operator', alias($._sign_operator, $.prefix_operator)),
+      field('expression', $._expression)
     )),
 
     hash_expression: $ => prec.left(PREC.hash, seq(
-      $._simple_expression,
-      alias($._hash_operator, $.infix_operator),
-      $._simple_expression
+      field('left', $._simple_expression),
+      field('operator', alias($._hash_operator, $.infix_operator)),
+      field('right', $._simple_expression)
     )),
 
     infix_expression: $ => {
@@ -1196,136 +1198,136 @@ module.exports = grammar({
 
       return choice(...table.map(({operator, precedence, associativity}) =>
         prec[associativity](precedence, seq(
-          $._expression,
-          alias(operator, $.infix_operator),
-          $._expression
+          field('left', $._expression),
+          field('operator', alias(operator, $.infix_operator)),
+          field('right', $._expression)
         ))
       ))
     },
 
     field_get_expression: $ => prec.left(PREC.dot, seq(
-      $._simple_expression,
+      field('record', $._simple_expression),
       '.',
-      $.field_path,
-      repeat($.attribute)
+      field('field', $.field_path),
+      repeat(field('attribute', $.attribute))
     )),
 
     array_get_expression: $ => prec.right(PREC.dot, seq(
-      $._simple_expression,
+      field('array', $._simple_expression),
       '.',
-      optional($.indexing_operator_path),
+      optional(field('operator', $.indexing_operator_path)),
       '(',
-      $._sequence_expression,
+      field('index', $._sequence_expression),
       ')',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     string_get_expression: $ => prec.right(PREC.dot, seq(
-      $._simple_expression,
+      field('string', $._simple_expression),
       '.',
-      optional($.indexing_operator_path),
+      optional(field('operator', $.indexing_operator_path)),
       '[',
-      $._sequence_expression,
+      field('index', $._sequence_expression),
       ']',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     bigarray_get_expression: $ => prec.right(PREC.dot, seq(
-      $._simple_expression,
+      field('array', $._simple_expression),
       '.',
-      optional($.indexing_operator_path),
+      optional(field('operator', $.indexing_operator_path)),
       '{',
-      $._sequence_expression,
+      field('index', $._sequence_expression),
       '}',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     set_expression: $ => prec.right(PREC.assign, seq(
-      choice(
+      field('get', choice(
         $.field_get_expression,
         $.array_get_expression,
         $.string_get_expression,
         $.bigarray_get_expression,
         $._instance_variable_name
-      ),
+      )),
       '<-',
-      $._expression
+      field('value', $._expression)
     )),
 
     if_expression: $ => prec.right(PREC.if, seq(
       'if',
       optional($._extension_attribute),
-      $._sequence_expression,
-      $.then_clause,
-      optional($.else_clause)
+      field('condition', $._sequence_expression),
+      field('then', $.then_clause),
+      optional(field('else', $.else_clause))
     )),
 
     then_clause: $ => seq(
       'then',
-      $._expression
+      field('expression', $._expression)
     ),
 
     else_clause: $ => seq(
       'else',
-      $._expression
+      field('expression', $._expression)
     ),
 
     while_expression: $ => prec.right(seq(
       'while',
       optional($._extension_attribute),
-      $._sequence_expression,
-      $.do_clause,
-      repeat($.attribute)
+      field('condition', $._sequence_expression),
+      field('do', $.do_clause),
+      repeat(field('attribute', $.attribute))
     )),
 
     do_clause: $ => seq(
       'do',
-      optional($._sequence_expression),
+      optional(field('expression', $._sequence_expression)),
       'done'
     ),
 
     for_expression: $ => prec.right(seq(
       'for',
       optional($._extension_attribute),
-      alias($._value_name, $.value_name),
+      field('name', alias($._value_name, $.value_name)),
       '=',
-      $._sequence_expression,
+      field('from', $._sequence_expression),
       choice('to', 'downto'),
-      $._sequence_expression,
-      $.do_clause,
-      repeat($.attribute)
+      field('to', $._sequence_expression),
+      field('do', $.do_clause),
+      repeat(field('attribute', $.attribute))
     )),
 
     sequence_expression: $ => prec.right(PREC.seq, seq(
-      $._expression,
+      field('left', $._expression),
       ';',
       optional(seq(
         optional(seq('%', $.attribute_id)),
-        $._sequence_expression
+        field('right', $._sequence_expression)
       ))
     )),
 
     match_expression: $ => prec.right(PREC.match, seq(
       choice(
         seq('match', optional($._extension_attribute)),
-        $.match_operator
+        field('operator', $.match_operator)
       ),
-      $._sequence_expression,
+      field('expression', $._sequence_expression),
       'with',
       $._match_cases,
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     _match_cases: $ => prec.right(seq(
       optional('|'),
-      sep1('|', $.match_case)
+      sep1('|', field('case', $.match_case))
     )),
 
     match_case: $ => seq(
-      $._pattern,
-      optional(seq('when', $._sequence_expression)),
+      field('pattern', $._pattern),
+      optional(seq('when', field('guard', $._sequence_expression))),
       '->',
-      choice($._sequence_expression, $.refutation_case)
+      field('expression', choice($._sequence_expression, $.refutation_case))
     ),
 
     refutation_case: $ => '.',
@@ -1334,139 +1336,139 @@ module.exports = grammar({
       'function',
       optional($._extension_attribute),
       $._match_cases,
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     fun_expression: $ => prec.right(PREC.match, seq(
       'fun',
       optional($._extension_attribute),
-      repeat1($._parameter),
-      optional(seq(':', $._simple_type)),
+      repeat1(field('parameter', $._parameter)),
+      optional(seq(':', field('type', $._simple_type))),
       '->',
-      $._sequence_expression
+      field('body', $._sequence_expression)
     )),
 
     try_expression: $ => prec.right(PREC.match, seq(
       'try',
       optional($._extension_attribute),
-      $._sequence_expression,
+      field('expression', $._sequence_expression),
       'with',
       $._match_cases,
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     let_expression: $ => prec.right(PREC.match, seq(
-      $.value_definition,
+      field('definition', $.value_definition),
       'in',
-      $._sequence_expression
+      field('body', $._sequence_expression)
     )),
 
     coercion_expression: $ => prec.right(seq(
       parenthesize(seq(
-        $._expression,
-        optional(seq(':', $._type)),
+        field('expression', $._expression),
+        optional(seq(':', field('type', $._type))),
         ':>',
-        $._type
+        field('coercion', $._type)
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     assert_expression: $ => prec.left(PREC.app, seq(
       'assert',
       optional($._extension_attribute),
-      $._simple_expression
+      field('expression', $._simple_expression)
     )),
 
     lazy_expression: $ => prec.left(PREC.app, seq(
       'lazy',
       optional($._extension_attribute),
-      $._simple_expression
+      field('expression', $._simple_expression)
     )),
 
     let_module_expression: $ => prec.right(PREC.match, seq(
       'let',
-      $.module_definition,
+      field('definition', $.module_definition),
       'in',
-      $._sequence_expression
+      field('expression', $._sequence_expression)
     )),
 
     let_open_expression: $ => prec.right(PREC.match, seq(
       'let',
-      $.open_statement,
+      field('open', $.open_statement),
       'in',
-      $._sequence_expression
+      field('expression', $._sequence_expression)
     )),
 
     local_open_expression: $ => prec.right(seq(
-      $._module_name,
+      field('module', $._module_name),
       '.',
       choice(
-        parenthesize(optional($._sequence_expression)),
-        $.list_expression,
-        $.array_expression,
-        $.record_expression,
-        $.object_copy_expression,
-        $.local_open_expression
+        parenthesize(optional(field('expression', $._sequence_expression))),
+        field('expression', $.list_expression),
+        field('expression', $.array_expression),
+        field('expression', $.record_expression),
+        field('expression', $.object_copy_expression),
+        field('expression', $.local_open_expression)
       ),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     package_expression: $ => prec.right(seq(
       parenthesize(seq(
         'module',
         optional($._extension_attribute),
-        $._simple_module_expression,
-        optional(seq(':', $._module_type))
+        field('module', $._simple_module_expression),
+        optional(seq(':', field('type', $._module_type)))
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     let_exception_expression: $ => prec.right(PREC.match, seq(
       'let',
-      $.exception_definition,
+      field('definition', $.exception_definition),
       'in',
-      $._sequence_expression
+      field('body', $._sequence_expression)
     )),
 
     new_expression: $ => seq(
       'new',
       optional($._extension_attribute),
-      $.class_path
+      field('class', $.class_path)
     ),
 
     object_copy_expression: $ => prec.right(seq(
       '{<',
-      sep(';', $.instance_variable_expression),
+      sep(';', field('variable', $.instance_variable_expression)),
       optional(';'),
       '>}',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     instance_variable_expression: $ => seq(
-      $._instance_variable_name,
-      optional(seq('=', $._expression))
+      field('name', $._instance_variable_name),
+      optional(seq('=', field('value', $._expression)))
     ),
 
     method_invocation: $ => prec.right(PREC.hash, seq(
-      $._simple_expression,
+      field('object', $._simple_expression),
       '#',
-      $._method_name,
-      repeat($.attribute)
+      field('method', $._method_name),
+      repeat(field('attribute', $.attribute))
     )),
 
     object_expression: $ => prec.right(seq(
       'object',
       optional($._extension_attribute),
       optional(parenthesize(seq(
-        $._pattern,
-        optional(seq(':', $._type))
+        field('self', $._pattern),
+        optional(seq(':', field('self_type', $._type)))
       ))),
       repeat(choice(
-        $._class_field,
-        $.floating_attribute
+        field('field', $._class_field),
+        field('floating_attribute', $.floating_attribute)
       )),
       'end',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     parenthesized_expression: $ => prec.right(seq(
@@ -1474,17 +1476,17 @@ module.exports = grammar({
         seq(
           'begin',
           optional($._extension_attribute),
-          $._sequence_expression,
+          field('expression', $._sequence_expression),
           'end'
         ),
-        parenthesize($._sequence_expression)
+        parenthesize(field('expression', $._sequence_expression))
       ),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     ocamlyacc_value: $ => prec.right(seq(
-      /\$[0-9]+/,
-      repeat($.attribute)
+      field('name', /\$[0-9]+/),
+      repeat(field('attribute', $.attribute))
     )),
 
     // Patterns
@@ -1532,194 +1534,194 @@ module.exports = grammar({
 
     value_name: $ => seq(
       $._value_name,
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     alias_pattern: $ => prec.left(PREC.match, seq(
-      $._pattern,
+      field('pattern', $._pattern),
       'as',
-      alias($._value_name, $.value_name),
-      repeat($.attribute)
+      field('name', alias($._value_name, $.value_name)),
+      repeat(field('attribute', $.attribute))
     )),
 
     alias_pattern_no_exn: $ => prec.left(PREC.match, seq(
-      $._pattern_no_exn,
+      field('pattern', $._pattern_no_exn),
       'as',
-      alias($._value_name, $.value_name),
-      repeat($.attribute)
+      field('name', alias($._value_name, $.value_name)),
+      repeat(field('attribute', $.attribute))
     )),
 
     typed_pattern: $ => seq(
       parenthesize(seq(
-        $._pattern,
+        field('pattern', $._pattern),
         ':',
-        $._type
+        field('type', $._type)
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     or_pattern: $ => prec.left(PREC.seq, seq(
-      $._pattern,
+      field('left', $._pattern),
       '|',
-      $._pattern
+      field('right', $._pattern)
     )),
 
     or_pattern_no_exn: $ => prec.left(PREC.seq, seq(
-      $._pattern_no_exn,
+      field('left', $._pattern_no_exn),
       '|',
-      $._pattern
+      field('right', $._pattern)
     )),
 
     constructor_pattern: $ => prec.right(PREC.app, seq(
-      alias($._constructor_path, $.constructor_path),
-      $._pattern
+      field('constructor', alias($._constructor_path, $.constructor_path)),
+      field('pattern', $._pattern)
     )),
 
     tag_pattern: $ => prec.right(PREC.app, seq(
-      $.tag,
-      $._pattern
+      field('tag', $.tag),
+      field('pattern', $._pattern)
     )),
 
     polymorphic_variant_pattern: $ => seq(
       '#',
-      $.type_constructor_path
+      field('polymorphic_variant', $.type_constructor_path)
     ),
 
     tuple_pattern: $ => prec.left(PREC.prod, seq(
-      $._pattern,
+      field('left', $._pattern),
       ',',
-      $._pattern
+      field('right', $._pattern)
     )),
 
     tuple_pattern_no_exn: $ => prec.left(PREC.prod, seq(
-      $._pattern_no_exn,
+      field('left', $._pattern_no_exn),
       ',',
-      $._pattern
+      field('right', $._pattern)
     )),
 
     record_pattern: $ => prec.left(seq(
       '{',
-      sep1(';', $.field_pattern),
+      sep1(';', field('field', $.field_pattern)),
       optional(seq(';', '_')),
       optional(';'),
       '}',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     field_pattern: $ => seq(
-      $.field_path,
-      optional(seq(':', $._type)),
-      optional(seq('=', $._pattern))
+      field('name', $.field_path),
+      optional(seq(':', field('type', $._type))),
+      optional(seq('=', field('pattern', $._pattern)))
     ),
 
     list_pattern: $ => prec.left(seq(
       '[',
       optional(seq(
-        sep1(';', $._pattern),
+        sep1(';', field('item', $._pattern)),
         optional(';')
       )),
       ']',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     cons_pattern: $ => prec.right(PREC.cons, seq(
-      $._pattern,
+      field('left', $._pattern),
       '::',
-      $._pattern
+      field('right', $._pattern)
     )),
 
     cons_pattern_no_exn: $ => prec.right(PREC.cons, seq(
-      $._pattern_no_exn,
+      field('left', $._pattern_no_exn),
       '::',
-      $._pattern
+      field('right', $._pattern)
     )),
 
     array_pattern: $ => prec.left(seq(
       '[|',
       optional(seq(
-        sep1(';', $._pattern),
+        sep1(';', field('item', $._pattern)),
         optional(';')
       )),
       '|]',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     range_pattern: $ => prec(PREC.dot, seq(
-      $._signed_constant,
+      field('left', $._signed_constant),
       '..',
-      $._signed_constant
+      field('right', $._signed_constant)
     )),
 
     lazy_pattern: $ => prec(PREC.hash, seq(
       'lazy',
       optional($._extension_attribute),
-      $._pattern
+      field('pattern', $._pattern)
     )),
 
     local_open_pattern: $ => prec.left(seq(
-      $._module_name,
+      field('module', $._module_name),
       '.',
       choice(
-        parenthesize(optional($._pattern)),
-        $.list_pattern,
-        $.array_pattern,
-        $.record_pattern,
-        $.local_open_pattern
+        parenthesize(optional(field('pattern', $._pattern))),
+        field('pattern', $.list_pattern),
+        field('pattern', $.array_pattern),
+        field('pattern', $.record_pattern),
+        field('pattern', $.local_open_pattern)
       ),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     package_pattern: $ => seq(
       parenthesize(seq(
         'module',
         optional($._extension_attribute),
-        choice($._module_name, alias('_', $.module_name)),
-        optional(seq(':', $._module_type))
+        field('module', choice($._module_name, alias('_', $.module_name))),
+        optional(seq(':', field('type', $._module_type)))
       )),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     parenthesized_pattern: $ => seq(
-      parenthesize($._pattern),
-      repeat($.attribute)
+      parenthesize(field('pattern', $._pattern)),
+      repeat(field('attribute', $.attribute))
     ),
 
     exception_pattern: $ => seq(
       'exception',
       optional($._extension_attribute),
-      $._pattern
+      field('pattern', $._pattern)
     ),
 
     // Attributes and extensions
 
     attribute: $ => seq(
       '[@',
-      $.attribute_id,
-      optional($.attribute_payload),
+      field('id', $.attribute_id),
+      optional(field('payload', $.attribute_payload)),
       ']'
     ),
 
     item_attribute: $ => seq(
       '[@@',
-      $.attribute_id,
-      optional($.attribute_payload),
+      field('id', $.attribute_id),
+      optional(field('payload', $.attribute_payload)),
       ']'
     ),
 
     floating_attribute: $ => seq(
       '[@@@',
-      $.attribute_id,
-      optional($.attribute_payload),
+      field('id', $.attribute_id),
+      optional(field('payload', $.attribute_payload)),
       ']'
     ),
 
     attribute_payload: $ => choice(
       $._definitions,
-      seq(':', choice($._type, $._specifications)),
+      seq(':', choice(field('type', $._type), $._specifications)),
       seq(
         '?',
-        $._pattern,
-        optional(seq('when', $._sequence_expression))
+        field('pattern', $._pattern),
+        optional(seq('when', field('guard', $._sequence_expression)))
       )
     ),
 
@@ -1730,10 +1732,10 @@ module.exports = grammar({
 
     extension: $ => prec.right(seq(
       '[%',
-      $.attribute_id,
-      optional($.attribute_payload),
+      field('id', $.attribute_id),
+      optional(field('payload', $.attribute_payload)),
       ']',
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     quoted_extension: $ => prec.right(seq(
@@ -1752,10 +1754,10 @@ module.exports = grammar({
 
     item_extension: $ => prec.right(seq(
       '[%%',
-      $.attribute_id,
-      optional($.attribute_payload),
+      field('id', $.attribute_id),
+      optional(field('payload', $.attribute_payload)),
       ']',
-      repeat($.item_attribute)
+      repeat(field('item_attribute', $.item_attribute))
     )),
 
     quoted_item_extension: $ => prec.right(seq(
@@ -1768,9 +1770,9 @@ module.exports = grammar({
     )),
 
     _extension_attribute: $ => prec.right(choice(
-      seq('%', $.attribute_id),
-      $.attribute,
-      seq($._extension_attribute, repeat1($.attribute))
+      seq('%', field('attribute_id', $.attribute_id)),
+      field('attribute', $.attribute),
+      seq($._extension_attribute, field('attribute', repeat1($.attribute)))
     )),
 
     // Constants
@@ -1784,7 +1786,7 @@ module.exports = grammar({
         $.boolean,
         $.unit
       ),
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     )),
 
     _signed_constant: $ => choice(
@@ -1797,14 +1799,14 @@ module.exports = grammar({
     signed_number: $ => seq(
       choice('+', '-'),
       $.number,
-      repeat($.attribute)
+      repeat(field('attribute', $.attribute))
     ),
 
     character: $ => seq(
       "'",
       choice(
         /[^\\']/,
-        $.escape_sequence
+        field('escape', $.escape_sequence)
       ),
       "'"
     ),
@@ -1814,11 +1816,11 @@ module.exports = grammar({
       repeat(choice(
         token.immediate('(*'),
         /[^\\"%@]+|%|@/,
-        $.escape_sequence,
-        alias(/\\u\{[0-9A-Fa-f]+\}/, $.escape_sequence),
-        alias(/\\\n[\t ]*/, $.escape_sequence),
-        $.conversion_specification,
-        $.pretty_printing_indication
+        field('escape', $.escape_sequence),
+        field('escape', alias(/\\u\{[0-9A-Fa-f]+\}/, $.escape_sequence)),
+        field('escape', alias(/\\\n[\t ]*/, $.escape_sequence)),
+        field('conversion', $.conversion_specification),
+        field('printing', $.pretty_printing_indication)
       )),
       '"'
     ),
@@ -1936,14 +1938,14 @@ module.exports = grammar({
     // Names
 
     _value_name: $ => choice(
-      $._identifier,
+      field('identifier', $._identifier),
       parenthesize(choice(
-        $.prefix_operator,
-        alias($._sign_operator, $.infix_operator),
-        $.infix_operator,
+        field('operator', $.prefix_operator),
+        field('operator', alias($._sign_operator, $.infix_operator)),
+        field('operator', $.infix_operator),
         seq(
           '.',
-          $.indexing_operator,
+          field('operator', $.indexing_operator),
           choice(
             seq('(', optional(seq(';', '..')), ')'),
             seq('[', optional(seq(';', '..')), ']'),
@@ -1951,82 +1953,82 @@ module.exports = grammar({
           ),
           optional('<-')
         ),
-        $.let_operator,
-        $.and_operator,
-        $.match_operator
+        field('operator', $.let_operator),
+        field('operator', $.and_operator),
+        field('operator', $.match_operator)
       ))
     ),
 
     _value_path: $ => choice(
-      alias($._value_name, $.value_name),
+      field('name', alias($._value_name, $.value_name)),
       seq(
-        $._module_name,
+        field('module', $._module_name),
         '.',
-        alias($._value_path, $.value_path)
+        field('path', alias($._value_path, $.value_path))
       )
     ),
 
     _module_type_path: $ => choice(
-      $._module_type_name,
+      field('name', $._module_type_name),
       seq(
-        $._simple_module_expression,
+        field('module', $._simple_module_expression),
         '.',
-        $._module_type_name
+        field('name', $._module_type_name)
       )
     ),
 
     field_path: $ => choice(
-      $._field_name,
+      field('name', $._field_name),
       seq(
-        $._module_name,
+        field('module', $._module_name),
         '.',
-        $.field_path
+        field('path', $.field_path)
       )
     ),
 
     _constructor_path: $ => prec.right(choice(
-      $._constructor_name,
+      field('name', $._constructor_name),
       seq(
-        $._module_name,
+        field('module', $._module_name),
         '.',
-        alias($._constructor_path, $.constructor_path)
+        field('path', alias($._constructor_path, $.constructor_path))
       )
     )),
 
     _extended_module_name: $ => seq(
-      $._module_name,
-      repeat(parenthesize($.module_path))
+      field('module', $._module_name),
+      repeat(parenthesize(field('argument', $.module_path)))
     ),
 
     module_path: $ => choice(
       $._extended_module_name,
-      seq($._extended_module_name, '.', $.module_path)
+      seq($._extended_module_name, '.', field('path', $.module_path))
     ),
 
     _type_constructor_path: $ => choice(
-      $._type_constructor,
+      field('name', $._type_constructor),
       seq(
         $._extended_module_name,
         '.',
-        alias($._type_constructor_path, $.type_constructor_path)
+        field('path', alias($._type_constructor_path, $.type_constructor_path))
       )
     ),
 
     _class_type_path: $ => prec(1, choice(
-      $._class_name,
+      field('name', $._class_name),
       seq(
         $._extended_module_name,
         '.',
-        alias($._class_type_path, $.class_type_path)
+        field('path', alias($._class_type_path, $.class_type_path))
       )
     )),
 
     _class_path: $ => choice(
-      $._class_name,
+      field('name', $._class_name),
       seq(
         $._module_name,
         '.',
-        alias($._class_path, $.class_path)
+        field('path', alias($._class_path, $.class_path))
       )
     ),
 
