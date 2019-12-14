@@ -11,7 +11,7 @@ Toplevel directives
 
 (compilation_unit
   (toplevel_directive (directive))
-  (toplevel_directive (directive) (string))
+  (toplevel_directive (directive) (constant (string)))
   (toplevel_directive (directive) (module_name))
   (toplevel_directive
     (directive)

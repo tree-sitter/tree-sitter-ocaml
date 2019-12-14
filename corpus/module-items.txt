@@ -43,8 +43,9 @@ let+ x = a and+ y = b
   (value_definition
     (let_binding
       (value_name)
-      (polymorphic_types (type_variable))
-      (constructed_type (type_variable) (type_constructor_path (type_constructor)))
+      (polymorphic_type
+        (type_variable)
+        (constructed_type (type_variable) (type_constructor_path (type_constructor))))
       (value_path (value_name))))
   (value_definition
     (let_binding
@@ -63,7 +64,7 @@ let+ x = a and+ y = b
   (value_definition
     (let_binding
       (value_name)
-      (parameter (abstract_type (type_constructor)))
+      (abstract_type (type_constructor))
       (parameter (value_name))
       (type_constructor_path (type_constructor))
       (value_path (value_name))))

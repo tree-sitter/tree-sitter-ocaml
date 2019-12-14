@@ -15,7 +15,7 @@ Comments
   (comment)
   (comment)
   (comment)
-  (value_path (value_name (infix_operator))))
+  (expression_item (value_path (value_name (infix_operator)))))
 
 ==============================
 Nested comments
@@ -39,8 +39,8 @@ Strings and comments
 
 (compilation_unit
   (comment)
-  (string)
-  (string))
+  (expression_item (constant (string)))
+  (expression_item (constant (string))))
 
 ==============================
 Characters and comments
@@ -67,7 +67,7 @@ x
   (comment)
   (comment)
   (comment)
-  (value_path (value_name)))
+  (expression_item (value_path (value_name))))
 
 ==============================
 Quoted strings and comments
@@ -83,5 +83,5 @@ Quoted strings and comments
 (compilation_unit
   (comment)
   (comment)
-  (quoted_string)
-  (quoted_string))
+  (expression_item (constant (quoted_string)))
+  (expression_item (constant (quoted_string))))

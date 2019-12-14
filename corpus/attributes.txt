@@ -48,9 +48,9 @@ module M = M [@@id]
 ---
 
 (compilation_unit
-  (value_path (value_name))
-  (item_attribute (attribute_id))
-  (item_attribute (attribute_id))
+  (expression_item (value_path (value_name))
+    (item_attribute (attribute_id))
+    (item_attribute (attribute_id)))
   (value_definition
     (let_binding
       (value_name)
@@ -87,8 +87,8 @@ x ;%id x
     (attribute (attribute_id))
     (let_binding
       (value_name)
-      (value_path (value_name))
-      (attribute (attribute_id))))
+      (value_path (value_name)
+        (attribute (attribute_id)))))
   (type_definition
     (type_binding
       (type_constructor)
@@ -103,19 +103,20 @@ x ;%id x
         (record_declaration
           (field_declaration
             (field_name)
-            (type_constructor_path (type_constructor))
-            (attribute (attribute_id)))
+            (type_constructor_path (type_constructor)
+              (attribute (attribute_id))))
           (attribute (attribute_id)))))
   (module_definition
     (module_binding
       (module_name)
       (structure
-        (attribute (attribute_id)))
-      (attribute (attribute_id))))
-  (sequence_expression
-    (value_path (value_name))
-    (attribute_id)
-    (value_path (value_name))))
+        (attribute (attribute_id))
+        (attribute (attribute_id)))))
+  (expression_item
+    (sequence_expression
+      (value_path (value_name))
+      (attribute_id)
+      (value_path (value_name)))))
 
 ===========================
 Item extension
