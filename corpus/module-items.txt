@@ -284,27 +284,27 @@ include M(M(M)).M(M).t
   (open_statement (module_name))
   (open_statement (module_name))
   (open_statement (module_name))
-  (include_statement (module_name))
   (include_statement (module_type_path (module_type_name)))
-  (include_statement (submodule (module_name) (module_name)))
-  (include_statement (module_type_path (module_name) (module_type_name)))
-  (include_statement
-    (submodule
-      (submodule (module_name) (module_name))
-      (module_name)))
+  (include_statement (module_type_path (module_type_name)))
+  (include_statement (module_type_path (module_name) (module_type_path (module_type_name))))
+  (include_statement (module_type_path (module_name) (module_type_path (module_type_name))))
   (include_statement
     (module_type_path
-      (submodule (module_name) (module_name))
-      (module_type_name)))
+      (module_name)
+      (module_type_path (module_name) (module_type_path (module_type_name)))))
+  (include_statement
+    (module_type_path
+      (module_name)
+      (module_type_path (module_name) (module_type_path (module_type_name)))))
   (include_statement (module_application (module_name) (module_name)))
   (include_statement
-    (submodule
-      (module_application (module_name) (module_name))
-      (module_name)))
+    (module_type_path
+      (module_name)
+      (module_path (module_name)) (module_type_path (module_type_name))))
   (include_statement
     (module_type_path
-      (module_application (module_name) (module_name))
-      (module_type_name)))
+      (module_name)
+      (module_path (module_name)) (module_type_path (module_type_name))))
   (include_statement
     (submodule
       (module_application
@@ -312,18 +312,18 @@ include M(M(M)).M(M).t
         (module_application (module_name) (module_name)))
       (module_application (module_name) (module_name))))
   (include_statement
-    (submodule
-      (submodule
-        (module_application
-          (module_name)
-          (module_application (module_name) (module_name)))
-        (module_application (module_name) (module_name)))
-      (module_name)))
+    (module_type_path
+      (module_name)
+      (module_path (module_name) (module_path (module_name)))
+      (module_type_path
+        (module_name)
+        (module_path (module_name))
+        (module_type_path (module_type_name)))))
   (include_statement
     (module_type_path
-      (submodule
-        (module_application
-          (module_name)
-          (module_application (module_name) (module_name)))
-        (module_application (module_name) (module_name)))
-      (module_type_name))))
+      (module_name)
+      (module_path (module_name) (module_path (module_name)))
+      (module_type_path
+        (module_name)
+        (module_path (module_name))
+        (module_type_path (module_type_name))))))

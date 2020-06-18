@@ -39,8 +39,8 @@ Strings and comments
 
 (compilation_unit
   (comment)
-  (expression_item (constant (string)))
-  (expression_item (constant (string))))
+  (expression_item (string))
+  (expression_item (string)))
 
 ==============================
 Characters and comments
@@ -83,5 +83,5 @@ Quoted strings and comments
 (compilation_unit
   (comment)
   (comment)
-  (expression_item (constant (quoted_string)))
-  (expression_item (constant (quoted_string))))
+  (expression_item (quoted_string))
+  (expression_item (quoted_string)))

@@ -59,38 +59,38 @@ true;;
 ---
 
 (compilation_unit
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (number)))
-  (expression_item (constant (character)))
-  (expression_item (constant (character (escape_sequence))))
-  (expression_item (constant (character (escape_sequence))))
-  (expression_item (constant (character (escape_sequence))))
-  (expression_item (constant (character (escape_sequence))))
-  (expression_item (constant (character (escape_sequence))))
-  (expression_item (constant (character)))
-  (expression_item (constant (string)))
-  (expression_item (constant (string (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence))))
-  (expression_item (constant (string (escape_sequence))))
-  (expression_item (constant (string (conversion_specification) (conversion_specification))))
-  (expression_item (constant (string
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (number))
+  (expression_item (character))
+  (expression_item (character (escape_sequence)))
+  (expression_item (character (escape_sequence)))
+  (expression_item (character (escape_sequence)))
+  (expression_item (character (escape_sequence)))
+  (expression_item (character (escape_sequence)))
+  (expression_item (character))
+  (expression_item (string))
+  (expression_item (string (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)))
+  (expression_item (string (escape_sequence)))
+  (expression_item (string (conversion_specification) (conversion_specification)))
+  (expression_item (string
     (pretty_printing_indication)
     (conversion_specification)
     (pretty_printing_indication)
     (conversion_specification)
     (pretty_printing_indication)
-    (pretty_printing_indication))))
-  (expression_item (constant (string)))
-  (expression_item (constant (quoted_string)))
-  (expression_item (constant (quoted_string)))
-  (expression_item (constant (quoted_string)))
-  (expression_item (constant (boolean)))
-  (expression_item (constant (unit))))
+    (pretty_printing_indication)))
+  (expression_item (string))
+  (expression_item (quoted_string))
+  (expression_item (quoted_string))
+  (expression_item (quoted_string))
+  (expression_item (boolean))
+  (expression_item (unit)))
 
 ===========================
 Typed expression
@@ -172,11 +172,11 @@ x.%(0).M.%(0) <- x;;
         (string_get_expression
           (array_get_expression
             (value_path (value_name))
-            (constant (number)))
-          (constant (number)))
+            (number))
+          (number))
         (product_expression
-          (constant (number))
-          (constant (number))))
+          (number)
+          (number)))
       (value_path (value_name))))
   (expression_item
     (set_expression
@@ -184,20 +184,20 @@ x.%(0).M.%(0) <- x;;
         (array_get_expression
           (value_path (value_name))
           (indexing_operator_path (indexing_operator))
-          (constant (number)))
+          (number))
         (indexing_operator_path
           (module_name)
           (indexing_operator_path (indexing_operator)))
-        (constant (number)))
+        (number))
       (value_path (value_name))))
   (expression_item
     (infix_expression
-      (constant (number))
+      (number)
       (infix_operator)
       (array_get_expression
         (value_path (value_name))
         (indexing_operator_path (indexing_operator))
-        (constant (number))))))
+        (number)))))
 
 ===========================
 Coercions
@@ -388,7 +388,7 @@ x lsl 1;;
     (infix_expression
       (value_path (value_name))
       (infix_operator)
-      (constant (number)))))
+      (number))))
 
 ===========================
 If, while and for
@@ -418,7 +418,7 @@ for i = 1 to n do x done;;
   (expression_item
     (for_expression
       (value_name)
-      (constant (number))
+      (number)
       (value_path (value_name))
       (do_clause (value_path (value_name))))))
 
@@ -488,11 +488,11 @@ function 0 -> 0 | x -> 1
   (expression_item
     (function_expression
       (match_case
-        (constant (number))
-        (constant (number)))
+        (number)
+        (number))
       (match_case
         (value_name)
-        (constant (number))))))
+        (number)))))
 
 ===========================
 Try expressions
@@ -508,7 +508,7 @@ try x with Exception -> ()
       (value_path (value_name))
       (match_case
         (constructor_path (constructor_name))
-        (constant (unit))))))
+        (unit)))))
 
 ===========================
 Let expressions
@@ -525,7 +525,7 @@ let rec x = y and y = x in x;;
       (value_definition
         (let_binding
           (value_name)
-          (constant (number))))
+          (number)))
       (value_path (value_name))))
   (expression_item
     (let_expression
