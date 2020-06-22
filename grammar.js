@@ -27,26 +27,6 @@ const NUMBER = token(choice(
   /0[bB][01][01_]*[g-zG-Z]?/
 ))
 
-const COMMENT = $ => seq(
-  '(*',
-  repeat(choice(
-    alias($._comment, $.comment),
-    /'([^'\\]|\\[\\"'ntbr ]|\\[0-9][0-9][0-9]|\\x[0-9A-Fa-f][0-9A-Fa-f]|\\o[0-3][0-7][0-7])'/,
-    /"([^\\"]|\\(.|\n))*"/,
-    seq(
-      token(seq('{', optional(seq(/%%?/, sep1('.', /[A-Za-z_][a-zA-Z0-9_']*/), /\s*/)))),
-      optional(seq(
-        $._quoted_string,
-        '}'
-      ))
-    ),
-    /[A-Za-z_][a-zA-Z0-9_']*/,
-    /[^('"{*A-Za-z_]+/,
-    '(', "'", '*',
-  )),
-  '*)'
-)
-
 const field = (_name, value) => value
 
 module.exports = grammar({
@@ -1753,6 +1733,7 @@ module.exports = grammar({
       "'",
       choice(
         /[^\\']/,
+        $._null,
         field('escape', $.escape_sequence)
       ),
       "'"
@@ -1761,8 +1742,10 @@ module.exports = grammar({
     string: $ => seq(
       '"',
       repeat(choice(
-        token.immediate('(*'),
+        token.immediate(' '),
+        token.immediate('[@'),
         /[^\\"%@]+|%|@/,
+        $._null,
         field('escape', $.escape_sequence),
         field('escape', alias(/\\u\{[0-9A-Fa-f]+\}/, $.escape_sequence)),
         field('escape', alias(/\\\n[\t ]*/, $.escape_sequence)),
@@ -2000,13 +1983,7 @@ module.exports = grammar({
     directive: $ => seq('#', choice($._identifier, $._capitalized_identifier)),
     type_variable: $ => seq("'", choice($._identifier, $._capitalized_identifier)),
     tag: $ => seq('`', choice($._identifier, $._capitalized_identifier)),
-    attribute_id: $ => sep1('.', choice($._identifier, $._capitalized_identifier)),
-
-    // Comments
-
-    _comment: COMMENT,
-
-    comment: COMMENT
+    attribute_id: $ => sep1('.', choice($._identifier, $._capitalized_identifier))
   },
 
   conflicts: $ => [
@@ -2018,8 +1995,11 @@ module.exports = grammar({
   ],
 
   externals: $ => [
+    $.comment,
     $._quoted_string,
-    $.line_number_directive
+    '"',
+    $.line_number_directive,
+    $._null
   ]
 })
 

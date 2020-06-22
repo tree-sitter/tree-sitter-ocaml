@@ -1391,21 +1391,6 @@
     }
   },
   {
-    "type": "comment",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "comment",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "compilation_unit",
     "named": true,
     "fields": {},
@@ -4652,6 +4637,10 @@
     }
   },
   {
+    "type": " ",
+    "named": false
+  },
+  {
     "type": "!",
     "named": false
   },
@@ -4684,19 +4673,11 @@
     "named": false
   },
   {
-    "type": "(*",
-    "named": false
-  },
-  {
     "type": ")",
     "named": false
   },
   {
     "type": "*",
-    "named": false
-  },
-  {
-    "type": "*)",
     "named": false
   },
   {
