@@ -110,11 +110,11 @@ type t = |
   (type_definition (type_binding (type_constructor)))
   (type_definition
     (type_binding
-      (type_params (type_variable))
+      (type_variable)
       (type_constructor)
       (type_constructor_path (type_constructor)))
     (type_binding
-      (type_params (type_variable) (type_variable))
+      (type_variable) (type_variable)
       (type_constructor)
       (type_constructor_path (type_constructor))))
   (type_definition (type_binding (type_constructor) (type_constructor_path (type_constructor))))
@@ -125,28 +125,25 @@ type t = |
         (constructor_declaration (constructor_name))
         (constructor_declaration
           (constructor_name)
-          (constructor_argument
-            (type_constructor_path (type_constructor))))
+          (type_constructor_path (type_constructor)))
         (constructor_declaration
           (constructor_name)
-          (constructor_argument
-            (type_constructor_path (type_constructor))
-            (type_constructor_path (type_constructor))))
+          (type_constructor_path (type_constructor))
+          (type_constructor_path (type_constructor)))
         (constructor_declaration
           (constructor_name)
-          (constructor_argument
-            (record_declaration
-              (field_declaration
-                (field_name)
-                (type_constructor_path (type_constructor)))))))))
+          (record_declaration
+            (field_declaration
+              (field_name)
+              (type_constructor_path (type_constructor))))))))
   (type_definition
     (type_binding
-      (type_params (type_variable))
+      (type_variable)
       (type_constructor)
       (variant_declaration
         (constructor_declaration
           (constructor_name)
-          (constructor_argument (type_variable))
+          (type_variable)
           (constructed_type (type_variable) (type_constructor_path (type_constructor)))))))
   (type_definition
     (type_binding
@@ -177,7 +174,7 @@ exception E of t
   (exception_definition
     (constructor_declaration
       (constructor_name)
-      (constructor_argument (type_constructor_path (type_constructor))))))
+      (type_constructor_path (type_constructor)))))
 
 ==============================
 Module definition

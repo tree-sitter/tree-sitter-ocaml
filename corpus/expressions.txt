@@ -460,7 +460,7 @@ match+ x with x -> x;;
         (value_path (value_name)))
       (match_case
         (value_name)
-        (value_path (value_name))
+        (guard (value_path (value_name)))
         (value_path (value_name)))
       (match_case
         (or_pattern (value_name) (value_name))
