@@ -892,7 +892,7 @@ module.exports = grammar({
         parenthesize(sep1(',', field('argument', $._type_ext)))
       )),
       '#',
-      $.class_path
+      $.class_type_path
     )),
 
     parenthesized_type: $ => parenthesize($._type_ext),

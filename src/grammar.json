@@ -4749,7 +4749,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "class_path"
+            "name": "class_type_path"
           }
         ]
       }
