@@ -132,12 +132,12 @@ function M.(A x) | M.[x] -> ()
       (match_case
         (or_pattern
           (local_open_pattern
-            (module_name)
+            (module_path (module_name))
             (constructor_pattern
               (constructor_path (constructor_name))
               (value_name)))
           (local_open_pattern
-            (module_name)
+            (module_path (module_name))
             (list_pattern (value_name))))
         (unit)))))
 

@@ -13,14 +13,14 @@ M.( + );;
   (expression_item (value_path (value_name)))
   (expression_item
     (value_path
-      (module_name)
-      (value_path (value_name))))
+      (module_path (module_name))
+      (value_name)))
   (expression_item
     (value_path (value_name (infix_operator))))
   (expression_item
     (value_path
-      (module_name)
-      (value_path (value_name (infix_operator))))))
+      (module_path (module_name))
+      (value_name (infix_operator)))))
 
 ===========================
 Constants
@@ -186,8 +186,8 @@ x.%(0).M.%(0) <- x;;
           (indexing_operator_path (indexing_operator))
           (number))
         (indexing_operator_path
-          (module_name)
-          (indexing_operator_path (indexing_operator)))
+          (module_path (module_name))
+          (indexing_operator))
         (number))
       (value_path (value_name))))
   (expression_item
@@ -231,11 +231,11 @@ M.[x; x];;
 (compilation_unit
   (expression_item
     (local_open_expression
-      (module_name)
+      (module_path (module_name))
       (value_path (value_name))))
   (expression_item
     (local_open_expression
-      (module_name)
+      (module_path (module_name))
       (list_expression
         (value_path (value_name))
         (value_path (value_name))))))
@@ -252,10 +252,10 @@ Package expressions
 (compilation_unit
   (expression_item
     (package_expression
-      (module_name)))
+      (module_path (module_name))))
   (expression_item
     (package_expression
-      (module_name)
+      (module_path (module_name))
       (module_type_path (module_type_name)))))
 
 ===========================
@@ -296,8 +296,8 @@ A x;;
     (constructor_path (constructor_name)))
   (expression_item
     (constructor_path
-      (module_name)
-      (constructor_path (constructor_name))))
+      (module_path (module_name))
+      (constructor_name)))
   (expression_item
     (application_expression
       (constructor_path (constructor_name))
@@ -578,11 +578,11 @@ let exception E in x;;
       (module_definition
         (module_binding
           (module_name)
-          (module_name)))
+          (module_path (module_name))))
       (value_path (value_name))))
   (expression_item
     (let_open_expression
-      (open_module (module_name))
+      (open_module (module_path (module_name)))
       (value_path (value_name))))
   (expression_item
     (let_exception_expression

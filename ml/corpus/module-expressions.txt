@@ -11,12 +11,12 @@ module M = M.M
   (module_definition
     (module_binding
       (module_name)
-      (module_name)))
+      (module_path (module_name))))
   (module_definition
     (module_binding
       (module_name)
-      (submodule
-        (module_name)
+      (module_path
+        (module_path (module_name))
         (module_name)))))
 
 ============================
@@ -58,16 +58,16 @@ module M = M (M) (M)
     (module_binding
       (module_name)
       (module_application
-        (module_name)
-        (module_name))))
+        (module_path (module_name))
+        (parenthesized_module_expression (module_path (module_name))))))
   (module_definition
     (module_binding
       (module_name)
       (module_application
         (module_application
-          (module_name)
-          (module_name))
-        (module_name)))))
+          (module_path (module_name))
+          (parenthesized_module_expression (module_path (module_name))))
+        (parenthesized_module_expression (module_path (module_name)))))))
 
 ==========================
 Typed module expressions
@@ -82,7 +82,7 @@ module M = (M : T)
     (module_binding
       (module_name)
       (typed_module_expression
-        (module_name)
+        (module_path (module_name))
         (module_type_path (module_type_name))))))
 
 =========================
@@ -99,20 +99,18 @@ module M = M (val m)
   (module_definition
     (module_binding
       (module_name)
-      (parenthesized_module_expression
-        (packed_module (value_path (value_name))))))
+      (packed_module (value_path (value_name)))))
   (module_definition
     (module_binding
       (module_name)
-      (parenthesized_module_expression
-        (packed_module
-          (value_path (value_name))
-          (module_type_path (module_type_name))))))
+      (packed_module
+        (value_path (value_name))
+        (module_type_path (module_type_name)))))
   (module_definition
     (module_binding
       (module_name)
       (module_application
-        (module_name)
+        (module_path (module_name))
         (packed_module (value_path (value_name)))))))
 
 =========================
@@ -131,7 +129,7 @@ module M = functor (M : T) -> M
         (module_parameter
           (module_name)
           (module_type_path (module_type_name)))
-        (module_name)))))
+        (module_path (module_name))))))
 
 ==============================
 Parenthesized module expressions
@@ -145,4 +143,4 @@ module M = (M)
   (module_definition
     (module_binding
       (module_name)
-      (parenthesized_module_expression (module_name)))))
+      (parenthesized_module_expression (module_path (module_name))))))

@@ -69,10 +69,22 @@ include M
 include M.M
 include M.M.M
 include M(M)
-include M(M).M
-include M(M(M)).M(M)
-include M(M(M)).M(M).M
 
 ---
 
-(compilation_unit (include_module (module_name)) (include_module (submodule (module_name) (module_name))) (include_module (submodule (submodule (module_name) (module_name)) (module_name))) (include_module (module_application (module_name) (module_name))) (include_module (submodule (module_application (module_name) (module_name)) (module_name))) (include_module (submodule (module_application (module_name) (module_application (module_name) (module_name))) (module_application (module_name) (module_name)))) (include_module (submodule (submodule (module_application (module_name) (module_application (module_name) (module_name))) (module_application (module_name) (module_name))) (module_name))))
+(compilation_unit
+  (include_module (module_path (module_name)))
+  (include_module
+    (module_path
+      (module_path (module_name))
+      (module_name)))
+  (include_module
+    (module_path
+      (module_path
+        (module_path (module_name))
+        (module_name))
+      (module_name)))
+  (include_module
+    (module_application
+      (module_path (module_name))
+      (parenthesized_module_expression (module_path (module_name))))))

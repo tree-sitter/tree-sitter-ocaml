@@ -266,7 +266,19 @@
         "named": true
       },
       {
-        "type": "packed_module",
+        "type": "functor",
+        "named": true
+      },
+      {
+        "type": "module_application",
+        "named": true
+      },
+      {
+        "type": "module_path",
+        "named": true
+      },
+      {
+        "type": "structure",
         "named": true
       }
     ]
@@ -596,27 +608,11 @@
     "named": true,
     "subtypes": [
       {
-        "type": "functor",
-        "named": true
-      },
-      {
-        "type": "module_application",
-        "named": true
-      },
-      {
-        "type": "module_name",
+        "type": "packed_module",
         "named": true
       },
       {
         "type": "parenthesized_module_expression",
-        "named": true
-      },
-      {
-        "type": "structure",
-        "named": true
-      },
-      {
-        "type": "submodule",
         "named": true
       },
       {
@@ -1406,11 +1402,7 @@
           "named": true
         },
         {
-          "type": "class_path",
-          "named": true
-        },
-        {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         }
       ]
@@ -1486,15 +1478,7 @@
           "named": true
         },
         {
-          "type": "class_type_path",
-          "named": true
-        },
-        {
-          "type": "module_name",
-          "named": true
-        },
-        {
-          "type": "module_path",
+          "type": "extended_module_path",
           "named": true
         }
       ]
@@ -1688,11 +1672,7 @@
         "required": true,
         "types": [
           {
-            "type": "_extension",
-            "named": true
-          },
-          {
-            "type": "_simple_module_expression",
+            "type": "module_path",
             "named": true
           }
         ]
@@ -1702,11 +1682,7 @@
         "required": true,
         "types": [
           {
-            "type": "_extension",
-            "named": true
-          },
-          {
-            "type": "_simple_module_expression",
+            "type": "extended_module_path",
             "named": true
           }
         ]
@@ -1856,11 +1832,7 @@
           "named": true
         },
         {
-          "type": "constructor_path",
-          "named": true
-        },
-        {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         }
       ]
@@ -2008,6 +1980,25 @@
         },
         {
           "type": "item_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "extended_module_path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "extended_module_path",
+          "named": true
+        },
+        {
+          "type": "module_name",
           "named": true
         }
       ]
@@ -2187,11 +2178,7 @@
           "named": true
         },
         {
-          "type": "field_path",
-          "named": true
-        },
-        {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         }
       ]
@@ -2430,7 +2417,7 @@
             "named": true
           },
           {
-            "type": "_simple_module_expression",
+            "type": "_module_expression",
             "named": true
           }
         ]
@@ -2595,7 +2582,7 @@
           "named": true
         },
         {
-          "type": "_simple_module_expression",
+          "type": "_module_expression",
           "named": true
         },
         {
@@ -2649,11 +2636,7 @@
           "named": true
         },
         {
-          "type": "indexing_operator_path",
-          "named": true
-        },
-        {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         }
       ]
@@ -3422,15 +3405,15 @@
           "named": true
         },
         {
-          "type": "local_open_expression",
-          "named": true
-        },
-        {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         },
         {
           "type": "object_copy_expression",
+          "named": true
+        },
+        {
+          "type": "package_expression",
           "named": true
         },
         {
@@ -3465,11 +3448,7 @@
           "named": true
         },
         {
-          "type": "local_open_pattern",
-          "named": true
-        },
-        {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         },
         {
@@ -3712,7 +3691,7 @@
             "named": true
           },
           {
-            "type": "_module_expression",
+            "type": "_simple_module_expression",
             "named": true
           }
         ]
@@ -3726,7 +3705,7 @@
             "named": true
           },
           {
-            "type": "_simple_module_expression",
+            "type": "_module_expression",
             "named": true
           }
         ]
@@ -3746,7 +3725,7 @@
             "named": true
           },
           {
-            "type": "_simple_module_expression",
+            "type": "_module_expression",
             "named": true
           }
         ]
@@ -3840,7 +3819,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "module_name",
@@ -3938,7 +3917,7 @@
           "named": true
         },
         {
-          "type": "_simple_module_expression",
+          "type": "_module_expression",
           "named": true
         }
       ]
@@ -3953,19 +3932,11 @@
       "required": true,
       "types": [
         {
-          "type": "module_name",
-          "named": true
-        },
-        {
-          "type": "module_path",
+          "type": "extended_module_path",
           "named": true
         },
         {
           "type": "module_type_name",
-          "named": true
-        },
-        {
-          "type": "module_type_path",
           "named": true
         }
       ]
@@ -4115,7 +4086,7 @@
           "named": true
         },
         {
-          "type": "_simple_module_expression",
+          "type": "_module_expression",
           "named": true
         },
         {
@@ -4180,7 +4151,7 @@
             "named": true
           },
           {
-            "type": "_simple_module_expression",
+            "type": "_module_expression",
             "named": true
           }
         ]
@@ -5027,40 +4998,6 @@
     }
   },
   {
-    "type": "submodule",
-    "named": true,
-    "fields": {
-      "left": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_extension",
-            "named": true
-          },
-          {
-            "type": "_simple_module_expression",
-            "named": true
-          }
-        ]
-      },
-      "right": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_extension",
-            "named": true
-          },
-          {
-            "type": "_simple_module_expression",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "tag",
     "named": true,
     "fields": {}
@@ -5390,19 +5327,11 @@
       "required": true,
       "types": [
         {
-          "type": "module_name",
-          "named": true
-        },
-        {
-          "type": "module_path",
+          "type": "extended_module_path",
           "named": true
         },
         {
           "type": "type_constructor",
-          "named": true
-        },
-        {
-          "type": "type_constructor_path",
           "named": true
         }
       ]
@@ -5587,7 +5516,7 @@
             "named": true
           },
           {
-            "type": "_simple_module_expression",
+            "type": "_module_expression",
             "named": true
           }
         ]
@@ -5718,15 +5647,11 @@
       "required": true,
       "types": [
         {
-          "type": "module_name",
+          "type": "module_path",
           "named": true
         },
         {
           "type": "value_name",
-          "named": true
-        },
-        {
-          "type": "value_path",
           "named": true
         }
       ]

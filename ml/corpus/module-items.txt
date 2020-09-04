@@ -142,29 +142,29 @@ module _ (_ : T) = M
   (module_definition
     (module_binding
       (module_name)
-      (module_name)))
+      (module_path (module_name))))
   (module_definition
     (module_binding
       (module_name)
       (module_type_path (module_type_name))
-      (module_name)))
+      (module_path (module_name))))
   (module_definition
     (module_binding
       (module_name)
       (module_parameter (module_name) (module_type_path (module_type_name)))
-      (module_name)))
+      (module_path (module_name))))
   (module_definition
     (module_binding
       (module_name)
-      (module_name))
+      (module_path (module_name)))
     (module_binding
       (module_name)
-      (module_name)))
+      (module_path (module_name))))
   (module_definition
     (module_binding
       (module_name)
       (module_parameter (module_name) (module_type_path (module_type_name)))
-      (module_name))))
+      (module_path (module_name)))))
 
 ==============================
 Module type definition
@@ -190,6 +190,6 @@ open ! M
 ---
 
 (compilation_unit
-  (open_module (module_name))
-  (open_module (module_name))
-  (open_module (module_name)))
+  (open_module (module_path (module_name)))
+  (open_module (module_path (module_name)))
+  (open_module (module_path (module_name))))

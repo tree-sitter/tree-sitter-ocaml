@@ -63,7 +63,7 @@ module M = M [@@id]
   (module_definition
     (module_binding
       (module_name)
-      (module_name)
+      (module_path (module_name))
       (item_attribute (attribute_id)))))
 
 ===========================
