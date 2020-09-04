@@ -2,7 +2,6 @@
   "name": "tree-sitter-ocaml",
   "version": "0.16.0",
   "description": "OCaml grammar for tree-sitter",
-  "main": "index.js",
   "keywords": [
     "parser",
     "ocaml"
@@ -13,10 +12,32 @@
     "nan": "^2.14.1"
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.16.8"
+    "tree-sitter-cli": "^0.16.9"
   },
   "scripts": {
-    "build": "tree-sitter generate && node-gyp build",
-    "test": "tree-sitter test && script/parse-examples"
-  }
+    "build": "npm run build-ml && npm run build-mli",
+    "build-ml": "cd ml && tree-sitter generate",
+    "build-mli": "cd mli && tree-sitter generate",
+    "test": "npm run test-ml && npm run test-mli && script/parse-examples",
+    "test-ml": "cd ml && tree-sitter test",
+    "test-mli": "cd mli && tree-sitter test"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.ocaml",
+      "file-types": [
+        "ml"
+      ],
+      "path": "ml",
+      "injection-regex": "^(ocaml|ml)$"
+    },
+    {
+      "scope": "source.mli",
+      "file-types": [
+        "mli"
+      ],
+      "path": "mli",
+      "injection-regex": "^mli$"
+    }
+  ]
 }
