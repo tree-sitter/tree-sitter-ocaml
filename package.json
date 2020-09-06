@@ -15,12 +15,12 @@
     "tree-sitter-cli": "^0.16.9"
   },
   "scripts": {
-    "build": "npm run build-ml && npm run build-mli",
-    "build-ml": "cd ml && tree-sitter generate",
-    "build-mli": "cd mli && tree-sitter generate",
-    "test": "npm run test-ml && npm run test-mli && script/parse-examples",
-    "test-ml": "cd ml && tree-sitter test",
-    "test-mli": "cd mli && tree-sitter test"
+    "build": "npm run build-ocaml && npm run build-interface",
+    "build-ocaml": "cd ocaml && tree-sitter generate",
+    "build-interface": "cd interface && tree-sitter generate",
+    "test": "npm run test-ocaml && npm run test-interface && script/parse-examples",
+    "test-ocaml": "cd ocaml && tree-sitter test",
+    "test-interface": "cd interface && tree-sitter test"
   },
   "tree-sitter": [
     {
@@ -28,16 +28,16 @@
       "file-types": [
         "ml"
       ],
-      "path": "ml",
+      "path": "ocaml",
       "injection-regex": "^(ocaml|ml)$"
     },
     {
-      "scope": "source.mli",
+      "scope": "source.ocaml.interface",
       "file-types": [
         "mli"
       ],
-      "path": "mli",
-      "injection-regex": "^mli$"
+      "path": "interface",
+      "injection-regex": "^ocaml_interface$"
     }
   ]
 }
