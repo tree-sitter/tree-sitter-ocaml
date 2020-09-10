@@ -10391,8 +10391,7 @@
     "_instance_variable_name",
     "_module_name",
     "_module_type_name",
-    "_constructor_name",
-    "_label"
+    "_constructor_name"
   ],
   "supertypes": [
     "_structure_item",

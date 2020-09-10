@@ -54,7 +54,6 @@ module.exports = grammar({
     $._module_name,
     $._module_type_name,
     $._constructor_name,
-    $._label
   ],
 
   word: $ => $._identifier,
