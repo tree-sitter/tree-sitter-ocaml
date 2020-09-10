@@ -64,7 +64,7 @@
   (comment)? @doc .
   (value_definition
     (let_binding
-      pattern: (operator_pattern (_) @name)) @definition.function)
+      pattern: (parenthesized_operator (_) @name)) @definition.function)
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
 )
 
