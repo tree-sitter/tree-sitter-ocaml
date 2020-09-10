@@ -57,6 +57,19 @@
   right: (value_path (value_name) @name)
   (#eq? @reference.call "|>"))
 
+; Operator
+;---------
+
+(
+  (comment)? @doc .
+  (value_definition
+    (let_binding
+      pattern: (operator_pattern (_) @name)) @definition.function)
+  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+)
+
+[(prefix_operator) (infix_operator) (indexing_operator) (let_operator) (and_operator) (match_operator)] @name @reference.call
+
 ; Classes
 ;--------
 
