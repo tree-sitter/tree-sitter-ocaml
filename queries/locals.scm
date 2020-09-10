@@ -1,14 +1,6 @@
 ; Scopes
 ;-------
 
-(structure) @local.scope
-
-(let_class_expression) @local.scope
-
-(let_expression) @local.scope
-
-(fun_expression) @local.scope
-
 (let_binding) @local.scope
 
 (class_binding) @local.scope
