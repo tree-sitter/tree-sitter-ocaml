@@ -18,7 +18,7 @@ let+ x = a and+ y = b
     (let_binding (value_pattern) (value_path (value_name))))
   (value_definition
     (let_binding
-      (operator_pattern (infix_operator))
+      (parenthesized_operator (infix_operator))
       (value_path (value_name))))
   (value_definition
     (let_binding (value_pattern) (value_path (value_name)))

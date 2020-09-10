@@ -814,7 +814,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "operator_name",
+        "type": "parenthesized_operator",
         "named": true
       },
       {
@@ -828,7 +828,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "operator_pattern",
+        "type": "parenthesized_operator",
         "named": true
       },
       {
@@ -4131,76 +4131,6 @@
     }
   },
   {
-    "type": "operator_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "and_operator",
-          "named": true
-        },
-        {
-          "type": "indexing_operator",
-          "named": true
-        },
-        {
-          "type": "infix_operator",
-          "named": true
-        },
-        {
-          "type": "let_operator",
-          "named": true
-        },
-        {
-          "type": "match_operator",
-          "named": true
-        },
-        {
-          "type": "prefix_operator",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "operator_pattern",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "and_operator",
-          "named": true
-        },
-        {
-          "type": "indexing_operator",
-          "named": true
-        },
-        {
-          "type": "infix_operator",
-          "named": true
-        },
-        {
-          "type": "let_operator",
-          "named": true
-        },
-        {
-          "type": "match_operator",
-          "named": true
-        },
-        {
-          "type": "prefix_operator",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "or_pattern",
     "named": true,
     "fields": {
@@ -4531,6 +4461,41 @@
         },
         {
           "type": "_module_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parenthesized_operator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "and_operator",
+          "named": true
+        },
+        {
+          "type": "indexing_operator",
+          "named": true
+        },
+        {
+          "type": "infix_operator",
+          "named": true
+        },
+        {
+          "type": "let_operator",
+          "named": true
+        },
+        {
+          "type": "match_operator",
+          "named": true
+        },
+        {
+          "type": "prefix_operator",
           "named": true
         }
       ]

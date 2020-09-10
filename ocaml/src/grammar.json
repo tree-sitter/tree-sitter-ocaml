@@ -9595,7 +9595,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "operator_name"
+          "name": "parenthesized_operator"
         }
       ]
     },
@@ -9613,19 +9613,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "operator_pattern"
+          "name": "parenthesized_operator"
         }
       ]
     },
-    "operator_name": {
-      "type": "SYMBOL",
-      "name": "_operator"
-    },
-    "operator_pattern": {
-      "type": "SYMBOL",
-      "name": "_operator"
-    },
-    "_operator": {
+    "parenthesized_operator": {
       "type": "SEQ",
       "members": [
         {

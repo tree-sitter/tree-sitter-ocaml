@@ -1834,18 +1834,15 @@ module.exports = grammar({
 
     _value_name: $ => choice(
       alias($._identifier, $.value_name),
-      $.operator_name
+      $.parenthesized_operator
     ),
 
     _value_pattern: $ => choice(
       alias($._identifier, $.value_pattern),
-      $.operator_pattern
+      $.parenthesized_operator
     ),
 
-    operator_name: $ => $._operator,
-    operator_pattern: $ => $._operator,
-
-    _operator: $ => parenthesize(choice(
+    parenthesized_operator: $ => parenthesize(choice(
       $.prefix_operator,
       alias($._sign_operator, $.infix_operator),
       $.infix_operator,

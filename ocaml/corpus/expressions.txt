@@ -16,11 +16,11 @@ M.( + );;
       (module_path (module_name))
       (value_name)))
   (expression_item
-    (value_path (operator_name (infix_operator))))
+    (value_path (parenthesized_operator (infix_operator))))
   (expression_item
     (value_path
       (module_path (module_name))
-      (operator_name (infix_operator)))))
+      (parenthesized_operator (infix_operator)))))
 
 ===========================
 Constants
