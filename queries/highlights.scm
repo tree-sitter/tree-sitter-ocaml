@@ -18,11 +18,6 @@
 ; Functions
 ;----------
 
-(
-  (value_name) @function.builtin
-  (#match? @function.builtin "^(raise(_notrace)?|failwith|invalid_arg)$")
-)
-
 (let_binding
   pattern: (value_pattern) @function
   (parameter))
@@ -35,19 +30,6 @@
 
 (external (value_pattern) @function)
 
-(application_expression
-  function: (value_path (value_name)) @function)
-
-(infix_expression
-  left: (value_path (value_name) @function)
-  (infix_operator) @operator
-  (#eq? @operator "@@"))
-
-(infix_expression
-  (infix_operator) @operator
-  right: (value_path (value_name) @function)
-  (#eq? @operator "|>"))
-
 (method_name) @function.method
 
 ; Variables
@@ -59,6 +41,27 @@
 
 (value_pattern) @variable.parameter
 
+; Application
+;------------
+
+(infix_expression
+  left: (value_path (value_name) @function)
+  (infix_operator) @operator
+  (#eq? @operator "@@"))
+
+(infix_expression
+  (infix_operator) @operator
+  right: (value_path (value_name) @function)
+  (#eq? @operator "|>"))
+
+(application_expression
+  function: (value_path (value_name)) @function)
+
+(
+  (value_name) @function.builtin
+  (#match? @function.builtin "^(raise(_notrace)?|failwith|invalid_arg)$")
+)
+
 ; Properties
 ;-----------
 
@@ -67,11 +70,13 @@
 ; Constants
 ;----------
 
-[(unit) (boolean)] @constant
+(boolean) @constant
 
 (number) @number
 
-[(string) (quoted_string) (character)] @string
+[(string) (character)] @string
+
+(quoted_string "{" @string "}" @string) @string
 
 (escape_sequence) @escape
 
@@ -80,16 +85,27 @@
 ; Operators
 ;----------
 
-[(prefix_operator) (infix_operator) (indexing_operator)] @operator
+(match_expression (match_operator) @keyword)
+
+(value_definition [(let_operator) (and_operator)] @keyword)
+
+[
+  (prefix_operator)
+  (infix_operator)
+  (indexing_operator)
+  (let_operator)
+  (and_operator)
+  (match_operator)
+] @operator
+
+(prefix_operator "!" @operator)
+
+(infix_operator ["&" "+" "-" "=" ">" "|" "%"] @operator)
 
 ["*" "#" "::" "<-"] @operator
 
 ; Keywords
 ;---------
-
-(match_expression (match_operator) @keyword)
-
-(value_definition [(let_operator) (and_operator)] @keyword)
 
 [
   "and"
@@ -143,15 +159,6 @@
 ; Punctuation
 ;------------
 
-["(" ")" "[" "]" "{" "}" "[|" "|]" "[<" "[>"] @punctuation.bracket
-
-(object_type ["<" ">"] @punctuation.bracket)
-
-[
-  "," "." ";" ":" "=" "|" "~" "?" "+" "-" "!" "%" ">"
-  "->" ";;" ":>" "+=" ":=" ".."
-] @punctuation.delimiter
-
 (attribute ["[@" "]"] @punctuation.special)
 (item_attribute ["[@@" "]"] @punctuation.special)
 (floating_attribute ["[@@@" "]"] @punctuation.special)
@@ -161,6 +168,15 @@
 (quoted_item_extension ["{%%" "}"] @punctuation.special)
 
 "%" @punctuation.special
+
+["(" ")" "[" "]" "{" "}" "[|" "|]" "[<" "[>"] @punctuation.bracket
+
+(object_type ["<" ">"] @punctuation.bracket)
+
+[
+  "," "." ";" ":" "=" "|" "~" "?" "+" "-" "!" ">" "&"
+  "->" ";;" ":>" "+=" ":=" ".."
+] @punctuation.delimiter
 
 ; Attributes
 ;-----------
