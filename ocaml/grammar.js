@@ -20,6 +20,7 @@ const PREC = {
 }
 
 const OP_CHAR = /[!$%&*+\-./:<=>?@^|~]/
+const HASH_OP_CHAR = /[#!$%&*+\-./:<=>?@^|~]/
 const NUMBER = token(choice(
   /[0-9][0-9_]*(\.[0-9_]*)?([eE][+\-]?[0-9][0-9_]*)?[g-zG-Z]?/,
   /0[xX][0-9A-Fa-f][0-9A-Fa-f_]*(\.[0-9A-Fa-f_]*)?([pP][+\-]?[0-9][0-9_]*)?[g-zG-Z]?/,
@@ -1852,8 +1853,8 @@ module.exports = grammar({
     // Operators
 
     prefix_operator: $ => token(choice(
-      seq('!', choice(optional(/[!$%&*+\-./:<>?@^|~]/), repeat2(OP_CHAR))),
-      seq(/[~?]/, repeat1(OP_CHAR))
+      seq('!', choice(optional(/[#!$%&*+\-./:<>?@^|~]/), repeat2(HASH_OP_CHAR))),
+      seq(/[~?]/, repeat1(HASH_OP_CHAR))
     )),
 
     _sign_operator: $ => choice('+', '-', '+.', '-.'),
@@ -1870,7 +1871,7 @@ module.exports = grammar({
       $._assign_operator
     ),
 
-    _hash_operator: $ => /#[#!$%&*+\-./:<=>?@^|~]+/,
+    _hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
 
     _pow_operator: $ => choice(
       token(seq('**', repeat(OP_CHAR))),
