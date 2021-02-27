@@ -160,15 +160,17 @@ module.exports = grammar({
       sep1(choice('and', $.and_operator), $.let_binding)
     ),
 
-    let_binding: $ => seq(
+    let_binding: $ => prec.right(seq(
       field('pattern', $._binding_pattern_ext),
-      repeat($._parameter),
-      optional($._polymorphic_typed),
-      optional(seq(':>', $._type_ext)),
-      '=',
-      field('body', $._sequence_expression_ext),
+      optional(seq(
+        repeat($._parameter),
+        optional($._polymorphic_typed),
+        optional(seq(':>', $._type_ext)),
+        '=',
+        field('body', $._sequence_expression_ext),
+      )),
       repeat($.item_attribute)
-    ),
+    )),
 
     _parameter: $ => choice(
       $.parameter,
