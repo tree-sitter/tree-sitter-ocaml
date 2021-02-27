@@ -1510,6 +1510,7 @@ module.exports = grammar({
 
     constructor_pattern: $ => prec.right(PREC.app, seq(
       $.constructor_path,
+      optional(alias($._parenthesized_abstract_type, $.abstract_type)),
       $._pattern_ext
     )),
 
