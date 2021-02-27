@@ -341,7 +341,7 @@ module.exports = grammar({
       'module', 'type',
       optional($._attribute),
       field('name', $._module_type_name),
-      optional(seq('=', field('body', $._module_type_ext))),
+      optional(seq(choice('=', ':='), field('body', $._module_type_ext))),
       repeat($.item_attribute)
     ),
 
@@ -460,7 +460,11 @@ module.exports = grammar({
     module_type_constraint: $ => prec.right(seq(
       $._module_type_ext,
       'with',
-      sep1('and', choice($.constrain_type, $.constrain_module))
+      sep1('and', choice(
+        $.constrain_type,
+        $.constrain_module,
+        $.constrain_module_type
+      ))
     )),
 
     constrain_type: $ => seq(
@@ -477,6 +481,13 @@ module.exports = grammar({
       choice('=', ':='),
       $.extended_module_path
     ),
+
+    constrain_module_type: $ => prec.left(seq(
+      'module', 'type',
+      $.module_type_path,
+      choice('=', ':='),
+      $._module_type_ext
+    )),
 
     module_type_of: $ => seq(
       'module', 'type', 'of',
