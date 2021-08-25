@@ -211,7 +211,7 @@ module.exports = grammar({
       'external',
       optional($._attribute),
       $._value_name,
-      $._typed,
+      $._polymorphic_typed,
       '=',
       repeat1($.string),
       repeat($.item_attribute)
@@ -281,8 +281,12 @@ module.exports = grammar({
       ),
       optional(choice(
         seq('of', $._constructor_argument),
-        $._simple_typed,
-        seq(':', $._constructor_argument, '->', field('type', $._simple_type_ext)),
+        seq(
+          ':',
+          optional(seq(repeat1($.type_variable), '.')),
+          optional(seq($._constructor_argument, '->')),
+          $._simple_type_ext
+        ),
         seq('=', $.constructor_path)
       ))
     ),
@@ -422,7 +426,7 @@ module.exports = grammar({
       'val',
       optional($._attribute),
       $._value_name,
-      $._typed,
+      $._polymorphic_typed,
       repeat($.item_attribute)
     ),
 
