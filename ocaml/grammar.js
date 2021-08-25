@@ -964,6 +964,7 @@ module.exports = grammar({
       $.new_expression,
       $.object_copy_expression,
       $.method_invocation,
+      $.object_expression,
       $.parenthesized_expression,
       $.ocamlyacc_value
     ),
@@ -993,8 +994,7 @@ module.exports = grammar({
       $.lazy_expression,
       $.let_module_expression,
       $.let_open_expression,
-      $.let_exception_expression,
-      $.object_expression
+      $.let_exception_expression
     ),
 
     _expression_ext: $ => choice(
