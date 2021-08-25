@@ -332,7 +332,7 @@ module.exports = grammar({
       field('name', choice($._module_name, alias('_', $.module_name))),
       repeat($.module_parameter),
       optional($._module_typed),
-      optional(seq('=', field('body', $._module_expression_ext))),
+      optional(seq(choice('=', ':='), field('body', $._module_expression_ext))),
       repeat($.item_attribute)
     ),
 
