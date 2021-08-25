@@ -1077,7 +1077,14 @@ module.exports = grammar({
         $._label,
         token.immediate(':'),
         $._simple_expression_ext
-      )
+      ),
+      seq(
+        choice('~', '?'),
+        '(',
+        $._label_name,
+        $._typed,
+        ')'
+      ),
     ),
 
     prefix_expression: $ => prec(PREC.prefix, seq(
