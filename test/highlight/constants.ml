@@ -1,5 +1,5 @@
 let t = true
-     (* ^ constant *)
+     (* ^ boolean *)
 
 let c = 'c'
      (* ^ string *)

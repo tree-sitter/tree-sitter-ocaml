@@ -68,7 +68,7 @@
 ; Constants
 ;----------
 
-(boolean) @constant
+(boolean) @boolean
 
 [(number) (signed_number)] @number
 
