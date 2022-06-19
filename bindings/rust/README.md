@@ -11,8 +11,8 @@ way.)
 
 ```toml
 [dependencies]
-tree-sitter = "0.19"
-tree-sitter-ocaml = "0.19"
+tree-sitter = "0.20"
+tree-sitter-ocaml = "0.20"
 ```
 
 Typically, you will use the [language][language func] function to add this
