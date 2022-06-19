@@ -63,3 +63,42 @@ pub const LOCALS_QUERY: &'static str = include_str!("../../queries/locals.scm");
 
 /// The symbol tagging query for OCaml.
 pub const TAGGING_QUERY: &'static str = include_str!("../../queries/tags.scm");
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_ocaml() {
+        let mut parser = tree_sitter::Parser::new();
+        parser
+            .set_language(super::language_ocaml())
+            .expect("Error loading OCaml grammar");
+
+        let code = r#"
+            module M = struct
+              let x = 0
+            end
+        "#;
+
+        let tree = parser.parse(code, None).unwrap();
+        let root = tree.root_node();
+        assert!(!root.has_error());
+    }
+
+    #[test]
+    fn test_ocaml_interface() {
+        let mut parser = tree_sitter::Parser::new();
+        parser
+            .set_language(super::language_ocaml_interface())
+            .expect("Error loading OCaml interface grammar");
+
+        let code = r#"
+            module M : sig
+              val x : int
+            end
+        "#;
+
+        let tree = parser.parse(code, None).unwrap();
+        let root = tree.root_node();
+        assert!(!root.has_error());
+    }
+}
