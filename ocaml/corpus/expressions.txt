@@ -333,10 +333,11 @@ Tags
 ---
 
 (compilation_unit
-  (expression_item (tag))
+  (expression_item
+    (tag (constructor_name)))
   (expression_item
     (application_expression
-      (tag)
+      (tag (constructor_name))
       (value_path (value_name)))))
 
 ===========================

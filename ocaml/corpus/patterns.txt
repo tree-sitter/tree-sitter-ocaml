@@ -74,8 +74,8 @@ function A x | A | `A | `A x -> ()
                 (constructor_path (constructor_name))
                 (value_pattern))
               (constructor_path (constructor_name)))
-            (tag))
-          (tag_pattern (tag) (value_pattern)))
+            (tag (constructor_name)))
+          (tag_pattern (tag (constructor_name)) (value_pattern)))
         (unit)))))
 
 ============================

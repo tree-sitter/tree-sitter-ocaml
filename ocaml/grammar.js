@@ -56,6 +56,7 @@ module.exports = grammar({
     $._module_name,
     $._module_type_name,
     $._constructor_name,
+    $._type_variable_name,
   ],
 
   word: $ => $._identifier,
@@ -2014,6 +2015,7 @@ module.exports = grammar({
     _type_constructor: $ => alias($._identifier, $.type_constructor),
     _instance_variable_name: $ => alias($._identifier, $.instance_variable_name),
 
+    _type_variable_name: $ => alias(choice($._capitalized_identifier, $._identifier), $.type_variable_name),
     _module_name: $ => alias($._capitalized_identifier, $.module_name),
     _module_type_name: $ => alias(choice($._capitalized_identifier, $._identifier), $.module_type_name),
     _constructor_name: $ => choice(
@@ -2026,8 +2028,8 @@ module.exports = grammar({
 
     _label: $ => seq(choice('~', '?'), $._label_name),
     directive: $ => seq('#', choice($._identifier, $._capitalized_identifier)),
-    type_variable: $ => seq("'", choice($._identifier, $._capitalized_identifier)),
-    tag: $ => seq('`', choice($._identifier, $._capitalized_identifier)),
+    type_variable: $ => seq("'", $._type_variable_name),
+    tag: $ => seq('`', choice($._value_name, $._constructor_name)),
     attribute_id: $ => sep1('.', choice($._identifier, $._capitalized_identifier))
   },
 

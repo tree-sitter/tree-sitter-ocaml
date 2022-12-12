@@ -4858,7 +4858,21 @@
   {
     "type": "tag",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_value_name",
+          "named": true
+        },
+        {
+          "type": "constructor_name",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "tag_pattern",
@@ -5183,7 +5197,17 @@
   {
     "type": "type_variable",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "type_variable_name",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "typed_class_expression",
@@ -5912,6 +5936,10 @@
   },
   {
     "type": "type_constructor",
+    "named": true
+  },
+  {
+    "type": "type_variable_name",
     "named": true
   },
   {
