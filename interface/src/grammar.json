@@ -10762,7 +10762,7 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "."
+                "value": "\\."
               },
               {
                 "type": "CHOICE",

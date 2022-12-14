@@ -2028,7 +2028,7 @@ module.exports = grammar({
     directive: $ => seq(/#/, choice($._identifier, $._capitalized_identifier)),
     type_variable: $ => seq(/'/, choice($._identifier, $._capitalized_identifier)),
     tag: $ => seq(/`/, choice($._identifier, $._capitalized_identifier)),
-    attribute_id: $ => sep1(/./, choice($._identifier, $._capitalized_identifier))
+    attribute_id: $ => sep1(/\./, choice($._identifier, $._capitalized_identifier))
   },
 
   externals: $ => [
