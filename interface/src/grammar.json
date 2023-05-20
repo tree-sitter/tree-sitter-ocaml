@@ -2581,6 +2581,19 @@
               {
                 "type": "SYMBOL",
                 "name": "_module_type_ext"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "("
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ")"
+                  }
+                ]
               }
             ]
           },
