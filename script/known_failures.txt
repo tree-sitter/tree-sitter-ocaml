@@ -45,3 +45,4 @@ examples/ppxlib/test/ppx_import_support/test.ml
 examples/ppxlib/test/quoter/test.ml
 examples/opam/src/core/opamCompat.ml
 examples/opam/src/core/opamCompat.mli
+examples/ppxlib/test/expansion_helpers/mangle/test.ml
