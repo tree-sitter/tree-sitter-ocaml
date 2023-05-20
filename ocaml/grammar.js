@@ -501,7 +501,8 @@ module.exports = grammar({
     functor_type: $ => prec.right(seq(
       choice(
         seq('functor', repeat($.module_parameter)),
-        $._module_type_ext
+        $._module_type_ext,
+        seq('(', ')')
       ),
       '->',
       $._module_type_ext
