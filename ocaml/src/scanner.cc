@@ -1,4 +1,4 @@
-#include "../../common/scanner.h"
+#include "../../include/scanner.h"
 
 extern "C" {
 

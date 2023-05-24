@@ -1,6 +1,6 @@
-#include "tree_sitter/parser.h"
+#include <tree_sitter/parser.h>
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 
 using namespace v8;
 
