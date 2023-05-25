@@ -54,3 +54,16 @@ jobs:
 
       - name: Test
         run: cargo test
+
+  build-swift:
+    name: build-swift
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: swift build
+
+      - name: Test
+        run: swift test
