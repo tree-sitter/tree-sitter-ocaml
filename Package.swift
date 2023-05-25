@@ -7,7 +7,9 @@ let package = Package(
     products: [
         .library(name: "TreeSitterOCaml", targets: ["TreeSitterOCaml"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.7.1"),
+    ],
     targets: [
         .target(
             name: "TreeSitterOCaml",
@@ -23,6 +25,14 @@ let package = Package(
             ],
             publicHeadersPath: "bindings/swift",
             cSettings: [.headerSearchPath("ocaml/src")]
+        ),
+        .testTarget(
+            name: "TreeSitterOCamlTests",
+            dependencies: [
+                "SwiftTreeSitter",
+                "TreeSitterOCaml",
+            ],
+            path: "bindings/swift/TreeSitterOCamlTests"
         )
     ]
 )
