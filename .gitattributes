@@ -1,3 +1,8 @@
-ocaml/src/parser.c linguist-vendored
-interface/src/parser.c linguist-vendored
-/examples/** linguist-vendored
+/interface/src/parser.c linguist-generated
+/interface/src/grammar.json linguist-generated
+/interface/src/node-types.json linguist-generated
+/interface/src/tree_sitter/* linguist-vendored
+/ocaml/src/parser.c linguist-generated
+/ocaml/src/grammar.json linguist-generated
+/ocaml/src/node-types.json linguist-generated
+/ocaml/src/tree_sitter/* linguist-vendored
