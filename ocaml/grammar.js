@@ -1797,10 +1797,7 @@ module.exports = grammar({
 
     number: $ => NUMBER,
 
-    signed_number: $ => seq(
-      choice('+', '-'),
-      NUMBER
-    ),
+    signed_number: $ => seq(/[+-]/, NUMBER),
 
     character: $ => seq("'", $.character_content, "'"),
 
@@ -1875,7 +1872,7 @@ module.exports = grammar({
       seq(/[~?]/, repeat1(HASH_OP_CHAR))
     )),
 
-    sign_operator: $ => choice('+', '-', '+.', '-.'),
+    sign_operator: $ => choice(/[+-]/, /[+-]\./),
 
     infix_operator: $ => choice(
       $._pow_operator,
@@ -1890,18 +1887,18 @@ module.exports = grammar({
 
     hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
 
-    _pow_operator: $ => choice(
-      token(seq('**', repeat(OP_CHAR))),
-      'lsl', 'lsr', 'asr'
-    ),
+    _pow_operator: $ => token(choice(
+      'lsl', 'lsr', 'asr',
+      seq('**', repeat(OP_CHAR))
+    )),
 
-    _mult_operator: $ => choice(
-      token(seq(/[*/%]/, repeat(OP_CHAR))),
-      'mod', 'land', 'lor', 'lxor'
-    ),
+    _mult_operator: $ => token(choice(
+      'mod', 'land', 'lor', 'lxor',
+      seq(/[*/%]/, repeat(OP_CHAR))
+    )),
 
     _add_operator: $ => choice(
-      '+', '-', '+.', '-.',
+      /[+-]/, /[+-]\./,
       token(choice(
         seq('+', repeat1(OP_CHAR)),
         seq('-', choice(repeat1(/[!$%&*+\-./:<=?@^|~]/), repeat2(OP_CHAR)))
@@ -1920,11 +1917,11 @@ module.exports = grammar({
       '!='
     )),
 
-    _and_operator: $ => choice('&', '&&'),
+    _and_operator: $ => token(choice('&', '&&')),
 
-    _or_operator: $ => choice('or', '||'),
+    _or_operator: $ => token(choice('or', '||')),
 
-    _assign_operator: $ => choice(':='),
+    _assign_operator: $ => /:=/,
 
     indexing_operator: $ => token(
       seq(/[!$%&*+\-/:=>?@^|]/, repeat(OP_CHAR))

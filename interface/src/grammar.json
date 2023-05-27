@@ -9022,17 +9022,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "+"
-            },
-            {
-              "type": "STRING",
-              "value": "-"
-            }
-          ]
+          "type": "PATTERN",
+          "value": "[+-]"
         },
         {
           "type": "TOKEN",
@@ -9459,20 +9450,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "+"
+          "type": "PATTERN",
+          "value": "[+-]"
         },
         {
-          "type": "STRING",
-          "value": "-"
-        },
-        {
-          "type": "STRING",
-          "value": "+."
-        },
-        {
-          "type": "STRING",
-          "value": "-."
+          "type": "PATTERN",
+          "value": "[+-]\\."
         }
       ]
     },
@@ -9533,11 +9516,23 @@
       }
     },
     "_pow_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "TOKEN",
-          "content": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "lsl"
+          },
+          {
+            "type": "STRING",
+            "value": "lsr"
+          },
+          {
+            "type": "STRING",
+            "value": "asr"
+          },
+          {
             "type": "SEQ",
             "members": [
               {
@@ -9553,27 +9548,31 @@
               }
             ]
           }
-        },
-        {
-          "type": "STRING",
-          "value": "lsl"
-        },
-        {
-          "type": "STRING",
-          "value": "lsr"
-        },
-        {
-          "type": "STRING",
-          "value": "asr"
-        }
-      ]
+        ]
+      }
     },
     "_mult_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "TOKEN",
-          "content": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "mod"
+          },
+          {
+            "type": "STRING",
+            "value": "land"
+          },
+          {
+            "type": "STRING",
+            "value": "lor"
+          },
+          {
+            "type": "STRING",
+            "value": "lxor"
+          },
+          {
             "type": "SEQ",
             "members": [
               {
@@ -9589,43 +9588,19 @@
               }
             ]
           }
-        },
-        {
-          "type": "STRING",
-          "value": "mod"
-        },
-        {
-          "type": "STRING",
-          "value": "land"
-        },
-        {
-          "type": "STRING",
-          "value": "lor"
-        },
-        {
-          "type": "STRING",
-          "value": "lxor"
-        }
-      ]
+        ]
+      }
     },
     "_add_operator": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "+"
+          "type": "PATTERN",
+          "value": "[+-]"
         },
         {
-          "type": "STRING",
-          "value": "-"
-        },
-        {
-          "type": "STRING",
-          "value": "+."
-        },
-        {
-          "type": "STRING",
-          "value": "-."
+          "type": "PATTERN",
+          "value": "[+-]\\."
         },
         {
           "type": "TOKEN",
@@ -9848,39 +9823,40 @@
       }
     },
     "_and_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "&"
-        },
-        {
-          "type": "STRING",
-          "value": "&&"
-        }
-      ]
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "&"
+          },
+          {
+            "type": "STRING",
+            "value": "&&"
+          }
+        ]
+      }
     },
     "_or_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "or"
-        },
-        {
-          "type": "STRING",
-          "value": "||"
-        }
-      ]
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "or"
+          },
+          {
+            "type": "STRING",
+            "value": "||"
+          }
+        ]
+      }
     },
     "_assign_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": ":="
-        }
-      ]
+      "type": "PATTERN",
+      "value": ":="
     },
     "indexing_operator": {
       "type": "TOKEN",

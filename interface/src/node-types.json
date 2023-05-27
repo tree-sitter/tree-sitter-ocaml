@@ -5463,10 +5463,6 @@
     "named": false
   },
   {
-    "type": "&&",
-    "named": false
-  },
-  {
     "type": "'",
     "named": false
   },
@@ -5487,10 +5483,6 @@
     "named": false
   },
   {
-    "type": "+.",
-    "named": false
-  },
-  {
     "type": "+=",
     "named": false
   },
@@ -5500,10 +5492,6 @@
   },
   {
     "type": "-",
-    "named": false
-  },
-  {
-    "type": "-.",
     "named": false
   },
   {
@@ -5620,10 +5608,6 @@
   },
   {
     "type": "as",
-    "named": false
-  },
-  {
-    "type": "asr",
     "named": false
   },
   {
@@ -5751,10 +5735,6 @@
     "named": true
   },
   {
-    "type": "land",
-    "named": false
-  },
-  {
     "type": "lazy",
     "named": false
   },
@@ -5771,22 +5751,6 @@
     "named": true
   },
   {
-    "type": "lor",
-    "named": false
-  },
-  {
-    "type": "lsl",
-    "named": false
-  },
-  {
-    "type": "lsr",
-    "named": false
-  },
-  {
-    "type": "lxor",
-    "named": false
-  },
-  {
     "type": "match",
     "named": false
   },
@@ -5801,10 +5765,6 @@
   {
     "type": "method_name",
     "named": true
-  },
-  {
-    "type": "mod",
-    "named": false
   },
   {
     "type": "module",
@@ -5844,10 +5804,6 @@
   },
   {
     "type": "open",
-    "named": false
-  },
-  {
-    "type": "or",
     "named": false
   },
   {
@@ -5948,10 +5904,6 @@
   },
   {
     "type": "|]",
-    "named": false
-  },
-  {
-    "type": "||",
     "named": false
   },
   {
