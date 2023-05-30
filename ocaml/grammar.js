@@ -1705,7 +1705,7 @@ module.exports = grammar({
     // Attributes and extensions
 
     attribute: $ => seq(
-      '[@',
+      alias(/\[@/, '[@'),
       $.attribute_id,
       optional($.attribute_payload),
       ']'
@@ -1813,12 +1813,8 @@ module.exports = grammar({
     string: $ => seq('"', optional($.string_content), '"'),
 
     string_content: $ => repeat1(choice(
-      token.immediate(' '),
-      token.immediate('\n'),
-      token.immediate('\t'),
-      token.immediate('[@'),
-      token.immediate('[@@'),
-      token.immediate('[@@@'),
+      token.immediate(/\s/),
+      token.immediate(/\[@/),
       /[^\\"%@]+|%|@/,
       $._null,
       $.escape_sequence,
@@ -1837,12 +1833,8 @@ module.exports = grammar({
     ),
 
     quoted_string_content: $ => repeat1(choice(
-      token.immediate(' '),
-      token.immediate('\n'),
-      token.immediate('\t'),
-      token.immediate('[@'),
-      token.immediate('[@@'),
-      token.immediate('[@@@'),
+      token.immediate(/\s/),
+      token.immediate(/\[@/),
       /[^%@|]+|%|@|\|/,
       $._null,
       $.conversion_specification,

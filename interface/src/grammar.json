@@ -8623,7 +8623,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\[@"
+          },
+          "named": false,
           "value": "[@"
         },
         {
@@ -9122,43 +9127,15 @@
           {
             "type": "IMMEDIATE_TOKEN",
             "content": {
-              "type": "STRING",
-              "value": " "
+              "type": "PATTERN",
+              "value": "\\s"
             }
           },
           {
             "type": "IMMEDIATE_TOKEN",
             "content": {
-              "type": "STRING",
-              "value": "\n"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "\t"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "[@"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "[@@"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "[@@@"
+              "type": "PATTERN",
+              "value": "\\[@"
             }
           },
           {
@@ -9252,43 +9229,15 @@
           {
             "type": "IMMEDIATE_TOKEN",
             "content": {
-              "type": "STRING",
-              "value": " "
+              "type": "PATTERN",
+              "value": "\\s"
             }
           },
           {
             "type": "IMMEDIATE_TOKEN",
             "content": {
-              "type": "STRING",
-              "value": "\n"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "\t"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "[@"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "[@@"
-            }
-          },
-          {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "[@@@"
+              "type": "PATTERN",
+              "value": "\\[@"
             }
           },
           {
