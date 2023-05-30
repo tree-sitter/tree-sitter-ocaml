@@ -11,6 +11,7 @@ env:
 
 jobs:
   crate:
+    if: github.repository_owner == 'tree-sitter'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
