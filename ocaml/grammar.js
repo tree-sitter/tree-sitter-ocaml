@@ -88,6 +88,7 @@ module.exports = grammar({
     $._item_extension,
     $._constant,
     $._signed_constant,
+    $._infix_operator,
     $._value_name,
     $._value_pattern
   ],
@@ -1093,60 +1094,60 @@ module.exports = grammar({
     ),
 
     prefix_expression: $ => prec(PREC.prefix, seq(
-      $.prefix_operator,
+      field('operator', $.prefix_operator),
       field('right', $._simple_expression_ext)
     )),
 
     sign_expression: $ => prec(PREC.neg, seq(
-      $.sign_operator,
+      field('operator', $.sign_operator),
       field('right', $._expression_ext)
     )),
 
     hash_expression: $ => prec.left(PREC.hash, seq(
       field('left', $._simple_expression_ext),
-      $.hash_operator,
+      field('operator', $.hash_operator),
       field('right', $._simple_expression_ext)
     )),
 
     infix_expression: $ => {
       const table = [
         {
-          operator: $._pow_operator,
+          operator: $.pow_operator,
           precedence: PREC.pow,
           associativity: 'right'
         },
         {
-          operator: $._mult_operator,
+          operator: $.mult_operator,
           precedence: PREC.mult,
           associativity: 'left'
         },
         {
-          operator: $._add_operator,
+          operator: $.add_operator,
           precedence: PREC.add,
           associativity: 'left'
         },
         {
-          operator: $._concat_operator,
+          operator: $.concat_operator,
           precedence: PREC.concat,
           associativity: 'right'
         },
         {
-          operator: $._rel_operator,
+          operator: $.rel_operator,
           precedence: PREC.rel,
           associativity: 'left'
         },
         {
-          operator: $._and_operator,
+          operator: $.and_operator,
           precedence: PREC.and,
           associativity: 'right'
         },
         {
-          operator: $._or_operator,
+          operator: $.or_operator,
           precedence: PREC.or,
           associativity: 'right'
         },
         {
-          operator: $._assign_operator,
+          operator: $.assign_operator,
           precedence: PREC.assign,
           associativity: 'right'
         }
@@ -1155,7 +1156,7 @@ module.exports = grammar({
       return choice(...table.map(({operator, precedence, associativity}) =>
         prec[associativity](precedence, seq(
           field('left', $._expression_ext),
-          alias(operator, $.infix_operator),
+          field('operator', operator),
           field('right', $._expression_ext)
         ))
       ))
@@ -1874,30 +1875,30 @@ module.exports = grammar({
 
     sign_operator: $ => choice(/[+-]/, /[+-]\./),
 
-    infix_operator: $ => choice(
-      $._pow_operator,
-      $._mult_operator,
-      $._add_operator,
-      $._concat_operator,
-      $._rel_operator,
-      $._and_operator,
-      $._or_operator,
-      $._assign_operator
+    _infix_operator: $ => choice(
+      $.pow_operator,
+      $.mult_operator,
+      $.add_operator,
+      $.concat_operator,
+      $.rel_operator,
+      $.and_operator,
+      $.or_operator,
+      $.assign_operator
     ),
 
     hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
 
-    _pow_operator: $ => token(choice(
+    pow_operator: $ => token(choice(
       'lsl', 'lsr', 'asr',
       seq('**', repeat(OP_CHAR))
     )),
 
-    _mult_operator: $ => token(choice(
+    mult_operator: $ => token(choice(
       'mod', 'land', 'lor', 'lxor',
       seq(/[*/%]/, repeat(OP_CHAR))
     )),
 
-    _add_operator: $ => choice(
+    add_operator: $ => choice(
       /[+-]/, /[+-]\./,
       token(choice(
         seq('+', repeat1(OP_CHAR)),
@@ -1905,11 +1906,11 @@ module.exports = grammar({
       ))
     ),
 
-    _concat_operator: $ => token(
+    concat_operator: $ => token(
       seq(/[@^]/, repeat(OP_CHAR))
     ),
 
-    _rel_operator: $ => token(choice(
+    rel_operator: $ => token(choice(
       seq(/[=>$]/, repeat(OP_CHAR)),
       seq('<', choice(optional(/[!$%&*+./:<=>?@^|~]/), repeat2(OP_CHAR))),
       seq('&', choice(/[!$%*+\-./:<=>?@^|~]/, repeat2(OP_CHAR))),
@@ -1917,11 +1918,11 @@ module.exports = grammar({
       '!='
     )),
 
-    _and_operator: $ => token(choice('&', '&&')),
+    and_operator: $ => token(choice('&', '&&')),
 
-    _or_operator: $ => token(choice('or', '||')),
+    or_operator: $ => token(choice('or', '||')),
 
-    _assign_operator: $ => /:=/,
+    assign_operator: $ => /:=/,
 
     indexing_operator: $ => token(
       seq(/[!$%&*+\-/:=>?@^|]/, repeat(OP_CHAR))
@@ -1955,7 +1956,7 @@ module.exports = grammar({
 
     parenthesized_operator: $ => parenthesize(choice(
       $.prefix_operator,
-      $.infix_operator,
+      $._infix_operator,
       $.hash_operator,
       seq(
         '.',

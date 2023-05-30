@@ -20,7 +20,7 @@ let* x and* y
     (let_binding (value_name) (value_path (value_name))))
   (value_definition
     (let_binding
-      (parenthesized_operator (infix_operator))
+      (parenthesized_operator (add_operator))
       (value_path (value_name))))
   (value_definition
     (let_binding (value_name) (value_path (value_name)))

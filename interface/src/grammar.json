@@ -5505,8 +5505,12 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "prefix_operator"
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "SYMBOL",
+              "name": "prefix_operator"
+            }
           },
           {
             "type": "FIELD",
@@ -5526,8 +5530,12 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "sign_operator"
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "SYMBOL",
+              "name": "sign_operator"
+            }
           },
           {
             "type": "FIELD",
@@ -5555,8 +5563,12 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "hash_operator"
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "SYMBOL",
+              "name": "hash_operator"
+            }
           },
           {
             "type": "FIELD",
@@ -5587,13 +5599,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_pow_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "pow_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5621,13 +5632,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_mult_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "mult_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5655,13 +5665,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_add_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "add_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5689,13 +5698,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_concat_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "concat_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5723,13 +5731,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_rel_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "rel_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5757,13 +5764,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_and_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "and_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5791,13 +5797,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_or_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "or_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -5825,13 +5830,12 @@
                 }
               },
               {
-                "type": "ALIAS",
+                "type": "FIELD",
+                "name": "operator",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_assign_operator"
-                },
-                "named": true,
-                "value": "infix_operator"
+                  "name": "assign_operator"
+                }
               },
               {
                 "type": "FIELD",
@@ -9459,40 +9463,40 @@
         }
       ]
     },
-    "infix_operator": {
+    "_infix_operator": {
       "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_pow_operator"
+          "name": "pow_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_mult_operator"
+          "name": "mult_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_add_operator"
+          "name": "add_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_concat_operator"
+          "name": "concat_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_rel_operator"
+          "name": "rel_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_and_operator"
+          "name": "and_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_or_operator"
+          "name": "or_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "_assign_operator"
+          "name": "assign_operator"
         }
       ]
     },
@@ -9515,7 +9519,7 @@
         ]
       }
     },
-    "_pow_operator": {
+    "pow_operator": {
       "type": "TOKEN",
       "content": {
         "type": "CHOICE",
@@ -9551,7 +9555,7 @@
         ]
       }
     },
-    "_mult_operator": {
+    "mult_operator": {
       "type": "TOKEN",
       "content": {
         "type": "CHOICE",
@@ -9591,7 +9595,7 @@
         ]
       }
     },
-    "_add_operator": {
+    "add_operator": {
       "type": "CHOICE",
       "members": [
         {
@@ -9665,7 +9669,7 @@
         }
       ]
     },
-    "_concat_operator": {
+    "concat_operator": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -9684,7 +9688,7 @@
         ]
       }
     },
-    "_rel_operator": {
+    "rel_operator": {
       "type": "TOKEN",
       "content": {
         "type": "CHOICE",
@@ -9822,7 +9826,7 @@
         ]
       }
     },
-    "_and_operator": {
+    "and_operator": {
       "type": "TOKEN",
       "content": {
         "type": "CHOICE",
@@ -9838,7 +9842,7 @@
         ]
       }
     },
-    "_or_operator": {
+    "or_operator": {
       "type": "TOKEN",
       "content": {
         "type": "CHOICE",
@@ -9854,7 +9858,7 @@
         ]
       }
     },
-    "_assign_operator": {
+    "assign_operator": {
       "type": "PATTERN",
       "value": ":="
     },
@@ -10024,7 +10028,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "infix_operator"
+              "name": "_infix_operator"
             },
             {
               "type": "SYMBOL",
@@ -10814,6 +10818,7 @@
     "_item_extension",
     "_constant",
     "_signed_constant",
+    "_infix_operator",
     "_value_name",
     "_value_pattern"
   ]

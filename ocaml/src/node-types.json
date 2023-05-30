@@ -322,6 +322,44 @@
     ]
   },
   {
+    "type": "_infix_operator",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "add_operator",
+        "named": true
+      },
+      {
+        "type": "and_operator",
+        "named": true
+      },
+      {
+        "type": "assign_operator",
+        "named": true
+      },
+      {
+        "type": "concat_operator",
+        "named": true
+      },
+      {
+        "type": "mult_operator",
+        "named": true
+      },
+      {
+        "type": "or_operator",
+        "named": true
+      },
+      {
+        "type": "pow_operator",
+        "named": true
+      },
+      {
+        "type": "rel_operator",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_item_extension",
     "named": true,
     "subtypes": [
@@ -895,6 +933,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "add_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "alias_pattern",
@@ -2416,6 +2459,16 @@
           }
         ]
       },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "hash_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -2430,16 +2483,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "hash_operator",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2598,6 +2641,44 @@
           }
         ]
       },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "add_operator",
+            "named": true
+          },
+          {
+            "type": "and_operator",
+            "named": true
+          },
+          {
+            "type": "assign_operator",
+            "named": true
+          },
+          {
+            "type": "concat_operator",
+            "named": true
+          },
+          {
+            "type": "mult_operator",
+            "named": true
+          },
+          {
+            "type": "or_operator",
+            "named": true
+          },
+          {
+            "type": "pow_operator",
+            "named": true
+          },
+          {
+            "type": "rel_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -2612,22 +2693,7 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "infix_operator",
-          "named": true
-        }
-      ]
     }
-  },
-  {
-    "type": "infix_operator",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "inheritance_definition",
@@ -4185,15 +4251,15 @@
       "required": true,
       "types": [
         {
+          "type": "_infix_operator",
+          "named": true
+        },
+        {
           "type": "hash_operator",
           "named": true
         },
         {
           "type": "indexing_operator",
-          "named": true
-        },
-        {
-          "type": "infix_operator",
           "named": true
         },
         {
@@ -4322,6 +4388,16 @@
     "type": "prefix_expression",
     "named": true,
     "fields": {
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "prefix_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -4336,16 +4412,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "prefix_operator",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4640,6 +4706,16 @@
     "type": "sign_expression",
     "named": true,
     "fields": {
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sign_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -4654,16 +4730,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "sign_operator",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -5575,12 +5641,20 @@
     "named": false
   },
   {
+    "type": "and_operator",
+    "named": true
+  },
+  {
     "type": "as",
     "named": false
   },
   {
     "type": "assert",
     "named": false
+  },
+  {
+    "type": "assign_operator",
+    "named": true
   },
   {
     "type": "begin",
@@ -5600,6 +5674,10 @@
   },
   {
     "type": "comment",
+    "named": true
+  },
+  {
+    "type": "concat_operator",
     "named": true
   },
   {
@@ -5751,6 +5829,10 @@
     "named": true
   },
   {
+    "type": "mult_operator",
+    "named": true
+  },
+  {
     "type": "mutable",
     "named": false
   },
@@ -5779,6 +5861,14 @@
     "named": false
   },
   {
+    "type": "or_operator",
+    "named": true
+  },
+  {
+    "type": "pow_operator",
+    "named": true
+  },
+  {
     "type": "prefix_operator",
     "named": true
   },
@@ -5793,6 +5883,10 @@
   {
     "type": "rec",
     "named": false
+  },
+  {
+    "type": "rel_operator",
+    "named": true
   },
   {
     "type": "shebang",
