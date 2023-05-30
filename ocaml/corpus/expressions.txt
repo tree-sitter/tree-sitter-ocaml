@@ -16,11 +16,11 @@ M.( + );;
       (module_path (module_name))
       (value_name)))
   (expression_item
-    (value_path (parenthesized_operator (infix_operator))))
+    (value_path (parenthesized_operator (add_operator))))
   (expression_item
     (value_path
       (module_path (module_name))
-      (parenthesized_operator (infix_operator)))))
+      (parenthesized_operator (add_operator)))))
 
 ===========================
 Constants
@@ -398,12 +398,12 @@ x lsl 1;;
   (expression_item
     (infix_expression
       (value_path (value_name))
-      (infix_operator)
+      (add_operator)
       (value_path (value_name))))
   (expression_item
     (infix_expression
       (value_path (value_name))
-      (infix_operator)
+      (pow_operator)
       (number))))
 
 ===========================
@@ -652,7 +652,7 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
               (instance_variable_name)
               (infix_expression
                 (value_path (value_name))
-                (infix_operator)
+                (assign_operator)
                 (product_expression
                   (product_expression
                     (infix_expression
@@ -677,40 +677,40 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
                                               (value_path (value_name)))
                                             (value_path (value_name))
                                             (value_path (value_name)))
-                                          (infix_operator)
+                                          (pow_operator)
                                           (infix_expression
                                             (value_path (value_name))
-                                            (infix_operator)
+                                            (pow_operator)
                                             (value_path (value_name))))
-                                        (infix_operator)
+                                        (mult_operator)
                                         (value_path (value_name)))
-                                      (infix_operator)
+                                      (mult_operator)
                                       (value_path (value_name)))
-                                    (infix_operator)
+                                    (add_operator)
                                     (value_path (value_name)))
-                                  (infix_operator)
+                                  (add_operator)
                                   (value_path (value_name)))
                                 (cons_expression
                                   (value_path (value_name))
                                   (value_path (value_name))))
-                              (infix_operator)
+                              (concat_operator)
                               (infix_expression
                                 (value_path (value_name))
-                                (infix_operator)
+                                (concat_operator)
                                 (value_path (value_name))))
-                            (infix_operator)
+                            (rel_operator)
                             (value_path (value_name)))
-                          (infix_operator)
+                          (rel_operator)
                           (value_path (value_name)))
-                        (infix_operator)
+                        (and_operator)
                         (infix_expression
                           (value_path (value_name))
-                          (infix_operator)
+                          (and_operator)
                           (value_path (value_name))))
-                      (infix_operator)
+                      (or_operator)
                       (infix_expression
                         (value_path (value_name))
-                        (infix_operator)
+                        (or_operator)
                         (value_path (value_name))))
                     (value_path (value_name)))
                   (value_path (value_name)))))))

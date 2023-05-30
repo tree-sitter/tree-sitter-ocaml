@@ -322,6 +322,44 @@
     ]
   },
   {
+    "type": "_infix_operator",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "add_operator",
+        "named": true
+      },
+      {
+        "type": "and_operator",
+        "named": true
+      },
+      {
+        "type": "assign_operator",
+        "named": true
+      },
+      {
+        "type": "concat_operator",
+        "named": true
+      },
+      {
+        "type": "mult_operator",
+        "named": true
+      },
+      {
+        "type": "or_operator",
+        "named": true
+      },
+      {
+        "type": "pow_operator",
+        "named": true
+      },
+      {
+        "type": "rel_operator",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_item_extension",
     "named": true,
     "subtypes": [
@@ -895,6 +933,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "add_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "alias_pattern",
@@ -2416,6 +2459,16 @@
           }
         ]
       },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "hash_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -2430,16 +2483,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "hash_operator",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2598,6 +2641,44 @@
           }
         ]
       },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "add_operator",
+            "named": true
+          },
+          {
+            "type": "and_operator",
+            "named": true
+          },
+          {
+            "type": "assign_operator",
+            "named": true
+          },
+          {
+            "type": "concat_operator",
+            "named": true
+          },
+          {
+            "type": "mult_operator",
+            "named": true
+          },
+          {
+            "type": "or_operator",
+            "named": true
+          },
+          {
+            "type": "pow_operator",
+            "named": true
+          },
+          {
+            "type": "rel_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -2612,22 +2693,7 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "infix_operator",
-          "named": true
-        }
-      ]
     }
-  },
-  {
-    "type": "infix_operator",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "inheritance_definition",
@@ -4185,7 +4251,7 @@
       "required": true,
       "types": [
         {
-          "type": "and_operator",
+          "type": "_infix_operator",
           "named": true
         },
         {
@@ -4197,7 +4263,7 @@
           "named": true
         },
         {
-          "type": "infix_operator",
+          "type": "let_and_operator",
           "named": true
         },
         {
@@ -4322,6 +4388,16 @@
     "type": "prefix_expression",
     "named": true,
     "fields": {
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "prefix_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -4336,16 +4412,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "prefix_operator",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4640,6 +4706,16 @@
     "type": "sign_expression",
     "named": true,
     "fields": {
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sign_operator",
+            "named": true
+          }
+        ]
+      },
       "right": {
         "multiple": false,
         "required": true,
@@ -4654,16 +4730,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "sign_operator",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -5301,11 +5367,11 @@
       "required": true,
       "types": [
         {
-          "type": "and_operator",
+          "type": "attribute_id",
           "named": true
         },
         {
-          "type": "attribute_id",
+          "type": "let_and_operator",
           "named": true
         },
         {
@@ -5435,10 +5501,6 @@
     "named": false
   },
   {
-    "type": "&&",
-    "named": false
-  },
-  {
     "type": "'",
     "named": false
   },
@@ -5459,10 +5521,6 @@
     "named": false
   },
   {
-    "type": "+.",
-    "named": false
-  },
-  {
     "type": "+=",
     "named": false
   },
@@ -5472,10 +5530,6 @@
   },
   {
     "type": "-",
-    "named": false
-  },
-  {
-    "type": "-.",
     "named": false
   },
   {
@@ -5595,12 +5649,12 @@
     "named": false
   },
   {
-    "type": "asr",
+    "type": "assert",
     "named": false
   },
   {
-    "type": "assert",
-    "named": false
+    "type": "assign_operator",
+    "named": true
   },
   {
     "type": "begin",
@@ -5620,6 +5674,10 @@
   },
   {
     "type": "comment",
+    "named": true
+  },
+  {
+    "type": "concat_operator",
     "named": true
   },
   {
@@ -5723,10 +5781,6 @@
     "named": true
   },
   {
-    "type": "land",
-    "named": false
-  },
-  {
     "type": "lazy",
     "named": false
   },
@@ -5735,28 +5789,16 @@
     "named": false
   },
   {
+    "type": "let_and_operator",
+    "named": true
+  },
+  {
     "type": "let_operator",
     "named": true
   },
   {
     "type": "line_number_directive",
     "named": true
-  },
-  {
-    "type": "lor",
-    "named": false
-  },
-  {
-    "type": "lsl",
-    "named": false
-  },
-  {
-    "type": "lsr",
-    "named": false
-  },
-  {
-    "type": "lxor",
-    "named": false
   },
   {
     "type": "match",
@@ -5775,10 +5817,6 @@
     "named": true
   },
   {
-    "type": "mod",
-    "named": false
-  },
-  {
     "type": "module",
     "named": false
   },
@@ -5788,6 +5826,10 @@
   },
   {
     "type": "module_type_name",
+    "named": true
+  },
+  {
+    "type": "mult_operator",
     "named": true
   },
   {
@@ -5819,8 +5861,12 @@
     "named": false
   },
   {
-    "type": "or",
-    "named": false
+    "type": "or_operator",
+    "named": true
+  },
+  {
+    "type": "pow_operator",
+    "named": true
   },
   {
     "type": "prefix_operator",
@@ -5837,6 +5883,10 @@
   {
     "type": "rec",
     "named": false
+  },
+  {
+    "type": "rel_operator",
+    "named": true
   },
   {
     "type": "shebang",
@@ -5924,10 +5974,6 @@
   },
   {
     "type": "|]",
-    "named": false
-  },
-  {
-    "type": "||",
     "named": false
   },
   {

@@ -15,7 +15,7 @@ function x -> ()
 Constant patterns
 ============================
 
-function 1 | +1.0 | 'x' | "x" | {|x|} | true | () -> ()
+function 1 | +1.0 | - 0b1 | 'x' | "x" | {|x|} | true | () -> ()
 
 ---
 
@@ -29,7 +29,7 @@ function 1 | +1.0 | 'x' | "x" | {|x|} | true | () -> ()
               (or_pattern
                 (or_pattern
                   (or_pattern
-                    (number)
+                    (or_pattern (number) (signed_number))
                     (signed_number))
                   (character (character_content)))
                 (string (string_content)))

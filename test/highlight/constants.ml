@@ -12,3 +12,7 @@ let () = Printf.printf "string\n%d" 5
                                  (* ^ number *)
  let x = {id|string|id}
       (* ^ string *)
+
+let f = function +1 -> true | - 1 -> false
+              (* ^ number *)
+                           (* ^ number *)
