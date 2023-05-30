@@ -85,7 +85,7 @@
 
 (match_expression (match_operator) @keyword)
 
-(value_definition [(let_operator) (and_operator)] @keyword)
+(value_definition [(let_operator) (let_and_operator)] @keyword)
 
 [
   (prefix_operator)
@@ -94,7 +94,7 @@
   (hash_operator)
   (indexing_operator)
   (let_operator)
-  (and_operator)
+  (let_and_operator)
   (match_operator)
 ] @operator
 

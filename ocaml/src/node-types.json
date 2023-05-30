@@ -4185,10 +4185,6 @@
       "required": true,
       "types": [
         {
-          "type": "and_operator",
-          "named": true
-        },
-        {
           "type": "hash_operator",
           "named": true
         },
@@ -4198,6 +4194,10 @@
         },
         {
           "type": "infix_operator",
+          "named": true
+        },
+        {
+          "type": "let_and_operator",
           "named": true
         },
         {
@@ -5301,11 +5301,11 @@
       "required": true,
       "types": [
         {
-          "type": "and_operator",
+          "type": "attribute_id",
           "named": true
         },
         {
-          "type": "attribute_id",
+          "type": "let_and_operator",
           "named": true
         },
         {
@@ -5575,10 +5575,6 @@
     "named": false
   },
   {
-    "type": "and_operator",
-    "named": true
-  },
-  {
     "type": "as",
     "named": false
   },
@@ -5713,6 +5709,10 @@
   {
     "type": "let",
     "named": false
+  },
+  {
+    "type": "let_and_operator",
+    "named": true
   },
   {
     "type": "let_operator",

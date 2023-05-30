@@ -336,7 +336,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "and_operator"
+                        "name": "let_and_operator"
                       }
                     ]
                   },
@@ -9926,7 +9926,7 @@
         ]
       }
     },
-    "and_operator": {
+    "let_and_operator": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -10168,7 +10168,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "and_operator"
+              "name": "let_and_operator"
             },
             {
               "type": "SYMBOL",

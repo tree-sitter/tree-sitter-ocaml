@@ -60,13 +60,13 @@ let* x and* y
   (value_definition
     (let_operator)
     (let_binding (value_name) (value_path (value_name)))
-    (and_operator)
+    (let_and_operator)
     (let_binding (value_name) (value_path (value_name))))
   (value_definition (attribute_id) (let_binding (value_name)))
   (value_definition
     (let_operator)
     (let_binding (value_name))
-    (and_operator)
+    (let_and_operator)
     (let_binding (value_name))))
 
 ==============================

@@ -70,7 +70,7 @@
         (hash_operator)
         (indexing_operator)
         (let_operator)
-        (and_operator)
+        (let_and_operator)
         (match_operator)
       ] @name)) @definition.function)
   (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
@@ -83,7 +83,7 @@
   (hash_operator)
   (indexing_operator)
   (let_operator)
-  (and_operator)
+  (let_and_operator)
   (match_operator)
 ] @name @reference.call
 

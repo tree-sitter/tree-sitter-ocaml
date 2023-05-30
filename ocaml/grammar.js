@@ -157,7 +157,7 @@ module.exports = grammar({
 
     value_definition: $ => seq(
       choice(seq('let', optional($._attribute), optional('rec')), $.let_operator),
-      sep1(choice('and', $.and_operator), $.let_binding)
+      sep1(choice('and', $.let_and_operator), $.let_binding)
     ),
 
     let_binding: $ => prec.right(seq(
@@ -1933,7 +1933,7 @@ module.exports = grammar({
       seq('let', /[$&*+\-/<=>@^|]/, repeat(OP_CHAR))
     ),
 
-    and_operator: $ => token(
+    let_and_operator: $ => token(
       seq('and', /[$&*+\-/<=>@^|]/, repeat(OP_CHAR))
     ),
 
@@ -1968,7 +1968,7 @@ module.exports = grammar({
         optional('<-')
       ),
       $.let_operator,
-      $.and_operator,
+      $.let_and_operator,
       $.match_operator
     )),
 
