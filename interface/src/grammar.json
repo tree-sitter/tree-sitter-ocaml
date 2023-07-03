@@ -480,13 +480,8 @@
               "type": "FIELD",
               "name": "pattern",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_identifier"
-                },
-                "named": true,
-                "value": "value_pattern"
+                "type": "SYMBOL",
+                "name": "_simple_value_pattern"
               }
             }
           ]
@@ -539,13 +534,8 @@
               "type": "FIELD",
               "name": "pattern",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_identifier"
-                },
-                "named": true,
-                "value": "value_pattern"
+                "type": "SYMBOL",
+                "name": "_simple_value_pattern"
               }
             },
             {
@@ -9795,17 +9785,21 @@
         }
       ]
     },
+    "_simple_value_pattern": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_identifier"
+      },
+      "named": true,
+      "value": "value_pattern"
+    },
     "_value_pattern": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_identifier"
-          },
-          "named": true,
-          "value": "value_pattern"
+          "type": "SYMBOL",
+          "name": "_simple_value_pattern"
         },
         {
           "type": "SYMBOL",
@@ -10384,7 +10378,7 @@
     },
     "_identifier": {
       "type": "PATTERN",
-      "value": "[a-z_][a-zA-Z0-9_']*"
+      "value": "(\\\\#)?[a-z_][a-zA-Z0-9_']*"
     },
     "_capitalized_identifier": {
       "type": "PATTERN",
@@ -10573,6 +10567,7 @@
     "_argument",
     "_extension",
     "_item_extension",
+    "_value_pattern",
     "_label_name",
     "_field_name",
     "_class_name",

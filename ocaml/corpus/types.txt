@@ -3,6 +3,7 @@ Type variables
 ===========================
 
 type 'a t = 'a
+type '\#if \#then = '\#else
 type ('a, 'b) t = 'a
 type +'a t = 'a
 type !+'a t = 'a
@@ -11,6 +12,11 @@ type +!'a t = 'a
 ---
 
 (compilation_unit
+  (type_definition
+    (type_binding
+      (type_variable)
+      (type_constructor)
+      (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
@@ -43,7 +49,9 @@ Type constructors
 ===========================
 
 type t = t
+type \#begin = \#end
 type t = M.t
+type \#try = M.\#with
 type t = M(M).t
 
 ---
@@ -53,6 +61,16 @@ type t = M(M).t
     (type_binding
       (type_constructor)
       (type_constructor_path (type_constructor))))
+  (type_definition
+    (type_binding
+      (type_constructor)
+      (type_constructor_path (type_constructor))))
+  (type_definition
+    (type_binding
+      (type_constructor)
+      (type_constructor_path
+        (extended_module_path (module_name))
+        (type_constructor))))
   (type_definition
     (type_binding
       (type_constructor)

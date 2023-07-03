@@ -3,7 +3,9 @@ Values
 ===========================
 
 x;;
+\#let;;
 M.x;;
+M.\#in;;
 ( + );;
 M.( + );;
 
@@ -11,6 +13,11 @@ M.( + );;
 
 (compilation_unit
   (expression_item (value_path (value_name)))
+  (expression_item (value_path (value_name)))
+  (expression_item
+    (value_path
+      (module_path (module_name))
+      (value_name)))
   (expression_item
     (value_path
       (module_path (module_name))
@@ -346,8 +353,10 @@ Function application
 ===========================
 
 f x;;
+f \#let;;
 f x x;;
 f ~x ?x:x ~(x:x);;
+f ~\#type ?\#module:x ~(\#val:x);;
 
 ---
 
@@ -359,8 +368,22 @@ f ~x ?x:x ~(x:x);;
   (expression_item
     (application_expression
       (value_path (value_name))
+      (value_path (value_name))))
+  (expression_item
+    (application_expression
+      (value_path (value_name))
       (value_path (value_name))
       (value_path (value_name))))
+  (expression_item
+    (application_expression
+      (value_path (value_name))
+      (labeled_argument (label_name))
+      (labeled_argument
+        (label_name)
+        (value_path (value_name)))
+      (labeled_argument
+        (label_name)
+        (type_constructor_path (type_constructor)))))
   (expression_item
     (application_expression
       (value_path (value_name))
