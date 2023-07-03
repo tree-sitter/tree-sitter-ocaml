@@ -1,4 +1,4 @@
 [@@@id payload]
 (* <- punctuation.special *)
- (* ^ attribute *)
+ (* ^ tag *)
            (* ^ punctuation.special *)
