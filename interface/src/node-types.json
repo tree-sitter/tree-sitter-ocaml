@@ -858,6 +858,10 @@
         "named": true
       },
       {
+        "type": "local_open_type",
+        "named": true
+      },
+      {
         "type": "object_type",
         "named": true
       },
@@ -3143,6 +3147,33 @@
         },
         {
           "type": "record_binding_pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "local_open_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "_type",
+          "named": true
+        },
+        {
+          "type": "extended_module_path",
+          "named": true
+        },
+        {
+          "type": "package_type",
+          "named": true
+        },
+        {
+          "type": "polymorphic_variant_type",
           "named": true
         }
       ]

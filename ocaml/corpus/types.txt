@@ -121,6 +121,7 @@ type t = [>
 ]
 type t = [< `A of t & t ]
 type t = [< `A > `A ]
+type t = M.[`A]
 
 ---
 
@@ -152,13 +153,21 @@ type t = [< `A > `A ]
       (type_constructor)
       (polymorphic_variant_type
         (tag_specification (tag))
-        (tag)))))
+        (tag))))
+  (type_definition
+    (type_binding
+      (type_constructor)
+      (local_open_type
+        (extended_module_path (module_name))
+        (polymorphic_variant_type
+          (tag_specification (tag)))))))
 
 ===========================
 Package types
 ===========================
 
 type t = (module T)
+type t = M.(module T)
 
 ---
 
@@ -167,7 +176,13 @@ type t = (module T)
     (type_binding
       (type_constructor)
       (package_type
-        (module_type_path (module_type_name))))))
+        (module_type_path (module_type_name)))))
+  (type_definition
+    (type_binding
+      (type_constructor)
+      (local_open_type
+        (extended_module_path (module_name))
+        (package_type (module_type_path (module_type_name)))))))
 
 ===========================
 Function types
@@ -251,6 +266,7 @@ Parenthesized types
 ===========================
 
 type t = (t)
+type t = M.(t)
 
 ---
 
@@ -259,4 +275,10 @@ type t = (t)
     (type_binding
       (type_constructor)
       (parenthesized_type
+        (type_constructor_path (type_constructor)))))
+  (type_definition
+    (type_binding
+      (type_constructor)
+      (local_open_type
+        (extended_module_path (module_name))
         (type_constructor_path (type_constructor))))))

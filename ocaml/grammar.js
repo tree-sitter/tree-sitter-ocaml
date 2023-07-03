@@ -771,6 +771,7 @@ module.exports = grammar({
       $.type_variable,
       $.type_constructor_path,
       $.constructed_type,
+      $.local_open_type,
       $.polymorphic_variant_type,
       $.package_type,
       $.hash_type,
@@ -822,6 +823,16 @@ module.exports = grammar({
       'as',
       $.type_variable
     )),
+
+    local_open_type: $ => seq(
+      $.extended_module_path,
+      '.',
+      choice(
+        parenthesize($._type),
+        $.package_type,
+        $.polymorphic_variant_type
+      )
+    ),
 
     polymorphic_variant_type: $ => seq(
       choice(
