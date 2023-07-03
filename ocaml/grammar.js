@@ -1991,7 +1991,7 @@ module.exports = grammar({
 
     constructor_path: $ => path($.module_path, $._constructor_name),
 
-    type_constructor_path: $ => prec(1, path($.extended_module_path, $._type_constructor)),
+    type_constructor_path: $ => path($.extended_module_path, $._type_constructor),
 
     class_path: $ => path($.module_path, $._class_name),
 
