@@ -367,13 +367,18 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     }
 
     if (lexer->lookahead != '"') return false;
+    advance(lexer);
+
     while (lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
-           lexer->lookahead != '"') {
+           lexer->lookahead != '"' && !eof(lexer)) {
       advance(lexer);
     }
-    if (lexer->lookahead != '"') return false;
 
-    while (lexer->lookahead != '\n' && lexer->lookahead != '\r') {
+    if (lexer->lookahead != '"') return false;
+    advance(lexer);
+
+    while (lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
+           !eof(lexer)) {
       advance(lexer);
     }
 
