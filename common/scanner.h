@@ -63,6 +63,8 @@ static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
+static inline bool eof(TSLexer *lexer) { return lexer->eof(lexer); }
+
 static void scan_string(TSLexer *lexer) {
   for (;;) {
     switch (lexer->lookahead) {
@@ -74,7 +76,7 @@ static void scan_string(TSLexer *lexer) {
         advance(lexer);
         return;
       case '\0':
-        if (lexer->eof(lexer)) return;
+        if (eof(lexer)) return;
         advance(lexer);
         break;
       default:
@@ -122,7 +124,7 @@ static bool scan_quoted_string(Scanner *scanner, TSLexer *lexer) {
         if (scan_right_quoted_string_delimiter(scanner, lexer)) return true;
         break;
       case '\0':
-        if (lexer->eof(lexer)) return false;
+        if (eof(lexer)) return false;
         advance(lexer);
         break;
       default:
@@ -184,7 +186,7 @@ static char scan_character(TSLexer *lexer) {
     case '\'':
       break;
     case '\0':
-      if (lexer->eof(lexer)) return 0;
+      if (eof(lexer)) return 0;
       advance(lexer);
       break;
     default:
@@ -279,7 +281,7 @@ static bool scan_comment(Scanner *scanner, TSLexer *lexer) {
         if (scan_quoted_string(scanner, lexer)) advance(lexer);
         break;
       case '\0':
-        if (lexer->eof(lexer)) return false;
+        if (eof(lexer)) return false;
         if (last) {
           last = 0;
         } else {
@@ -390,8 +392,11 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     lexer->result_symbol = STRING_DELIM;
     return true;
   }
-  if (valid_symbols[NULL_CHARACTER] && lexer->lookahead == '\0') {
-    return !lexer->eof(lexer);
+  if (valid_symbols[NULL_CHARACTER] && lexer->lookahead == '\0' &&
+      !eof(lexer)) {
+    advance(lexer);
+    lexer->result_symbol = NULL_CHARACTER;
+    return true;
   }
 
   return false;
