@@ -16,9 +16,9 @@ let package = Package(
             path: ".",
             sources: [
                 "interface/src/parser.c",
-                "interface/src/scanner.cc",
+                "interface/src/scanner.c",
                 "ocaml/src/parser.c",
-                "ocaml/src/scanner.cc",
+                "ocaml/src/scanner.c",
             ],
             resources: [
                 .copy("queries")
