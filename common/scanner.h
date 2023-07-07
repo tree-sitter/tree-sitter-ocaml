@@ -1,5 +1,6 @@
 #include <tree_sitter/parser.h>
-#include <string>
+#include <assert.h>
+#include <string.h>
 #include <wctype.h>
 
 namespace {
@@ -15,20 +16,64 @@ enum {
 
 struct Scanner {
   bool in_string = false;
-  std::string quoted_string_id;
+
+  size_t quoted_string_id_length;
+  size_t quoted_string_id_capacity;
+  char *quoted_string_id;
+
+  ~Scanner() {
+    free(quoted_string_id);
+  }
+
+  inline void quoted_string_id_clear() {
+    quoted_string_id_length = 0;
+  }
+
+  inline void quoted_string_id_resize(size_t min_capacity) {
+    if (quoted_string_id_capacity < 16) {
+      quoted_string_id_capacity = 16;
+    }
+    while (quoted_string_id_capacity < min_capacity) {
+      quoted_string_id_capacity <<= 1;
+    }
+    quoted_string_id = (char*) realloc(quoted_string_id, quoted_string_id_capacity * sizeof(char));
+  }
+
+  inline void quoted_string_id_assign(const char *buffer, size_t length) {
+    if (length > 0) {
+      quoted_string_id_resize(length);
+      memcpy(quoted_string_id, buffer, length);
+    }
+    quoted_string_id_length = length;
+  }
+
+  inline size_t quoted_string_id_copy(char *buffer) {
+    if (quoted_string_id_length > 0) {
+      memcpy(buffer, quoted_string_id, quoted_string_id_length);
+    }
+    return quoted_string_id_length;
+  }
+
+  inline void quoted_string_id_push(char c) {
+    quoted_string_id_resize(quoted_string_id_length + 1);
+    quoted_string_id[quoted_string_id_length++] = c;
+  }
 
   unsigned serialize(char *buffer) {
-    size_t size = quoted_string_id.size();
-
     buffer[0] = in_string;
-    quoted_string_id.copy(&buffer[1], size);
-    return size + 1;
+    if (quoted_string_id_length >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+      return 1;
+    }
+    return quoted_string_id_copy(buffer + 1) + 1;
   }
 
   void deserialize(const char *buffer, unsigned length) {
     if (length > 0) {
       in_string = buffer[0];
-      quoted_string_id.assign(&buffer[1], length - 1);
+      quoted_string_id_assign(buffer + 1, length - 1);
+    } else {
+      in_string = false;
+      quoted_string_id_clear();
     }
   }
 
@@ -177,10 +222,10 @@ struct Scanner {
   }
 
   bool scan_left_quoted_string_delimiter(TSLexer *lexer) {
-    quoted_string_id.clear();
+    quoted_string_id_clear();
 
     while (iswlower(lexer->lookahead) || lexer->lookahead == '_') {
-      quoted_string_id.push_back(lexer->lookahead);
+      quoted_string_id_push(lexer->lookahead);
       advance(lexer);
     }
 
@@ -192,7 +237,7 @@ struct Scanner {
   }
 
   bool scan_right_quoted_string_delimiter(TSLexer *lexer) {
-    for (size_t i = 0; i < quoted_string_id.size(); i++) {
+    for (size_t i = 0; i < quoted_string_id_length; i++) {
       if (lexer->lookahead != quoted_string_id[i]) return false;
       advance(lexer);
     }
