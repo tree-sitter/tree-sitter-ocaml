@@ -14,4 +14,4 @@ extern TSLanguage *tree_sitter_ocaml_interface();
 }
 #endif
 
-#endif // TREE_SITTER_OCAML_H_
+#endif  // TREE_SITTER_OCAML_H_
