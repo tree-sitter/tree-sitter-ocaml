@@ -1,7 +1,7 @@
 module type T = sig
 (* <- keyword *)
     (* ^ keyword *)
-         (* ^ constructor *)
+         (* ^ module *)
            (* ^ punctuation.delimiter *)
              (* ^ keyword *)
   val x : int
@@ -10,29 +10,29 @@ end
 
 module M : T = struct
 (* <- keyword *)
-    (* ^ constructor *)
+    (* ^ module *)
       (* ^ punctuation.delimiter *)
-        (* ^ constructor *)
+        (* ^ module *)
   let x = 0
 end
 
 module F (M : T) = struct
-    (* ^ constructor *)
+    (* ^ module *)
       (* ^ punctuation.bracket *)
-       (* ^ constructor *)
-           (* ^ constructor *)
+       (* ^ module *)
+           (* ^ module *)
             (* ^ punctuation.bracket *)
                 (* ^ keyword *)
   include M
   (* <- keyword *)
-       (* ^ constructor *)
+       (* ^ module *)
 end
 
 module N = F (M)
-    (* ^ constructor *)
-        (* ^ constructor *)
-           (* ^ constructor *)
+    (* ^ module *)
+        (* ^ module *)
+           (* ^ module *)
 
 let x = N.x
-     (* ^ constructor *)
+     (* ^ module *)
       (* ^ punctuation.delimiter *)
