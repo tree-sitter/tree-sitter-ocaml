@@ -216,6 +216,7 @@ static bool scan_identifier(TSLexer *lexer) {
 static bool scan_extattrident(TSLexer *lexer) {
   while (scan_identifier(lexer)) {
     if (lexer->lookahead != '.') return true;
+    advance(lexer);
   }
   return false;
 }
