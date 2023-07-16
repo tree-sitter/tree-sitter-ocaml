@@ -31,6 +31,8 @@ static inline void quoted_string_id_resize(Scanner *scanner,
                                            size_t min_capacity) {
   size_t capacity = scanner->quoted_string_id_capacity;
 
+  if (capacity >= min_capacity) return;
+
   if (capacity < 16) capacity = 16;
   while (capacity < min_capacity) capacity <<= 1;
 
