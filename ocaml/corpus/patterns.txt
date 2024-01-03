@@ -2,11 +2,15 @@
 Values
 ============================
 
-function x -> ()
+function x -> ();;
+function \#function -> ();;
 
 ---
 
 (compilation_unit
+  (expression_item
+    (function_expression
+      (match_case (value_pattern) (unit))))
   (expression_item
     (function_expression
       (match_case (value_pattern) (unit)))))

@@ -43,6 +43,7 @@ module.exports = grammar({
     $._argument,
     $._extension,
     $._item_extension,
+    $._value_pattern,
     $._label_name,
     $._field_name,
     $._class_name,
@@ -169,7 +170,7 @@ module.exports = grammar({
       field('pattern', $._simple_pattern),
       seq(
         choice('~', '?'),
-        field('pattern', alias($._identifier, $.value_pattern))
+        field('pattern', $._simple_value_pattern)
       ),
       seq(
         $._label,
@@ -179,7 +180,7 @@ module.exports = grammar({
       seq(
         choice('~', '?'),
         '(',
-        field('pattern', alias($._identifier, $.value_pattern)),
+        field('pattern', $._simple_value_pattern),
         optional($._typed),
         optional(seq('=', $._sequence_expression)),
         ')'
@@ -770,6 +771,7 @@ module.exports = grammar({
       $.type_variable,
       $.type_constructor_path,
       $.constructed_type,
+      $.local_open_type,
       $.polymorphic_variant_type,
       $.package_type,
       $.hash_type,
@@ -821,6 +823,16 @@ module.exports = grammar({
       'as',
       $.type_variable
     )),
+
+    local_open_type: $ => seq(
+      $.extended_module_path,
+      '.',
+      choice(
+        parenthesize($._type),
+        $.package_type,
+        $.polymorphic_variant_type
+      )
+    ),
 
     polymorphic_variant_type: $ => seq(
       choice(
@@ -1857,8 +1869,10 @@ module.exports = grammar({
       $.parenthesized_operator
     ),
 
+    _simple_value_pattern: $ => alias($._identifier, $.value_pattern),
+
     _value_pattern: $ => choice(
-      alias($._identifier, $.value_pattern),
+      $._simple_value_pattern,
       $.parenthesized_operator
     ),
 
@@ -1920,7 +1934,7 @@ module.exports = grammar({
       parenthesize(alias('::', $.constructor_name))
     ),
 
-    _identifier: $ => /[a-z_][a-zA-Z0-9_']*/,
+    _identifier: $ => /(\\#)?[a-z_][a-zA-Z0-9_']*/,
     _capitalized_identifier: $ => /[A-Z][a-zA-Z0-9_']*/,
 
     _label: $ => seq(choice('~', '?'), $._label_name),
