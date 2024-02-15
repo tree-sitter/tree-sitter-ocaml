@@ -1,10 +1,13 @@
-name: build
+name: CI
 
-on: [push, pull_request]
-
-env:
-  CARGO_TERM_COLOR: always
-  CARGO_INCREMENTAL: 0
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "**"
 
 jobs:
   build-node:
@@ -12,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '12'
+          node-version: 18
 
       - name: Display Node versions
         run: |
@@ -28,7 +31,7 @@ jobs:
         run: npm install
 
       - name: Cache examples
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: examples
           key: ${{ hashFiles('script/parse-examples') }}
@@ -41,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install rust
         uses: actions-rs/toolchain@v1
@@ -57,10 +60,10 @@ jobs:
 
   build-swift:
     name: build-swift
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build
         run: swift build
