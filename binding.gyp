@@ -4,13 +4,13 @@
       "target_name": "tree_sitter_ocaml_binding",
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
-        "ocaml/src"
+        "include"
       ],
       "sources": [
-        "ocaml/src/parser.c",
-        "ocaml/src/scanner.c",
-        "interface/src/parser.c",
-        "interface/src/scanner.c",
+        "grammars/ocaml/src/parser.c",
+        "grammars/ocaml/src/scanner.c",
+        "grammars/interface/src/parser.c",
+        "grammars/interface/src/scanner.c",
         "bindings/node/binding.cc"
       ],
       "cflags_c": [

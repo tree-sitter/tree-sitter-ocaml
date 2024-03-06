@@ -15,6 +15,6 @@ try {
 }
 
 try {
-  module.exports.ocaml.nodeTypeInfo = require("../../ocaml/src/node-types.json");
-  module.exports.interface.nodeTypeInfo = require("../../interface/src/node-types.json");
+  module.exports.ocaml.nodeTypeInfo = require("../../grammars/ocaml/src/node-types.json");
+  module.exports.interface.nodeTypeInfo = require("../../grammars/interface/src/node-types.json");
 } catch (_) {}

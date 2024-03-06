@@ -48,12 +48,12 @@ pub fn language_ocaml_interface() -> Language {
 /// The content of the [`node-types.json`][] file for OCaml.
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
-pub const OCAML_NODE_TYPES: &'static str = include_str!("../../ocaml/src/node-types.json");
+pub const OCAML_NODE_TYPES: &'static str = include_str!("../../grammars/ocaml/src/node-types.json");
 
 /// The content of the [`node-types.json`][] file for OCaml interfaces.
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
-pub const INTERFACE_NODE_TYPES: &'static str = include_str!("../../interface/src/node-types.json");
+pub const INTERFACE_NODE_TYPES: &'static str = include_str!("../../grammars/interface/src/node-types.json");
 
 /// The syntax highlighting query for OCaml.
 pub const HIGHLIGHTS_QUERY: &'static str = include_str!("../../queries/highlights.scm");
