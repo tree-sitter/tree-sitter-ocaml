@@ -1,91 +1,38 @@
-; Modules
-;--------
-
-[(module_name) (module_type_name)] @module
-
-; Types
-;------
-
-(
-  (type_constructor) @type.builtin
-  (#match? @type.builtin "^(int|char|bytes|string|float|bool|unit|exn|array|list|option|int32|int64|nativeint|format6|lazy_t)$")
-)
-
-[(class_name) (class_type_name) (type_constructor)] @type
-
-[(constructor_name) (tag)] @constructor
-
-; Functions
-;----------
-
-(let_binding
-  pattern: (value_name) @function
-  (parameter))
-
-(let_binding
-  pattern: (value_name) @function
-  body: [(fun_expression) (function_expression)])
-
-(value_specification (value_name) @function)
-
-(external (value_name) @function)
-
-(method_name) @function.method
-
-; Application
+; Punctuation
 ;------------
 
-(
-  (value_name) @function.builtin
-  (#match? @function.builtin "^(raise(_notrace)?|failwith|invalid_arg)$")
-)
+[
+  "," "." ";" ":" "=" "|" "~" "?" "+" "-" "!" ">" "&"
+  "->" ";;" ":>" "+=" ":=" ".."
+] @punctuation.delimiter
 
-(infix_expression
-  left: (value_path (value_name) @function)
-  operator: (concat_operator) @operator
-  (#eq? @operator "@@"))
+["(" ")" "[" "]" "{" "}" "[|" "|]" "[<" "[>"] @punctuation.bracket
 
-(infix_expression
-  operator: (rel_operator) @operator
-  right: (value_path (value_name) @function)
-  (#eq? @operator "|>"))
+(object_type ["<" ">"] @punctuation.bracket)
 
-(application_expression
-  function: (value_path (value_name) @function))
+"%" @punctuation.special
 
-; Variables
-;----------
+(attribute ["[@" "]"] @punctuation.special)
+(item_attribute ["[@@" "]"] @punctuation.special)
+(floating_attribute ["[@@@" "]"] @punctuation.special)
+(extension ["[%" "]"] @punctuation.special)
+(item_extension ["[%%" "]"] @punctuation.special)
+(quoted_extension ["{%" "}"] @punctuation.special)
+(quoted_item_extension ["{%%" "}"] @punctuation.special)
 
-[(value_name) (type_variable)] @variable
+; Keywords
+;---------
 
-(value_pattern) @variable.parameter
-
-; Properties
-;-----------
-
-[(label_name) (field_name) (instance_variable_name)] @property
-
-; Constants
-;----------
-
-(boolean) @constant
-
-[(number) (signed_number)] @number
-
-[(string) (character)] @string
-
-(quoted_string "{" @string "}" @string) @string
-
-(escape_sequence) @escape
-
-(conversion_specification) @string.special
+[
+  "and" "as" "assert" "begin" "class" "constraint" "do" "done" "downto" "else"
+  "end" "exception" "external" "for" "fun" "function" "functor" "if" "in"
+  "include" "inherit" "initializer" "lazy" "let" "match" "method" "module"
+  "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig" "struct"
+  "then" "to" "try" "type" "val" "virtual" "when" "while" "with"
+] @keyword
 
 ; Operators
 ;----------
-
-(match_expression (match_operator) @keyword)
-
-(value_definition [(let_operator) (let_and_operator)] @keyword)
 
 [
   (prefix_operator)
@@ -105,40 +52,90 @@
   (match_operator)
 ] @operator
 
+(match_expression (match_operator) @keyword)
+
+(value_definition [(let_operator) (let_and_operator)] @keyword)
+
 ["*" "#" "::" "<-"] @operator
 
-; Keywords
-;---------
+; Constants
+;----------
 
-[
-  "and" "as" "assert" "begin" "class" "constraint" "do" "done" "downto" "else"
-  "end" "exception" "external" "for" "fun" "function" "functor" "if" "in"
-  "include" "inherit" "initializer" "lazy" "let" "match" "method" "module"
-  "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig" "struct"
-  "then" "to" "try" "type" "val" "virtual" "when" "while" "with"
-] @keyword
+(boolean) @constant
 
-; Punctuation
-;------------
+[(number) (signed_number)] @number
 
-(attribute ["[@" "]"] @punctuation.special)
-(item_attribute ["[@@" "]"] @punctuation.special)
-(floating_attribute ["[@@@" "]"] @punctuation.special)
-(extension ["[%" "]"] @punctuation.special)
-(item_extension ["[%%" "]"] @punctuation.special)
-(quoted_extension ["{%" "}"] @punctuation.special)
-(quoted_item_extension ["{%%" "}"] @punctuation.special)
+[(string) (character)] @string
 
-"%" @punctuation.special
+(quoted_string "{" @string "}" @string) @string
 
-["(" ")" "[" "]" "{" "}" "[|" "|]" "[<" "[>"] @punctuation.bracket
+(escape_sequence) @escape
 
-(object_type ["<" ">"] @punctuation.bracket)
+(conversion_specification) @string.special
 
-[
-  "," "." ";" ":" "=" "|" "~" "?" "+" "-" "!" ">" "&"
-  "->" ";;" ":>" "+=" ":=" ".."
-] @punctuation.delimiter
+; Variables
+;----------
+
+[(value_name) (type_variable)] @variable
+
+(value_pattern) @variable.parameter
+
+; Properties
+;-----------
+
+[(label_name) (field_name) (instance_variable_name)] @property
+
+; Functions
+;----------
+
+(let_binding
+  pattern: (value_name) @function
+  (parameter))
+
+(let_binding
+  pattern: (value_name) @function
+  body: [(fun_expression) (function_expression)])
+
+(value_specification (value_name) @function)
+
+(external (value_name) @function)
+
+(method_name) @function.method
+
+(application_expression
+  function: (value_path (value_name) @function))
+
+(infix_expression
+  left: (value_path (value_name) @function)
+  operator: (concat_operator) @operator
+  (#eq? @operator "@@"))
+
+(infix_expression
+  operator: (rel_operator) @operator
+  right: (value_path (value_name) @function)
+  (#eq? @operator "|>"))
+
+(
+  (value_name) @function.builtin
+  (#match? @function.builtin "^(raise(_notrace)?|failwith|invalid_arg)$")
+)
+
+; Types
+;------
+
+[(class_name) (class_type_name) (type_constructor)] @type
+
+(
+  (type_constructor) @type.builtin
+  (#match? @type.builtin "^(int|char|bytes|string|float|bool|unit|exn|array|list|option|int32|int64|nativeint|format6|lazy_t)$")
+)
+
+[(constructor_name) (tag)] @constructor
+
+; Modules
+;--------
+
+[(module_name) (module_type_name)] @module
 
 ; Attributes
 ;-----------

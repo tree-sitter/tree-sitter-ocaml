@@ -9,7 +9,7 @@
 
 (module_path (module_name) @name) @reference.module
 
-; Modules types
+; Module types
 ;--------------
 
 (
