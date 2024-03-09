@@ -9,10 +9,10 @@
   "author": "Max Brunsfeld",
   "license": "MIT",
   "dependencies": {
-    "nan": "^2.17.0"
+    "nan": "^2.19.0"
   },
   "devDependencies": {
-    "tree-sitter-cli": ">=0.20.8"
+    "tree-sitter-cli": ">=0.21.0"
   },
   "scripts": {
     "build": "npm run build-ocaml && npm run build-interface",
@@ -26,20 +26,31 @@
   "tree-sitter": [
     {
       "scope": "source.ocaml",
+      "path": "ocaml",
+      "external-files": [
+        "common/scanner.h"
+      ],
       "file-types": [
         "ml"
       ],
-      "first-line-regex": "",
-      "path": "ocaml",
-      "injection-regex": "^(ocaml|ml)$"
+      "injection-regex": "^(ocaml|ml)$",
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm",
+      "tags": "queries/tags.scm"
     },
     {
       "scope": "source.ocaml.interface",
+      "path": "interface",
+      "external-files": [
+        "common/scanner.h"
+      ],
       "file-types": [
         "mli"
       ],
-      "path": "interface",
-      "injection-regex": "^ocaml_interface$"
+      "injection-regex": "^ocaml_interface$",
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm",
+      "tags": "queries/tags.scm"
     }
   ]
 }
