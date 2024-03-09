@@ -26,7 +26,7 @@ let code = r#"
 "#;
 let mut parser = Parser::new();
 parser
-    .set_language(tree_sitter_ocaml::language_ocaml())
+    .set_language(&tree_sitter_ocaml::language_ocaml())
     .expect("Error loading OCaml grammar");
 let tree = parser.parse(code, None).unwrap();
 ```

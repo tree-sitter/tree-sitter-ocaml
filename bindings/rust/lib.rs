@@ -14,7 +14,7 @@
 //! "#;
 //! let mut parser = tree_sitter::Parser::new();
 //! parser
-//!     .set_language(tree_sitter_ocaml::language_ocaml())
+//!     .set_language(&tree_sitter_ocaml::language_ocaml())
 //!     .expect("Error loading OCaml grammar");
 //! let tree = parser.parse(code, None).unwrap();
 //! ```
@@ -70,7 +70,7 @@ mod tests {
     fn test_ocaml() {
         let mut parser = tree_sitter::Parser::new();
         parser
-            .set_language(super::language_ocaml())
+            .set_language(&super::language_ocaml())
             .expect("Error loading OCaml grammar");
 
         let code = r#"
@@ -88,7 +88,7 @@ mod tests {
     fn test_ocaml_interface() {
         let mut parser = tree_sitter::Parser::new();
         parser
-            .set_language(super::language_ocaml_interface())
+            .set_language(&super::language_ocaml_interface())
             .expect("Error loading OCaml interface grammar");
 
         let code = r#"
