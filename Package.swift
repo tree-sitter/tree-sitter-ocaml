@@ -35,5 +35,6 @@ let package = Package(
             ],
             path: "bindings/swift/TreeSitterOCamlTests"
         )
-    ]
+    ],
+    cLanguageStandard: .c11
 )
