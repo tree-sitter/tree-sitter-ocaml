@@ -6,11 +6,7 @@ fn main() {
     let interface_dir = grammars_dir.join("interface").join("src");
 
     let mut c_config = cc::Build::new();
-    c_config.include(&include_dir);
-    c_config
-        .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-but-set-variable")
-        .flag_if_supported("-Wno-trigraphs");
+    c_config.std("c11").include(&include_dir);
 
     println!("cargo:rerun-if-changed={}", include_dir.to_str().unwrap());
 
@@ -23,5 +19,5 @@ fn main() {
         println!("cargo:rerun-if-changed={}", scanner_path.to_str().unwrap());
     }
 
-    c_config.compile("parser");
+    c_config.compile("tree-sitter-ocaml");
 }

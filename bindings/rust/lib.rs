@@ -1,9 +1,9 @@
-//! This crate provides OCaml grammars for the [tree-sitter][] parsing library.
-//! There are separate grammars for implementation (`.ml`) and interface
-//! (`.mli`) files.
+//! This crate provides OCaml language support for the [tree-sitter][] parsing
+//! library. There are separate languages for implementation (`.ml`) and
+//! interface (`.mli`) files.
 //!
 //! Typically, you will use the [language_ocaml][language func] function to add
-//! this grammar to a tree-sitter [Parser][], and then use the parser to parse
+//! this language to a tree-sitter [Parser][], and then use the parser to parse
 //! some code:
 //!
 //! ```
@@ -17,6 +17,7 @@
 //!     .set_language(&tree_sitter_ocaml::language_ocaml())
 //!     .expect("Error loading OCaml grammar");
 //! let tree = parser.parse(code, None).unwrap();
+//! assert!(!tree.root_node().has_error());
 //! ```
 //!
 //! [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
