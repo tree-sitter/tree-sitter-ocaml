@@ -16,19 +16,19 @@
   },
   "scripts": {
     "build": "npm run build-ocaml && npm run build-interface",
-    "build-ocaml": "cd ocaml && tree-sitter generate",
-    "build-interface": "cd interface && tree-sitter generate",
+    "build-ocaml": "cd grammars/ocaml && tree-sitter generate --no-bindings",
+    "build-interface": "cd grammars/interface && tree-sitter generate --no-bindings",
     "test": "npm run test-ocaml && npm run test-interface && npm run test-highlight && script/parse-examples",
-    "test-ocaml": "cd ocaml && tree-sitter test",
-    "test-interface": "cd interface && tree-sitter test",
+    "test-ocaml": "cd grammars/ocaml && tree-sitter test",
+    "test-interface": "cd grammars/interface && tree-sitter test",
     "test-highlight": "tree-sitter test"
   },
   "tree-sitter": [
     {
       "scope": "source.ocaml",
-      "path": "ocaml",
+      "path": "grammars/ocaml",
       "external-files": [
-        "common/scanner.h"
+        "include/scanner.h"
       ],
       "file-types": [
         "ml"
@@ -40,9 +40,9 @@
     },
     {
       "scope": "source.ocaml.interface",
-      "path": "interface",
+      "path": "grammars/interface",
       "external-files": [
-        "common/scanner.h"
+        "include/scanner.h"
       ],
       "file-types": [
         "mli"
