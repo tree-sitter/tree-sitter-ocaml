@@ -8922,8 +8922,11 @@
           "name": "character_content"
         },
         {
-          "type": "STRING",
-          "value": "'"
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "'"
+          }
         }
       ]
     },
@@ -8931,8 +8934,18 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "[^\\\\']"
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\r*\\n"
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\\\'\\r\\n]"
+          }
         },
         {
           "type": "SYMBOL",
@@ -9013,7 +9026,7 @@
             "type": "ALIAS",
             "content": {
               "type": "PATTERN",
-              "value": "\\\\\\n[\\t ]*"
+              "value": "\\\\\\r*\\n[\\t ]*"
             },
             "named": true,
             "value": "escape_sequence"

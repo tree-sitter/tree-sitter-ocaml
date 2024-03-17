@@ -1720,10 +1720,11 @@ module.exports = grammar({
 
     signed_number: $ => seq(/[+-]/, NUMBER),
 
-    character: $ => seq("'", $.character_content, "'"),
+    character: $ => seq("'", $.character_content, token.immediate("'")),
 
     character_content: $ => choice(
-      /[^\\']/,
+      token.immediate(/\r*\n/),
+      token.immediate(/[^\\'\r\n]/),
       $._null,
       $.escape_sequence
     ),
@@ -1737,7 +1738,7 @@ module.exports = grammar({
       $._null,
       $.escape_sequence,
       alias(/\\u\{[0-9A-Fa-f]+\}/, $.escape_sequence),
-      alias(/\\\n[\t ]*/, $.escape_sequence),
+      alias(/\\\r*\n[\t ]*/, $.escape_sequence),
       $.conversion_specification,
       $.pretty_printing_indication
     )),
