@@ -1,72 +1,100 @@
 name: CI
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - "**"
+on: [push, pull_request]
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
 
 jobs:
-  build-node:
-    name: build-node
-    runs-on: ubuntu-latest
+  test-parser:
+    name: Test parser
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@82741f40f135e08e1ed1e347cdce1438624e54a9
+      - name: Test ocaml
+        working-directory: grammars/ocaml
+        run: tree-sitter test
+      - name: Test interface
+        working-directory: grammars/interface
+        run: tree-sitter test
+      - name: Test highlighting
+        run: tree-sitter test
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+  test-go:
+    name: Test Go binding
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          node-version: 18
+          go-version: '1.22'
+          cache-dependency-path: bindings/go/go.mod
+      - name: Get dependencies
+        working-directory: bindings/go
+        run: go get -t .
+      - name: Test
+        working-directory: bindings/go
+        run: go test -v
 
-      - name: Display Node versions
-        run: |
-          node --version
-          npm --version
-
+  test-node:
+    name: Test Node binding
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
       - name: Install dependencies
         run: npm install
-
-      - name: Cache examples
-        uses: actions/cache@v4
-        with:
-          path: examples
-          key: ${{ hashFiles('script/parse-examples') }}
-
-      - name: Test corpus & parse examples
-        run: npm test
-
-  build-rust:
-    name: build-rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-
-      - name: Build
-        run: cargo build --release
-
       - name: Test
-        run: cargo test
+        run: npm run test-binding
 
-  build-swift:
-    name: build-swift
-    runs-on: macos-14
+  test-rust:
+    name: Test Rust binding
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build
+        run: cargo build -v
+      - name: Test
+        run: cargo test -v
 
+  test-swift:
+    name: Test Swift binding
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Build
         run: swift build
-
       - name: Test
         run: swift test
