@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-ocaml",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "description": "OCaml grammar for tree-sitter",
   "keywords": [
     "parser",
@@ -12,7 +12,7 @@
     "nan": "^2.19.0"
   },
   "devDependencies": {
-    "tree-sitter-cli": ">=0.21.0"
+    "tree-sitter-cli": "^0.21.0"
   },
   "scripts": {
     "build": "npm run build-ocaml && npm run build-interface",
