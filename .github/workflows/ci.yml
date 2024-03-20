@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up tree-sitter
-        uses: tree-sitter/setup-action/cli@82741f40f135e08e1ed1e347cdce1438624e54a9
+        uses: tree-sitter/setup-action/cli@v1
       - name: Test ocaml
         working-directory: grammars/ocaml
         run: tree-sitter test
@@ -27,6 +27,26 @@ jobs:
         run: tree-sitter test
       - name: Test highlighting
         run: tree-sitter test
+
+  parse-examples:
+    name: Parse examples
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v1
+      - name: Parse examples
+        uses: tree-sitter/parse-action@v4
+        with:
+          files-list: test/files.txt
+          invalid-files-list: test/invalid-files.txt
 
   test-go:
     name: Test Go binding

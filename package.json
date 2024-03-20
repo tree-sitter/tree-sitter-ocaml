@@ -46,7 +46,8 @@
     "test-interface": "cd grammars/interface && tree-sitter test",
     "test-highlight": "tree-sitter test",
     "test-binding": "node --test bindings/node/binding_test.js",
-    "parse": "tree-sitter parse"
+    "parse": "tree-sitter parse",
+    "parse-examples": "test/parse-examples.sh"
   },
   "tree-sitter": [
     {
