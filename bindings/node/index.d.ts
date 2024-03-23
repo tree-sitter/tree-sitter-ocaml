@@ -26,3 +26,4 @@ type Language = {
 
 export const ocaml: Language;
 export const interface: Language;
+export const type: Language;

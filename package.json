@@ -15,8 +15,9 @@
   "files": [
     "binding.gyp",
     "bindings/node/*",
-    "grammars/interface/src/*",
     "grammars/ocaml/src/*",
+    "grammars/interface/src/*",
+    "grammars/type/src/*",
     "include/**",
     "prebuilds/**",
     "queries/*"
@@ -35,15 +36,18 @@
   "scripts": {
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip",
-    "build": "npm run build-ocaml && npm run build-interface",
+    "build": "npm run build-ocaml && npm run build-interface && npm run build-type",
     "build-ocaml": "cd grammars/ocaml && tree-sitter generate --no-bindings",
     "build-interface": "cd grammars/interface && tree-sitter generate --no-bindings",
-    "build-wasm": "npm run build-wasm-ocaml && npm run build-wasm-interface",
+    "build-type": "cd grammars/type && tree-sitter generate --no-bindings",
+    "build-wasm": "npm run build-wasm-ocaml && npm run build-wasm-interface && npm run build-wasm-type",
     "build-wasm-ocaml": "cd grammars/ocaml && tree-sitter build-wasm",
     "build-wasm-interface": "cd grammars/interface && tree-sitter build-wasm",
-    "test": "npm run test-ocaml && npm run test-interface && npm run test-highlight",
+    "build-wasm-type": "cd grammars/type && tree-sitter build-wasm",
+    "test": "npm run test-ocaml && npm run test-interface && npm run test-type && npm run test-highlight",
     "test-ocaml": "cd grammars/ocaml && tree-sitter test",
     "test-interface": "cd grammars/interface && tree-sitter test",
+    "test-type": "cd grammars/type && tree-sitter test",
     "test-highlight": "tree-sitter test",
     "test-binding": "node --test bindings/node/binding_test.js",
     "parse": "tree-sitter parse",
@@ -74,6 +78,18 @@
         "mli"
       ],
       "injection-regex": "^ocaml_interface$",
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm",
+      "tags": "queries/tags.scm"
+    },
+    {
+      "scope": "source.ocaml.type",
+      "path": "grammars/type",
+      "external-files": [
+        "include/scanner.h"
+      ],
+      "file-types": [],
+      "injection-regex": "^ocaml_type$",
       "highlights": "queries/highlights.scm",
       "locals": "queries/locals.scm",
       "tags": "queries/tags.scm"

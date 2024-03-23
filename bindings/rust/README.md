@@ -1,8 +1,8 @@
 # tree-sitter-ocaml
 
 This crate provides Ocaml grammars for the [tree-sitter][] parsing library.
-There are separate grammars for implementation (`.ml`) and interface (`.mli`)
-files.
+There are separate grammars for implementations (`.ml`), interfaces (`.mli`)
+and types.
 
 To use this crate, add it to the `[dependencies]` section of your `Cargo.toml`
 file. (Note that you will probably also need to depend on the

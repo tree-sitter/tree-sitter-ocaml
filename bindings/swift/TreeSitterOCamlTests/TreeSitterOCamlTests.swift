@@ -40,4 +40,18 @@ final class TreeSitterOCamlTests: XCTestCase {
         XCTAssertFalse(root.hasError)
     }
 
+    func testOCamlType() throws {
+        let language = Language(language: tree_sitter_ocaml_type())
+
+        let parser = Parser()
+        try parser.setLanguage(language)
+
+        let source = "int list"
+
+        let tree = try XCTUnwrap(parser.parse(source))
+        let root = try XCTUnwrap(tree.rootNode)
+
+        XCTAssertFalse(root.hasError)
+    }
+
 }

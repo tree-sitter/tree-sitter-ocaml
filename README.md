@@ -8,11 +8,12 @@
 
 OCaml grammar for [tree-sitter](https://github.com/tree-sitter/tree-sitter).
 
-This module defines two grammars for implementation (`.ml`) and interface (`.mli`) files. Require them as follows:
+This module defines grammars for implementations (`.ml`) interfaces (`.mli`) and types. Require them as follows:
 
 ```js
 require('tree-sitter-ocaml').ocaml;
 require('tree-sitter-ocaml').interface;
+require('tree-sitter-ocaml').type;
 ```
 
 References
