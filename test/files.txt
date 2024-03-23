@@ -1,0 +1,6 @@
+examples/**/*.ml
+examples/**/*.mli
+!examples/**/*.cppo.*
+!examples/ocamlformat/test/failing/**/*
+!examples/ocamlformat/test/passing/**/*
+!examples/ocaml/testsuite/tests/parse-errors/**/*

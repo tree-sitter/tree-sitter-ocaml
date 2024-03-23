@@ -1,27 +1,53 @@
 {
   "name": "tree-sitter-ocaml",
-  "version": "0.21.2",
+  "version": "0.22.0",
   "description": "OCaml grammar for tree-sitter",
+  "repository": "github:tree-sitter/tree-sitter-ocaml",
+  "license": "MIT",
+  "main": "bindings/node",
+  "types": "bindings/node",
   "keywords": [
-    "parser",
+    "incremental",
+    "parsing",
+    "tree-sitter",
     "ocaml"
   ],
-  "author": "Max Brunsfeld",
-  "license": "MIT",
+  "files": [
+    "binding.gyp",
+    "bindings/node/*",
+    "grammars/interface/src/*",
+    "grammars/ocaml/src/*",
+    "include/**",
+    "prebuilds/**",
+    "queries/*"
+  ],
   "dependencies": {
-    "nan": "^2.19.0"
+    "node-addon-api": "^7.1.0",
+    "node-gyp-build": "^4.8.0"
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.21.0"
+    "prebuildify": "^6.0.0",
+    "tree-sitter-cli": "^0.22.0"
+  },
+  "peerDependencies": {
+    "tree-sitter": "0.21"
   },
   "scripts": {
+    "install": "node-gyp-build",
+    "prebuildify": "prebuildify --napi --strip",
     "build": "npm run build-ocaml && npm run build-interface",
     "build-ocaml": "cd grammars/ocaml && tree-sitter generate --no-bindings",
     "build-interface": "cd grammars/interface && tree-sitter generate --no-bindings",
-    "test": "npm run test-ocaml && npm run test-interface && npm run test-highlight && script/parse-examples",
+    "build-wasm": "npm run build-wasm-ocaml && npm run build-wasm-interface",
+    "build-wasm-ocaml": "cd grammars/ocaml && tree-sitter build-wasm",
+    "build-wasm-interface": "cd grammars/interface && tree-sitter build-wasm",
+    "test": "npm run test-ocaml && npm run test-interface && npm run test-highlight",
     "test-ocaml": "cd grammars/ocaml && tree-sitter test",
     "test-interface": "cd grammars/interface && tree-sitter test",
-    "test-highlight": "tree-sitter test"
+    "test-highlight": "tree-sitter test",
+    "test-binding": "node --test bindings/node/binding_test.js",
+    "parse": "tree-sitter parse",
+    "parse-examples": "test/parse-examples.sh"
   },
   "tree-sitter": [
     {
