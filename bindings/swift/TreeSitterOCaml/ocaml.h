@@ -9,6 +9,7 @@ extern "C" {
 
 extern TSLanguage *tree_sitter_ocaml();
 extern TSLanguage *tree_sitter_ocaml_interface();
+extern TSLanguage *tree_sitter_ocaml_type();
 
 #ifdef __cplusplus
 }

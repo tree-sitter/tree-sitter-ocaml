@@ -1,6 +1,6 @@
 //! This crate provides OCaml language support for the [tree-sitter][] parsing
-//! library. There are separate languages for implementation (`.ml`) and
-//! interface (`.mli`) files.
+//! library. There are separate languages for implementation, (`.ml`),
+//! interfaces (`.mli`) and types.
 //!
 //! Typically, you will use the [language_ocaml][language func] function to add
 //! this language to a tree-sitter [Parser][], and then use the parser to parse
@@ -30,6 +30,7 @@ use tree_sitter::Language;
 extern "C" {
     fn tree_sitter_ocaml() -> Language;
     fn tree_sitter_ocaml_interface() -> Language;
+    fn tree_sitter_ocaml_type() -> Language;
 }
 
 /// Get the tree-sitter [Language][] for OCaml.
@@ -46,6 +47,13 @@ pub fn language_ocaml_interface() -> Language {
     unsafe { tree_sitter_ocaml_interface() }
 }
 
+/// Get the tree-sitter [Language][] for OCaml types.
+///
+/// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
+pub fn language_ocaml_type() -> Language {
+    unsafe { tree_sitter_ocaml_type() }
+}
+
 /// The content of the [`node-types.json`][] file for OCaml.
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
@@ -55,6 +63,11 @@ pub const OCAML_NODE_TYPES: &'static str = include_str!("../../grammars/ocaml/sr
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
 pub const INTERFACE_NODE_TYPES: &'static str = include_str!("../../grammars/interface/src/node-types.json");
+
+/// The content of the [`node-types.json`][] file for OCaml types.
+///
+/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
+pub const TYPE_NODE_TYPES: &'static str = include_str!("../../grammars/type/src/node-types.json");
 
 /// The syntax highlighting query for OCaml.
 pub const HIGHLIGHTS_QUERY: &'static str = include_str!("../../queries/highlights.scm");
@@ -97,6 +110,20 @@ mod tests {
               val x : int
             end
         "#;
+
+        let tree = parser.parse(code, None).unwrap();
+        let root = tree.root_node();
+        assert!(!root.has_error());
+    }
+
+    #[test]
+    fn test_ocaml_type() {
+        let mut parser = tree_sitter::Parser::new();
+        parser
+            .set_language(&super::language_ocaml_type())
+            .expect("Error loading OCaml type grammar");
+
+        let code = r#"int list"#;
 
         let tree = parser.parse(code, None).unwrap();
         let root = tree.root_node();

@@ -25,6 +25,9 @@ jobs:
       - name: Test interface
         working-directory: grammars/interface
         run: tree-sitter test
+      - name: Test type
+        working-directory: grammars/type
+        run: tree-sitter test
       - name: Test highlighting
         run: tree-sitter test
 

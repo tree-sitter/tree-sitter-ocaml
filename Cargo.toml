@@ -19,6 +19,9 @@ include = [
   "grammars/interface/grammar.js",
   "grammars/interface/src/*.c",
   "grammars/interface/src/*.json",
+  "grammars/type/grammar.js",
+  "grammars/type/src/*.c",
+  "grammars/type/src/*.json",
   "include/*",
   "queries/*"
 ]

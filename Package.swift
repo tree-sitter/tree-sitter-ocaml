@@ -15,10 +15,12 @@ let package = Package(
             name: "TreeSitterOCaml",
             path: ".",
             sources: [
-                "grammars/interface/src/parser.c",
-                "grammars/interface/src/scanner.c",
                 "grammars/ocaml/src/parser.c",
                 "grammars/ocaml/src/scanner.c",
+                "grammars/interface/src/parser.c",
+                "grammars/interface/src/scanner.c",
+                "grammars/type/src/parser.c",
+                "grammars/type/src/scanner.c",
                 "include",
             ],
             resources: [
