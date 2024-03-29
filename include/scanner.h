@@ -1,6 +1,7 @@
 #ifndef TREE_SITTER_OCAML_SCANNER_H_
 #define TREE_SITTER_OCAML_SCANNER_H_
 
+#include "tree_sitter/alloc.h"
 #include "tree_sitter/parser.h"
 
 #include <assert.h>
@@ -39,7 +40,7 @@ static inline void quoted_string_id_resize(Scanner *scanner,
 
   scanner->quoted_string_id_capacity = capacity;
   scanner->quoted_string_id =
-      realloc(scanner->quoted_string_id, capacity * sizeof(char));
+      ts_realloc(scanner->quoted_string_id, capacity * sizeof(char));
 }
 
 static inline void quoted_string_id_assign(Scanner *scanner, const char *buffer,
@@ -303,13 +304,13 @@ static bool scan_comment(Scanner *scanner, TSLexer *lexer) {
 }
 
 static Scanner *create() {
-  Scanner *scanner = calloc(1, sizeof(Scanner));
+  Scanner *scanner = ts_calloc(1, sizeof(Scanner));
   return scanner;
 }
 
 static void destroy(Scanner *scanner) {
-  free(scanner->quoted_string_id);
-  free(scanner);
+  ts_free(scanner->quoted_string_id);
+  ts_free(scanner);
 }
 
 static unsigned serialize(Scanner *scanner, char *buffer) {
