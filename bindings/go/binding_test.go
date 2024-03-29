@@ -35,3 +35,17 @@ func TestOCamlInterfaceGrammar(t *testing.T) {
 		t.Errorf("Error parsing OCamlInterface")
 	}
 }
+
+func TestOCamlTypeGrammar(t *testing.T) {
+	language := tree_sitter.NewLanguage(tree_sitter_ocaml.OCamlType())
+	if language == nil {
+		t.Errorf("Error loading OCamlType grammar")
+	}
+
+	sourceCode := []byte("int list")
+
+	node, err := tree_sitter.ParseCtx(context.Background(), sourceCode, language)
+	if err != nil || node.HasError() {
+		t.Errorf("Error parsing OCamlType")
+	}
+}

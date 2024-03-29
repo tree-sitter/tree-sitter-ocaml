@@ -35,10 +35,12 @@ setup(
             name="_binding",
             sources=[
                 "bindings/python/tree_sitter_ocaml/binding.c",
-                "grammars/interface/src/parser.c",
-                "grammars/interface/src/scanner.c",
                 "grammars/ocaml/src/parser.c",
                 "grammars/ocaml/src/scanner.c",
+                "grammars/interface/src/parser.c",
+                "grammars/interface/src/scanner.c",
+                "grammars/type/src/parser.c",
+                "grammars/type/src/scanner.c",
             ],
             extra_compile_args=(
                 ["-std=c11"] if system() != 'Windows' else []

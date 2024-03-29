@@ -4,6 +4,7 @@ typedef struct TSLanguage TSLanguage;
 
 extern "C" TSLanguage *tree_sitter_ocaml();
 extern "C" TSLanguage *tree_sitter_ocaml_interface();
+extern "C" TSLanguage *tree_sitter_ocaml_type();
 
 // "tree-sitter", "language" hashed with BLAKE2
 const napi_type_tag LANGUAGE_TYPE_TAG = {
@@ -24,6 +25,13 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     interface_language.TypeTag(&LANGUAGE_TYPE_TAG);
     interface_exports["language"] = interface_language;
     exports["interface"] = interface_exports;
+
+    auto type_exports = Napi::Object::New(env);
+    type_exports["name"] = Napi::String::New(env, "ocaml_type");
+    auto type_language = Napi::External<TSLanguage>::New(env, tree_sitter_ocaml_type());
+    type_language.TypeTag(&LANGUAGE_TYPE_TAG);
+    type_exports["language"] = type_language;
+    exports["type"] = type_exports;
 
     return exports;
 }
