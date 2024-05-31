@@ -22,6 +22,9 @@ include = [
   "grammars/type/grammar.js",
   "grammars/type/src/*.c",
   "grammars/type/src/*.json",
+  "grammars/menhir/grammar.js",
+  "grammars/menhir/src/*.c",
+  "grammars/menhir/src/*.json",
   "include/*",
   "queries/*"
 ]
