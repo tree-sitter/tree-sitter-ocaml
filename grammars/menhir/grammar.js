@@ -1,3 +1,5 @@
+// Grammar based on: https://github.com/Kerl13/tree-sitter-menhir/
+//
 // Reference: https://gitlab.inria.fr/fpottier/menhir/blob/master/src/lexer.mll
 const lowercase = "[a-zß-öø-ÿ_]"
 const uppercase = "[A-ZÀ-ÖØ-Þ]"
