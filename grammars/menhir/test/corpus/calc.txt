@@ -1,0 +1,51 @@
+================
+Random Stuff
+================
+
+%{
+open Ast
+%}
+
+%token <string list> MYSTRING
+%start program
+
+%%
+
+let program :=
+  | ~ = MYSTRING; <>
+
+----
+
+(menhir
+  (declaration
+    (header
+      (ocaml
+        (open_module
+          (module_path
+            (module_name))))))
+  (declaration
+    (type
+      (ocaml_type
+        (constructed_type
+          (type_constructor_path
+            (type_constructor))
+          (type_constructor_path
+            (type_constructor)))))
+    (terminal_alias_attrs
+      (uid)))
+  (declaration
+    (non_terminal
+      (lid)))
+  (new_rule
+    (lid)
+    (equality_symbol)
+    (expression
+      (seq_expression
+        (pattern)
+        (symbol_expression
+          (symbol
+            (uid)))
+        (seq_expression
+          (action_expression
+            (menhir_action
+              (type))))))))
