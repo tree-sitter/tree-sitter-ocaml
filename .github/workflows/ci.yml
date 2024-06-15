@@ -90,6 +90,7 @@ jobs:
       - name: Test
         run: npm run test-binding
 
+
   test-rust:
     name: Test Rust binding
     runs-on: ${{matrix.os}}

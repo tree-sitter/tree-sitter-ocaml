@@ -15,10 +15,10 @@
   "files": [
     "binding.gyp",
     "bindings/node/*",
-    "grammars/ocaml/src/*",
-    "grammars/interface/src/*",
-    "grammars/type/src/*",
-    "include/**",
+    "common/**",
+    "grammars/ocaml/src/**",
+    "grammars/interface/src/**",
+    "grammars/type/src/**",
     "prebuilds/**",
     "queries/*"
   ],
@@ -58,7 +58,7 @@
       "scope": "source.ocaml",
       "path": "grammars/ocaml",
       "external-files": [
-        "include/scanner.h"
+        "common/scanner.h"
       ],
       "file-types": [
         "ml"
@@ -72,7 +72,7 @@
       "scope": "source.ocaml.interface",
       "path": "grammars/interface",
       "external-files": [
-        "include/scanner.h"
+        "common/scanner.h"
       ],
       "file-types": [
         "mli"
@@ -86,7 +86,7 @@
       "scope": "source.ocaml.type",
       "path": "grammars/type",
       "external-files": [
-        "include/scanner.h"
+        "common/scanner.h"
       ],
       "file-types": [],
       "injection-regex": "^ocaml_type$",

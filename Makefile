@@ -6,7 +6,7 @@ LANGUAGE_NAME := tree-sitter-ocaml
 OCAML_DIR := grammars/ocaml
 INTERFACE_DIR := grammars/interface
 TYPE_DIR := grammars/type
-INCLUDE_DIR := include
+SRC_DIR := grammars/ocaml/src
 
 PARSER_REPO_URL := $(shell git remote get-url origin 2>/dev/null)
 
@@ -35,7 +35,7 @@ OBJS := $(patsubst %.c,%.o,$(wildcard grammars/*/src/*.c))
 
 # flags
 ARFLAGS := rcs
-override CFLAGS += -I$(INCLUDE_DIR) -std=c11 -fPIC
+override CFLAGS += -I$(SRC_DIR) -std=c11 -fPIC
 
 # OS-specific bits
 ifeq ($(OS),Windows_NT)

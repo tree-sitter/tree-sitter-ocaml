@@ -1,6 +1,6 @@
 package tree_sitter_ocaml
 
-// #cgo CFLAGS: -I../../include -std=c11 -fPIC
+// #cgo CFLAGS: -I../../grammars/type/src -std=c11 -fPIC
 // #include "../../grammars/type/src/parser.c"
 // #include "../../grammars/type/src/scanner.c"
 import "C"

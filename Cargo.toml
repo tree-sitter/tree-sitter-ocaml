@@ -12,18 +12,15 @@ autoexamples = false
 
 build = "bindings/rust/build.rs"
 include = [
-  "bindings/rust/*",
+  "bindings/rust",
+  "common",
   "grammars/ocaml/grammar.js",
-  "grammars/ocaml/src/*.c",
-  "grammars/ocaml/src/*.json",
+  "grammars/ocaml/src",
   "grammars/interface/grammar.js",
-  "grammars/interface/src/*.c",
-  "grammars/interface/src/*.json",
+  "grammars/interface/src",
   "grammars/type/grammar.js",
-  "grammars/type/src/*.c",
-  "grammars/type/src/*.json",
-  "include/*",
-  "queries/*"
+  "grammars/type/src",
+  "queries"
 ]
 
 [lib]

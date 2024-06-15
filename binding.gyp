@@ -6,7 +6,7 @@
         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except",
       ],
       "include_dirs": [
-        "include"
+        "grammars/ocaml/src",
       ],
       "sources": [
         "bindings/node/binding.cc",
