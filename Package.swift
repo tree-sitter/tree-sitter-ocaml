@@ -21,13 +21,12 @@ let package = Package(
                 "grammars/interface/src/scanner.c",
                 "grammars/type/src/parser.c",
                 "grammars/type/src/scanner.c",
-                "include",
             ],
             resources: [
                 .copy("queries")
             ],
             publicHeadersPath: "bindings/swift",
-            cSettings: [.headerSearchPath("include")]
+            cSettings: [.headerSearchPath("grammars/ocaml/src")]
         ),
         .testTarget(
             name: "TreeSitterOCamlTests",
