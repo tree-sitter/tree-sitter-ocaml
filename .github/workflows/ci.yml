@@ -90,6 +90,26 @@ jobs:
       - name: Test
         run: npm run test-binding
 
+  test-python:
+    name: Test Python binding
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          cache: pip
+          python-version: 3.12
+          cache-dependency-path: pyproject.toml
+      - name: Build
+        run: pip install -e .[core]
+      - name: Test
+        run: python -munittest discover -v -s bindings/python/tests
 
   test-rust:
     name: Test Rust binding
