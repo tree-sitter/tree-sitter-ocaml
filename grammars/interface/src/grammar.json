@@ -1,4 +1,9 @@
 {
+  "0": "o",
+  "1": "c",
+  "2": "a",
+  "3": "m",
+  "4": "l",
   "name": "ocaml_interface",
   "word": "_identifier",
   "rules": {

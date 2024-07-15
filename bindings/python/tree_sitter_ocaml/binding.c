@@ -6,15 +6,15 @@ TSLanguage *tree_sitter_ocaml(void);
 TSLanguage *tree_sitter_ocaml_interface(void);
 TSLanguage *tree_sitter_ocaml_type(void);
 
-static PyObject* _binding_language_ocaml(PyObject *self, PyObject *args) {
+static PyObject* _binding_language_ocaml(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args)) {
     return PyLong_FromVoidPtr(tree_sitter_ocaml());
 }
 
-static PyObject* _binding_language_ocaml_interface(PyObject *self, PyObject *args) {
+static PyObject* _binding_language_ocaml_interface(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args)) {
     return PyLong_FromVoidPtr(tree_sitter_ocaml_interface());
 }
 
-static PyObject* _binding_language_ocaml_type(PyObject *self, PyObject *args) {
+static PyObject* _binding_language_ocaml_type(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args)) {
     return PyLong_FromVoidPtr(tree_sitter_ocaml_type());
 }
 
