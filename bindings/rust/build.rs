@@ -9,6 +9,9 @@ fn main() {
     let mut c_config = cc::Build::new();
     c_config.std("c11").include(&ocaml_dir);
 
+    #[cfg(target_env = "msvc")]
+    c_config.flag("-utf-8");
+
     println!("cargo:rerun-if-changed={}", common_dir.to_str().unwrap());
 
     for dir in &[ocaml_dir, interface_dir, type_dir] {
