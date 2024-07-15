@@ -1,4 +1,4 @@
-* text eol=lf
+* text=auto eol=lf
 
 grammars/ocaml/src/*.json linguist-generated
 grammars/ocaml/src/parser.c linguist-generated
