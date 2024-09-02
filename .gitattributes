@@ -2,15 +2,15 @@
 
 grammars/ocaml/src/*.json linguist-generated
 grammars/ocaml/src/parser.c linguist-generated
-grammars/ocaml/src/tree_sitter/* linguist-vendored
+grammars/ocaml/src/tree_sitter/* linguist-generated
 
 grammars/interface/src/*.json linguist-generated
 grammars/interface/src/parser.c linguist-generated
-grammars/interface/src/tree_sitter/* linguist-vendored
+grammars/interface/src/tree_sitter/* linguist-generated
 
 grammars/type/src/*.json linguist-generated
 grammars/type/src/parser.c linguist-generated
-grammars/type/src/tree_sitter/* linguist-vendored
+grammars/type/src/tree_sitter/* linguist-generated
 
 bindings/** linguist-generated
 binding.gyp linguist-generated

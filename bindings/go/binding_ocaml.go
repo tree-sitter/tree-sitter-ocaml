@@ -8,6 +8,6 @@ import "C"
 import "unsafe"
 
 // Get the tree-sitter Language for OCaml.
-func OCaml() unsafe.Pointer {
+func LanguageOCaml() unsafe.Pointer {
 	return unsafe.Pointer(C.tree_sitter_ocaml())
 }

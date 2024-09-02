@@ -9,13 +9,13 @@
         "grammars/ocaml/src",
       ],
       "sources": [
-        "bindings/node/binding.cc",
         "grammars/ocaml/src/parser.c",
         "grammars/ocaml/src/scanner.c",
         "grammars/interface/src/parser.c",
         "grammars/interface/src/scanner.c",
         "grammars/type/src/parser.c",
         "grammars/type/src/scanner.c",
+        "bindings/node/binding.cc",
       ],
       "conditions": [
         ["OS!='win'", {
@@ -29,6 +29,6 @@
           ],
         }],
       ],
-    },
+    }
   ]
 }

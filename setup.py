@@ -42,17 +42,13 @@ setup(
                 "grammars/type/src/parser.c",
                 "grammars/type/src/scanner.c",
             ],
-            extra_compile_args=(
-                [
-                    "-std=c11",
-                    "-fvisibility=hidden",
-                ]
-                if system() != "Windows"
-                else [
-                    "/std:c11",
-                    "/utf-8",
-                ]
-            ),
+            extra_compile_args=[
+                "-std=c11",
+                "-fvisibility=hidden",
+            ] if system() != "Windows" else [
+                "/std:c11",
+                "/utf-8",
+            ],
             define_macros=[
                 ("Py_LIMITED_API", "0x03090000"),
                 ("PY_SSIZE_T_CLEAN", None),

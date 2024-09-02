@@ -1,5 +1,4 @@
 # Rust artifacts
-Cargo.lock
 target/
 
 # Node artifacts
@@ -7,14 +6,12 @@ build/
 prebuilds/
 node_modules/
 *.tgz
-package-lock.json
 
 # Swift artifacts
 .build/
 Package.resolved
 
 # Go artifacts
-go.sum
 _obj/
 
 # Python artifacts
@@ -32,11 +29,10 @@ dist/
 *.dll
 *.pc
 
+# Example dirs
+/examples/*/
+
 # Grammar volatiles
 *.wasm
 *.obj
 *.o
-
-# Test files
-/test.ml
-/test.mli

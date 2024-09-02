@@ -12,27 +12,27 @@ const napi_type_tag LANGUAGE_TYPE_TAG = {
 };
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-    auto ocaml_exports = Napi::Object::New(env);
-    ocaml_exports["name"] = Napi::String::New(env, "ocaml");
+    auto ocaml = Napi::Object::New(env);
+    ocaml["name"] = Napi::String::New(env, "ocaml");
     auto ocaml_language = Napi::External<TSLanguage>::New(env, tree_sitter_ocaml());
     ocaml_language.TypeTag(&LANGUAGE_TYPE_TAG);
-    ocaml_exports["language"] = ocaml_language;
-    exports["ocaml"] = ocaml_exports;
+    ocaml["language"] = ocaml_language;
 
-    auto interface_exports = Napi::Object::New(env);
-    interface_exports["name"] = Napi::String::New(env, "ocaml_interface");
-    auto interface_language = Napi::External<TSLanguage>::New(env, tree_sitter_ocaml_interface());
-    interface_language.TypeTag(&LANGUAGE_TYPE_TAG);
-    interface_exports["language"] = interface_language;
-    exports["interface"] = interface_exports;
+    auto ocaml_interface = Napi::Object::New(env);
+    ocaml_interface["name"] = Napi::String::New(env, "ocaml_interface");
+    auto ocaml_interface_language = Napi::External<TSLanguage>::New(env, tree_sitter_ocaml_interface());
+    ocaml_interface_language.TypeTag(&LANGUAGE_TYPE_TAG);
+    ocaml_interface["language"] = ocaml_interface_language;
 
-    auto type_exports = Napi::Object::New(env);
-    type_exports["name"] = Napi::String::New(env, "ocaml_type");
-    auto type_language = Napi::External<TSLanguage>::New(env, tree_sitter_ocaml_type());
-    type_language.TypeTag(&LANGUAGE_TYPE_TAG);
-    type_exports["language"] = type_language;
-    exports["type"] = type_exports;
+    auto ocaml_type = Napi::Object::New(env);
+    ocaml_type["name"] = Napi::String::New(env, "ocaml_type");
+    auto ocaml_type_language = Napi::External<TSLanguage>::New(env, tree_sitter_ocaml_type());
+    ocaml_type_language.TypeTag(&LANGUAGE_TYPE_TAG);
+    ocaml_type["language"] = ocaml_type_language;
 
+    exports["ocaml"] = ocaml;
+    exports["ocaml_interface"] = ocaml_interface;
+    exports["ocaml_type"] = ocaml_type;
     return exports;
 }
 

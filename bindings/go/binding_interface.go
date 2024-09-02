@@ -8,6 +8,6 @@ import "C"
 import "unsafe"
 
 // Get the tree-sitter Language for OCaml interfaces.
-func OCamlInterface() unsafe.Pointer {
+func LanguageOCamlInterface() unsafe.Pointer {
 	return unsafe.Pointer(C.tree_sitter_ocaml_interface())
 }
