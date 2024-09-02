@@ -1,6 +1,23 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+    paths:
+      - "scripts.js"
+      - "common/*"
+      - "grammars/*/grammar.js"
+      - "grammars/*/src/**"
+      - "bindings/**"
+      - "binding.gyp"
+  pull_request:
+    paths:
+      - "scripts.js"
+      - "common/*"
+      - "grammars/*/grammar.js"
+      - "grammars/*/src/**"
+      - "bindings/**"
+      - "binding.gyp"
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
@@ -14,131 +31,57 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      REPOSITORIES: |
+        0install/0install@225587e
+        BinaryAnalysisPlatform/bap@f969db3
+        janestreet/base@1311ac1
+        dbuenzli/cmdliner@c229193
+        ocaml/dune@58d1cd3
+        ocaml-multicore/eio@14ae3cf
+        ocsigen/js_of_ocaml@d2cf189
+        garrigue/lablgtk@e2d564b
+        ocsigen/lwt@73f1a0f
+        melange-re/melange@01d6ba4
+        ocaml/merlin@b274d31
+        ocaml/ocaml@18c4510
+        mirage/ocaml-cohttp@cf2ae33
+        ocaml/ocaml-lsp@ad20957
+        ocaml-ppx/ocamlformat@6ce00bf
+        ocaml/opam@eafdc81
+        owlbarn/owl@c66069e
+        ocaml-ppx/ppxlib@455f217
+        facebook/pyre-check@5cd77ed
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v1
-      - name: Test ocaml
-        working-directory: grammars/ocaml
-        run: tree-sitter test
-      - name: Test interface
-        working-directory: grammars/interface
-        run: tree-sitter test
-      - name: Test type
-        working-directory: grammars/type
-        run: tree-sitter test
-      - name: Test highlighting
-        run: tree-sitter test
-
-  parse-examples:
-    name: Parse examples
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Set up examples
+        shell: bash
+        run: |
+          while IFS='@' read -r repo_url repo_sha || [ -n "$repo_url" ]; do
+            if [ -z "$repo_url" ]; then
+              continue
+            fi
+            repo_name=$(basename "$repo_url")
+            git clone --filter=blob:none --no-checkout "https://github.com/$repo_url" "examples/$repo_name"
+            (
+              cd "examples/$repo_name"
+              git checkout "$repo_sha"
+            )
+          done <<< "$REPOSITORIES"
+      - name: Run tests
+        uses: tree-sitter/parser-test-action@v2
         with:
-          submodules: true
-      - name: Set up tree-sitter
-        uses: tree-sitter/setup-action/cli@v1
+          test-rust: ${{runner.os == 'Linux'}}
+          test-node: true
+          test-python: true
+          test-go: true
+          test-swift: ${{runner.os == 'macOS'}}
       - name: Parse examples
+        id: test
         uses: tree-sitter/parse-action@v4
         with:
           files-list: test/files.txt
           invalid-files-list: test/invalid-files.txt
-
-  test-go:
-    name: Test Go binding
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-          cache-dependency-path: bindings/go/go.mod
-      - name: Get dependencies
-        working-directory: bindings/go
-        run: go get -t .
-      - name: Test
-        working-directory: bindings/go
-        run: go test -v
-
-  test-node:
-    name: Test Node binding
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
-      - name: Install dependencies
-        run: npm install
-      - name: Test
-        run: npm run test-binding
-
-  test-python:
-    name: Test Python binding
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          cache: pip
-          python-version: 3.12
-          cache-dependency-path: pyproject.toml
-      - name: Build
-        run: pip install -e .[core]
-      - name: Test
-        run: python -munittest discover -v -s bindings/python/tests
-
-  test-rust:
-    name: Test Rust binding
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Build
-        run: cargo build -v
-      - name: Test
-        run: cargo test -v
-
-  test-swift:
-    name: Test Swift binding
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Build
-        run: swift build
-      - name: Test
-        run: swift test

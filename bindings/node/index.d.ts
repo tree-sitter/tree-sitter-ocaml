@@ -24,6 +24,7 @@ type Language = {
   nodeTypeInfo: NodeInfo[];
 };
 
-export const ocaml: Language;
-export const interface: Language;
-export const type: Language;
+declare const ocaml: Language;
+declare const ocaml_interface: Language;
+declare const ocaml_type: Language;
+export = {ocaml, ocaml_interface, ocaml_type}

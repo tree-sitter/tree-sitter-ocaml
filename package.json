@@ -24,12 +24,12 @@
     "*.wasm"
   ],
   "dependencies": {
-    "node-addon-api": "^8.0.0",
-    "node-gyp-build": "^4.8.1"
+    "node-addon-api": "^8.1.0",
+    "node-gyp-build": "^4.8.2"
   },
   "devDependencies": {
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.22.6"
+    "tree-sitter-cli": "^0.23.0"
   },
   "peerDependencies": {
     "tree-sitter": "^0.21.1"
@@ -41,22 +41,10 @@
   },
   "scripts": {
     "install": "node-gyp-build",
-    "build": "npm run build-ocaml && npm run build-interface && npm run build-type",
-    "build-ocaml": "cd grammars/ocaml && tree-sitter generate --no-bindings",
-    "build-interface": "cd grammars/interface && tree-sitter generate --no-bindings",
-    "build-type": "cd grammars/type && tree-sitter generate --no-bindings",
-    "build-wasm": "npm run build-wasm-ocaml && npm run build-wasm-interface && npm run build-wasm-type",
-    "build-wasm-ocaml": "cd grammars/ocaml && tree-sitter build --wasm",
-    "build-wasm-interface": "cd grammars/interface && tree-sitter build --wasm",
-    "build-wasm-type": "cd grammars/type && tree-sitter build --wasm",
-    "test": "npm run test-ocaml && npm run test-interface && npm run test-type && npm run test-highlight && npm run test-binding",
-    "test-ocaml": "cd grammars/ocaml && tree-sitter test",
-    "test-interface": "cd grammars/interface && tree-sitter test",
-    "test-type": "cd grammars/type && tree-sitter test",
-    "test-highlight": "tree-sitter test",
-    "test-binding": "node --test bindings/node/*_test.js",
-    "parse": "tree-sitter parse",
-    "parse-examples": "test/parse-examples.sh"
+    "generate": "for dir in ocaml ocaml_interface ocaml_type; do cd $dir && tree-sitter generate --no-bindings && cd ..; done",
+    "prestart": "tree-sitter build ocaml --wasm -o ocaml/tree-sitter-ocaml.wasm",
+    "start": "tree-sitter playground --grammar-path ocaml",
+    "test": "node --test bindings/node/*_test.js"
   },
   "tree-sitter": [
     {
