@@ -27,8 +27,21 @@ jobs:
           test-python: true
           test-go: true
           test-swift: ${{runner.os == 'macOS'}}
+  parse-examples:
+    name: Parse examples
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v1
       - name: Parse examples
-        id: test
         uses: tree-sitter/parse-action@v4
         with:
           files-list: test/files.txt
