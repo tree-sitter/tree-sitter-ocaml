@@ -41,7 +41,7 @@
   },
   "scripts": {
     "install": "node-gyp-build",
-    "generate": "for dir in ocaml ocaml_interface ocaml_type; do cd $dir && tree-sitter generate --no-bindings && cd ..; done",
+    "generate": "for dir in grammars/ocaml grammars/interface grammars/type; do cd $dir; tree-sitter generate --no-bindings; cd -; done",
     "prestart": "tree-sitter build ocaml --wasm -o ocaml/tree-sitter-ocaml.wasm",
     "start": "tree-sitter playground --grammar-path ocaml",
     "test": "node --test bindings/node/*_test.js",
