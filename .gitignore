@@ -33,3 +33,7 @@ dist/
 *.wasm
 *.obj
 *.o
+
+# Test files
+/test.ml
+/test.mli
