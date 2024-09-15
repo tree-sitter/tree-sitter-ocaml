@@ -81,6 +81,7 @@ module.exports = grammar({
     $._expression,
     $._sequence_expression,
     $._simple_pattern,
+    $._effect_pattern,
     $._pattern,
     $._binding_pattern,
     $._constant,
@@ -1379,17 +1380,22 @@ module.exports = grammar({
       $._extension
     ),
 
-    _pattern: $ => choice(
+    _effect_pattern: $ => choice(
       $._simple_pattern,
-      $.alias_pattern,
-      $.or_pattern,
       $.constructor_pattern,
       $.tag_pattern,
+      $.lazy_pattern
+    ),
+
+    _pattern: $ => choice(
+      $._effect_pattern,
+      $.alias_pattern,
+      $.or_pattern,
       $.tuple_pattern,
       $.cons_pattern,
       $.range_pattern,
-      $.lazy_pattern,
-      $.exception_pattern
+      $.exception_pattern,
+      $.effect_pattern
     ),
 
     _binding_pattern: $ => choice(
@@ -1623,6 +1629,13 @@ module.exports = grammar({
       'exception',
       optional($._attribute),
       $._pattern
+    ),
+
+    effect_pattern: $ => seq(
+      'effect',
+      field('effect', $._effect_pattern),
+      ',',
+      field('continuation', $._simple_pattern)
     ),
 
     // Attributes and extensions

@@ -220,8 +220,9 @@ function lazy x -> ()
 (compilation_unit
   (expression_item
     (function_expression
-      (match_case (lazy_pattern (value_pattern))
-      (unit)))))
+      (match_case
+        (lazy_pattern (value_pattern))
+        (unit)))))
 
 ============================
 Parenthesized patterns
@@ -236,4 +237,19 @@ function (x) -> ()
     (function_expression
       (match_case
         (parenthesized_pattern (value_pattern))
+        (unit)))))
+
+============================
+Effect patterns
+============================
+
+function effect E, k -> ()
+
+---
+
+(compilation_unit
+  (expression_item
+    (function_expression
+      (match_case
+        (effect_pattern (constructor_path (constructor_name)) (value_pattern))
         (unit)))))
