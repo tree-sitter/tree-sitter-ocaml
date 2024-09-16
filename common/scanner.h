@@ -1,12 +1,12 @@
 #ifndef TREE_SITTER_OCAML_SCANNER_H_
 #define TREE_SITTER_OCAML_SCANNER_H_
 
-#include "tree_sitter/alloc.h"
-#include "tree_sitter/parser.h"
-
 #include <assert.h>
 #include <string.h>
 #include <wctype.h>
+
+#include "tree_sitter/alloc.h"
+#include "tree_sitter/parser.h"
 
 enum TokenType {
   COMMENT,
@@ -22,7 +22,7 @@ typedef struct {
 
   size_t quoted_string_id_length;
   size_t quoted_string_id_capacity;
-  char *quoted_string_id;
+  int32_t *quoted_string_id;
 } Scanner;
 
 static inline void quoted_string_id_clear(Scanner *scanner) {
@@ -40,7 +40,7 @@ static inline void quoted_string_id_resize(Scanner *scanner,
 
   scanner->quoted_string_id_capacity = capacity;
   scanner->quoted_string_id =
-      ts_realloc(scanner->quoted_string_id, capacity * sizeof(char));
+      ts_realloc(scanner->quoted_string_id, capacity * sizeof(int32_t));
 }
 
 static inline void quoted_string_id_assign(Scanner *scanner, const char *buffer,
@@ -58,7 +58,7 @@ static inline size_t quoted_string_id_copy(Scanner *scanner, char *buffer) {
   return length;
 }
 
-static inline void quoted_string_id_push(Scanner *scanner, char c) {
+static inline void quoted_string_id_push(Scanner *scanner, int32_t c) {
   quoted_string_id_resize(scanner, scanner->quoted_string_id_length + 1);
   scanner->quoted_string_id[scanner->quoted_string_id_length++] = c;
 }
@@ -89,11 +89,15 @@ static void scan_string(TSLexer *lexer) {
   }
 }
 
+static bool is_quoted_string_delim(int32_t c) {
+    return iswlower(c) || c == '_' || c >= 128;
+}
+
 static bool scan_left_quoted_string_delimiter(Scanner *scanner,
                                               TSLexer *lexer) {
   quoted_string_id_clear(scanner);
 
-  while (iswlower(lexer->lookahead) || lexer->lookahead == '_') {
+  while (is_quoted_string_delim(lexer->lookahead)) {
     quoted_string_id_push(scanner, lexer->lookahead);
     advance(lexer);
   }
@@ -137,8 +141,8 @@ static bool scan_quoted_string(Scanner *scanner, TSLexer *lexer) {
   }
 }
 
-static char scan_character(TSLexer *lexer) {
-  char last = 0;
+static int32_t scan_character(TSLexer *lexer) {
+  int32_t last = 0;
 
   switch (lexer->lookahead) {
     case '\\':
@@ -226,7 +230,7 @@ static bool scan_extattrident(TSLexer *lexer) {
 }
 
 static bool scan_comment(Scanner *scanner, TSLexer *lexer) {
-  char last = 0;
+  int32_t last = 0;
 
   if (lexer->lookahead != '*') return false;
   advance(lexer);
@@ -334,8 +338,7 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
   if (valid_symbols[LEFT_QUOTED_STRING_DELIM] &&
-      (iswlower(lexer->lookahead) || lexer->lookahead == '_' ||
-       lexer->lookahead == '|')) {
+      (is_quoted_string_delim(lexer->lookahead) || lexer->lookahead == '|')) {
     lexer->result_symbol = LEFT_QUOTED_STRING_DELIM;
     return scan_left_quoted_string_delimiter(scanner, lexer);
   }
