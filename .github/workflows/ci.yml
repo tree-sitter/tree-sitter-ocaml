@@ -1,23 +1,6 @@
 name: CI
 
-on:
-  push:
-    branches: [master]
-    paths:
-      - "scripts.js"
-      - "common/*"
-      - "grammars/*/grammar.js"
-      - "grammars/*/src/**"
-      - "bindings/**"
-      - "binding.gyp"
-  pull_request:
-    paths:
-      - "scripts.js"
-      - "common/*"
-      - "grammars/*/grammar.js"
-      - "grammars/*/src/**"
-      - "bindings/**"
-      - "binding.gyp"
+on: [push, pull_request]
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
@@ -31,46 +14,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    env:
-      REPOSITORIES: |
-        0install/0install@225587e
-        BinaryAnalysisPlatform/bap@f969db3
-        janestreet/base@1311ac1
-        dbuenzli/cmdliner@c229193
-        ocaml/dune@58d1cd3
-        ocaml-multicore/eio@14ae3cf
-        ocsigen/js_of_ocaml@d2cf189
-        garrigue/lablgtk@e2d564b
-        ocsigen/lwt@73f1a0f
-        melange-re/melange@01d6ba4
-        ocaml/merlin@b274d31
-        ocaml/ocaml@18c4510
-        mirage/ocaml-cohttp@cf2ae33
-        ocaml/ocaml-lsp@ad20957
-        ocaml-ppx/ocamlformat@6ce00bf
-        ocaml/opam@eafdc81
-        owlbarn/owl@c66069e
-        ocaml-ppx/ppxlib@455f217
-        facebook/pyre-check@5cd77ed
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v1
-      - name: Set up examples
-        shell: bash
-        run: |
-          while IFS='@' read -r repo_url repo_sha || [ -n "$repo_url" ]; do
-            if [ -z "$repo_url" ]; then
-              continue
-            fi
-            repo_name=$(basename "$repo_url")
-            git clone --filter=blob:none --no-checkout "https://github.com/$repo_url" "examples/$repo_name"
-            (
-              cd "examples/$repo_name"
-              git checkout "$repo_sha"
-            )
-          done <<< "$REPOSITORIES"
       - name: Run tests
         uses: tree-sitter/parser-test-action@v2
         with:
@@ -79,8 +27,21 @@ jobs:
           test-python: true
           test-go: true
           test-swift: ${{runner.os == 'macOS'}}
+  parse-examples:
+    name: Parse examples
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v1
       - name: Parse examples
-        id: test
         uses: tree-sitter/parse-action@v4
         with:
           files-list: test/files.txt

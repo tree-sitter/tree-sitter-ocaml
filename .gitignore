@@ -29,10 +29,11 @@ dist/
 *.dll
 *.pc
 
-# Example dirs
-/examples/*/
-
 # Grammar volatiles
 *.wasm
 *.obj
 *.o
+
+# Test files
+/test.ml
+/test.mli
