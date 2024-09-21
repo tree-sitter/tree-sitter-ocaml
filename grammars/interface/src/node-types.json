@@ -232,6 +232,28 @@
     ]
   },
   {
+    "type": "_effect_pattern",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "_simple_pattern",
+        "named": true
+      },
+      {
+        "type": "constructor_pattern",
+        "named": true
+      },
+      {
+        "type": "lazy_pattern",
+        "named": true
+      },
+      {
+        "type": "tag_pattern",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_expression",
     "named": true,
     "subtypes": [
@@ -438,7 +460,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "_simple_pattern",
+        "type": "_effect_pattern",
         "named": true
       },
       {
@@ -450,15 +472,11 @@
         "named": true
       },
       {
-        "type": "constructor_pattern",
+        "type": "effect_pattern",
         "named": true
       },
       {
         "type": "exception_pattern",
-        "named": true
-      },
-      {
-        "type": "lazy_pattern",
         "named": true
       },
       {
@@ -467,10 +485,6 @@
       },
       {
         "type": "range_pattern",
-        "named": true
-      },
-      {
-        "type": "tag_pattern",
         "named": true
       },
       {
@@ -1827,6 +1841,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "effect_pattern",
+    "named": true,
+    "fields": {
+      "continuation": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_simple_pattern",
+            "named": true
+          }
+        ]
+      },
+      "effect": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_effect_pattern",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3812,6 +3852,10 @@
           {
             "type": "_pattern",
             "named": true
+          },
+          {
+            "type": "_simple_pattern",
+            "named": true
           }
         ]
       }
@@ -5207,6 +5251,10 @@
   },
   {
     "type": "downto",
+    "named": false
+  },
+  {
+    "type": "effect",
     "named": false
   },
   {
