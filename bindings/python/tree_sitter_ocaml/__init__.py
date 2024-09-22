@@ -23,9 +23,9 @@ def __getattr__(name):
 
 
 __all__ = [
-    "ocaml",
-    "interface",
-    "type",
+    "language_ocaml",
+    "language_ocaml_interface",
+    "language_ocaml_type",
     "HIGHLIGHTS_QUERY",
     "LOCALS_QUERY",
     "TAGS_QUERY",
