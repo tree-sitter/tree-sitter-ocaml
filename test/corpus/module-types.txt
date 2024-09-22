@@ -81,6 +81,7 @@ Functor types
 ==============================
 
 module M : functor (M : T) -> T
+module M : (M : T) (M : T) -> T
 module M : T -> T -> T
 module M : () -> T
 
@@ -99,6 +100,17 @@ module M : () -> T
     (module_binding
       (module_name)
       (functor_type
+        (module_parameter
+          (module_name)
+          (module_type_path (module_type_name)))
+        (module_parameter
+          (module_name)
+          (module_type_path (module_type_name)))
+        (module_type_path (module_type_name)))))
+  (module_definition
+    (module_binding
+      (module_name)
+      (functor_type
         (module_type_path (module_type_name))
         (functor_type
           (module_type_path (module_type_name))
@@ -107,6 +119,7 @@ module M : () -> T
     (module_binding
       (module_name)
       (functor_type
+        (module_parameter)
         (module_type_path (module_type_name))))))
 
 ==============================

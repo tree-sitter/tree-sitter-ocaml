@@ -58,7 +58,7 @@ module.exports = grammar({
     $._label
   ],
 
-  word: $ => $._identifier,
+  word: $ => $._lowercase_identifier,
 
   supertypes: $ => [
     $._structure_item,
@@ -81,6 +81,7 @@ module.exports = grammar({
     $._expression,
     $._sequence_expression,
     $._simple_pattern,
+    $._effect_pattern,
     $._pattern,
     $._binding_pattern,
     $._constant,
@@ -484,9 +485,8 @@ module.exports = grammar({
 
     functor_type: $ => prec.right(seq(
       choice(
-        seq('functor', repeat($.module_parameter)),
-        $._module_type,
-        seq('(', ')')
+        seq(optional('functor'), repeat($.module_parameter)),
+        $._module_type
       ),
       '->',
       $._module_type
@@ -1380,17 +1380,22 @@ module.exports = grammar({
       $._extension
     ),
 
-    _pattern: $ => choice(
+    _effect_pattern: $ => choice(
       $._simple_pattern,
-      $.alias_pattern,
-      $.or_pattern,
       $.constructor_pattern,
       $.tag_pattern,
+      $.lazy_pattern
+    ),
+
+    _pattern: $ => choice(
+      $._effect_pattern,
+      $.alias_pattern,
+      $.or_pattern,
       $.tuple_pattern,
       $.cons_pattern,
       $.range_pattern,
-      $.lazy_pattern,
-      $.exception_pattern
+      $.exception_pattern,
+      $.effect_pattern
     ),
 
     _binding_pattern: $ => choice(
@@ -1624,6 +1629,13 @@ module.exports = grammar({
       'exception',
       optional($._attribute),
       $._pattern
+    ),
+
+    effect_pattern: $ => seq(
+      'effect',
+      field('effect', $._effect_pattern),
+      ',',
+      field('continuation', $._simple_pattern)
     ),
 
     // Attributes and extensions
@@ -1869,11 +1881,11 @@ module.exports = grammar({
     // Names
 
     _value_name: $ => choice(
-      alias($._identifier, $.value_name),
+      alias($._lowercase_identifier, $.value_name),
       $.parenthesized_operator
     ),
 
-    _simple_value_pattern: $ => alias($._identifier, $.value_pattern),
+    _simple_value_pattern: $ => alias($._lowercase_identifier, $.value_pattern),
 
     _value_pattern: $ => choice(
       $._simple_value_pattern,
@@ -1923,29 +1935,29 @@ module.exports = grammar({
 
     class_type_path: $ => path($.extended_module_path, $._class_type_name),
 
-    _label_name: $ => alias($._identifier, $.label_name),
-    _field_name: $ => alias($._identifier, $.field_name),
-    _class_name: $ => alias($._identifier, $.class_name),
-    _class_type_name: $ => alias($._identifier, $.class_type_name),
-    _method_name: $ => alias($._identifier, $.method_name),
-    _type_constructor: $ => alias($._identifier, $.type_constructor),
-    _instance_variable_name: $ => alias($._identifier, $.instance_variable_name),
+    _label_name: $ => alias($._lowercase_identifier, $.label_name),
+    _field_name: $ => alias($._lowercase_identifier, $.field_name),
+    _class_name: $ => alias($._lowercase_identifier, $.class_name),
+    _class_type_name: $ => alias($._lowercase_identifier, $.class_type_name),
+    _method_name: $ => alias($._lowercase_identifier, $.method_name),
+    _type_constructor: $ => alias($._lowercase_identifier, $.type_constructor),
+    _instance_variable_name: $ => alias($._lowercase_identifier, $.instance_variable_name),
 
-    _module_name: $ => alias($._capitalized_identifier, $.module_name),
-    _module_type_name: $ => alias(choice($._capitalized_identifier, $._identifier), $.module_type_name),
+    _module_name: $ => alias($._uppercase_identifier, $.module_name),
+    _module_type_name: $ => alias(choice($._uppercase_identifier, $._lowercase_identifier), $.module_type_name),
     _constructor_name: $ => choice(
-      alias($._capitalized_identifier, $.constructor_name),
+      alias($._uppercase_identifier, $.constructor_name),
       parenthesize(alias('::', $.constructor_name))
     ),
 
-    _identifier: $ => /(\\#)?[a-z_][a-zA-Z0-9_']*/,
-    _capitalized_identifier: $ => /[A-Z][a-zA-Z0-9_']*/,
+    _lowercase_identifier: $ => /(\\#)?[\p{Ll}_][\p{XID_Continue}']*/,
+    _uppercase_identifier: $ => /[\p{Lu}][\p{XID_Continue}']*/,
 
     _label: $ => seq(choice('~', '?'), $._label_name),
-    directive: $ => seq(/#/, choice($._identifier, $._capitalized_identifier)),
-    type_variable: $ => seq(/'/, choice($._identifier, $._capitalized_identifier)),
-    tag: $ => seq(/`/, choice($._identifier, $._capitalized_identifier)),
-    attribute_id: $ => sep1(/\./, choice($._identifier, $._capitalized_identifier))
+    directive: $ => seq(/#/, choice($._lowercase_identifier, $._uppercase_identifier)),
+    type_variable: $ => seq(/'/, choice($._lowercase_identifier, $._uppercase_identifier)),
+    tag: $ => seq(/`/, choice($._lowercase_identifier, $._uppercase_identifier)),
+    attribute_id: $ => sep1(/\./, choice($._lowercase_identifier, $._uppercase_identifier))
   },
 
   externals: $ => [

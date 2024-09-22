@@ -24,8 +24,8 @@
 ;---------
 
 [
-  "and" "as" "assert" "begin" "class" "constraint" "do" "done" "downto" "else"
-  "end" "exception" "external" "for" "fun" "function" "functor" "if" "in"
+  "and" "as" "assert" "begin" "class" "constraint" "do" "done" "downto" "effect"
+  "else" "end" "exception" "external" "for" "fun" "function" "functor" "if" "in"
   "include" "inherit" "initializer" "lazy" "let" "match" "method" "module"
   "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig" "struct"
   "then" "to" "try" "type" "val" "virtual" "when" "while" "with"
