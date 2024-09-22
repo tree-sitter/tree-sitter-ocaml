@@ -6,7 +6,7 @@ from tree_sitter import Language, Parser
 
 class TestLanguage(TestCase):
     def test_ocaml_grammar(self):
-        language = Language(tree_sitter_ocaml.ocaml())
+        language = Language(tree_sitter_ocaml.language_ocaml())
         parser = Parser(language)
         tree = parser.parse(
             b"""
@@ -18,7 +18,7 @@ class TestLanguage(TestCase):
         self.assertFalse(tree.root_node.has_error)
 
     def test_interface_grammar(self):
-        language = Language(tree_sitter_ocaml.interface())
+        language = Language(tree_sitter_ocaml.language_ocaml_interface())
         parser = Parser(language)
         tree = parser.parse(
             b"""
@@ -30,7 +30,7 @@ class TestLanguage(TestCase):
         self.assertFalse(tree.root_node.has_error)
 
     def test_type_grammar(self):
-        language = Language(tree_sitter_ocaml.type())
+        language = Language(tree_sitter_ocaml.language_ocaml_type())
         parser = Parser(language)
         tree = parser.parse(b"int list")
         self.assertFalse(tree.root_node.has_error)
