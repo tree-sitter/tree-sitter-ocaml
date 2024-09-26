@@ -2,7 +2,7 @@
 
 from importlib.resources import files as _files
 
-from ._binding import ocaml, interface, type
+from ._binding import language_ocaml, language_ocaml_interface, language_ocaml_type
 
 
 def _get_query(name, file):
@@ -23,9 +23,9 @@ def __getattr__(name):
 
 
 __all__ = [
-    "ocaml",
-    "interface",
-    "type",
+    "language_ocaml",
+    "language_ocaml_interface",
+    "language_ocaml_type",
     "HIGHLIGHTS_QUERY",
     "LOCALS_QUERY",
     "TAGS_QUERY",
