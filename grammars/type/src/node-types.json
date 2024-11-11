@@ -4643,6 +4643,7 @@
   {
     "type": "type",
     "named": true,
+    "root": true,
     "fields": {},
     "children": {
       "multiple": false,
@@ -5439,10 +5440,6 @@
   },
   {
     "type": "rel_operator",
-    "named": true
-  },
-  {
-    "type": "shebang",
     "named": true
   },
   {
