@@ -2,7 +2,7 @@
   "name": "tree-sitter-ocaml",
   "version": "0.23.1",
   "description": "OCaml grammar for tree-sitter",
-  "repository": "github:tree-sitter/tree-sitter-ocaml",
+  "repository": "https://github.com/tree-sitter/tree-sitter-ocaml",
   "license": "MIT",
   "main": "bindings/node",
   "types": "bindings/node",
@@ -24,12 +24,12 @@
     "*.wasm"
   ],
   "dependencies": {
-    "node-addon-api": "^8.1.0",
+    "node-addon-api": "^8.2.2",
     "node-gyp-build": "^4.8.2"
   },
   "devDependencies": {
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.23.0"
+    "tree-sitter-cli": "^0.24.4"
   },
   "peerDependencies": {
     "tree-sitter": "^0.21.1"
@@ -42,51 +42,8 @@
   "scripts": {
     "install": "node-gyp-build",
     "generate": "for dir in grammars/ocaml grammars/interface grammars/type; do cd $dir; tree-sitter generate --no-bindings; cd -; done",
-    "prestart": "tree-sitter build ocaml --wasm -o ocaml/tree-sitter-ocaml.wasm",
-    "start": "tree-sitter playground --grammar-path ocaml",
-    "test": "node --test bindings/node/*_test.js",
-    "parse-examples": "test/parse-examples.sh"
-  },
-  "tree-sitter": [
-    {
-      "scope": "source.ocaml",
-      "path": "grammars/ocaml",
-      "external-files": [
-        "common/scanner.h"
-      ],
-      "file-types": [
-        "ml"
-      ],
-      "injection-regex": "^(ocaml|ml)$",
-      "highlights": "queries/highlights.scm",
-      "locals": "queries/locals.scm",
-      "tags": "queries/tags.scm"
-    },
-    {
-      "scope": "source.ocaml.interface",
-      "path": "grammars/interface",
-      "external-files": [
-        "common/scanner.h"
-      ],
-      "file-types": [
-        "mli"
-      ],
-      "injection-regex": "^ocaml_interface$",
-      "highlights": "queries/highlights.scm",
-      "locals": "queries/locals.scm",
-      "tags": "queries/tags.scm"
-    },
-    {
-      "scope": "source.ocaml.type",
-      "path": "grammars/type",
-      "external-files": [
-        "common/scanner.h"
-      ],
-      "file-types": [],
-      "injection-regex": "^ocaml_type$",
-      "highlights": "queries/highlights.scm",
-      "locals": "queries/locals.scm",
-      "tags": "queries/tags.scm"
-    }
-  ]
+    "prestart": "tree-sitter build grammars/ocaml --wasm -o grammars/ocaml/tree-sitter-ocaml.wasm",
+    "start": "tree-sitter playground --grammar-path grammars/ocaml",
+    "test": "node --test bindings/node/*_test.js"
+  }
 }

@@ -58,6 +58,9 @@ setup(
             py_limited_api=True,
         )
     ],
-    cmdclass={"build": Build, "bdist_wheel": BdistWheel},
-    zip_safe=False,
+    cmdclass={
+        "build": Build,
+        "bdist_wheel": BdistWheel
+    },
+    zip_safe=False
 )

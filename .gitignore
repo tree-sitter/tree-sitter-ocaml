@@ -5,11 +5,9 @@ target/
 build/
 prebuilds/
 node_modules/
-*.tgz
 
 # Swift artifacts
 .build/
-Package.resolved
 
 # Go artifacts
 _obj/
@@ -17,7 +15,6 @@ _obj/
 # Python artifacts
 .venv/
 dist/
-*.pyc
 *.egg-info
 *.whl
 
@@ -29,11 +26,15 @@ dist/
 *.dll
 *.pc
 
+# Example dirs
+/examples/*/
+
 # Grammar volatiles
 *.wasm
 *.obj
 *.o
 
-# Test files
-/test.ml
-/test.mli
+# Archives
+*.tar.gz
+*.tgz
+*.zip
