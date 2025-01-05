@@ -68,12 +68,14 @@ Quoted strings and comments
 (* {|*)|} *)
 (* {%id |*)|} *)
 (* {%M.id|*)|} *)
+(* {À| *)
 {|(**)|};;
 {|(*|};;
 
 ---
 
 (compilation_unit
+  (comment)
   (comment)
   (comment)
   (comment)
