@@ -209,19 +209,28 @@ static int32_t scan_character(TSLexer *lexer) {
   return last;
 }
 
-static bool scan_identifier(TSLexer *lexer) {
-  if (iswalpha(lexer->lookahead) || lexer->lookahead == '_') {
+static inline bool is_lowercase_ext(const int32_t c) {
+  return (c >= 'a' && c <= 'z') || c == '_' || c >= 192;
+}
+
+static inline bool is_identstart(const int32_t c) {
+  return is_lowercase_ext(c) || (c >= 'A' && c <= 'Z');
+}
+
+static inline bool is_identchar(const int32_t c) {
+  return is_identstart(c) || (c >= '0' && c <= '9') || c == '\'';
+}
+
+static inline bool scan_identifier(TSLexer *lexer) {
+  if (is_identstart(lexer->lookahead)) {
     advance(lexer);
-    while (iswalnum(lexer->lookahead) || lexer->lookahead == '_' ||
-           lexer->lookahead == '\'') {
-      advance(lexer);
-    }
+    while (is_identchar(lexer->lookahead)) advance(lexer);
     return true;
   }
   return false;
 }
 
-static bool scan_extattrident(TSLexer *lexer) {
+static inline bool scan_extattrident(TSLexer *lexer) {
   while (scan_identifier(lexer)) {
     if (lexer->lookahead != '.') return true;
     advance(lexer);
