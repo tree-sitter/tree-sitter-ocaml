@@ -233,8 +233,6 @@ static bool scan_left_quoted_string_delimiter(Scanner *scanner,
                                               TSLexer *lexer) {
   int32_t c;
 
-  quoted_string_id_clear(scanner);
-
   while ((c = scan_quoted_string_delim_char(lexer))) {
     quoted_string_id_push(scanner, c);
   }
@@ -244,6 +242,7 @@ static bool scan_left_quoted_string_delimiter(Scanner *scanner,
     scanner->in_string = true;
     return true;
   } else {
+    quoted_string_id_clear(scanner);
     return false;
   }
 }
@@ -258,6 +257,7 @@ static bool scan_right_quoted_string_delimiter(Scanner *scanner,
 
   if (lexer->lookahead == '}') {
     scanner->in_string = false;
+    quoted_string_id_clear(scanner);
     return true;
   } else {
     return false;
@@ -480,11 +480,12 @@ static void destroy(Scanner *scanner) {
 
 static unsigned serialize(Scanner *scanner, char *buffer) {
   buffer[0] = scanner->in_string;
-  if (scanner->quoted_string_id_length >=
+  if (scanner->quoted_string_id_length <
       TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+    return quoted_string_id_copy(scanner, buffer + 1) + 1;
+  } else {
     return 1;
   }
-  return quoted_string_id_copy(scanner, buffer + 1) + 1;
 }
 
 static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
