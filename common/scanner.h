@@ -340,8 +340,12 @@ static int32_t scan_character(TSLexer *lexer) {
       advance(lexer);
       break;
     default:
-      last = lexer->lookahead;
-      advance(lexer);
+      if (lexer->lookahead < 256) {
+        last = lexer->lookahead;
+        advance(lexer);
+      } else {
+        return 0;
+      }
   }
 
   if (lexer->lookahead == '\'') {

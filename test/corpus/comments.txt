@@ -45,11 +45,13 @@ Characters and comments
 (* '" " *)
 (* '*)
 (* é' '"' *)
+(* '🐫''"'" *)
 x
 
 ---
 
 (compilation_unit
+  (comment)
   (comment)
   (comment)
   (comment)
