@@ -451,7 +451,7 @@ static bool scan_comment(Scanner *scanner, TSLexer *lexer) {
         if (scan_quoted_string(scanner, lexer)) advance(lexer);
         break;
       case '\0':
-        if (eof(lexer)) return false;
+        if (eof(lexer)) return true;
         if (last) {
           last = 0;
         } else {
