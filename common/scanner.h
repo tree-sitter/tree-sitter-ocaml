@@ -14,7 +14,8 @@ enum TokenType {
   RIGHT_QUOTED_STRING_DELIM,
   STRING_DELIM,
   LINE_NUMBER_DIRECTIVE,
-  NULL_CHARACTER
+  NULL_CHARACTER,
+  ERROR_SENTINEL,
 };
 
 typedef struct {
@@ -487,16 +488,20 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
 }
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
-  if (valid_symbols[LEFT_QUOTED_STRING_DELIM] &&
+  if (!valid_symbols[ERROR_SENTINEL] &&
+      valid_symbols[LEFT_QUOTED_STRING_DELIM] &&
       (is_lowercase_ext(lexer->lookahead) || lexer->lookahead == '|')) {
     lexer->result_symbol = LEFT_QUOTED_STRING_DELIM;
     return scan_left_quoted_string_delimiter(scanner, lexer);
   }
-  if (valid_symbols[RIGHT_QUOTED_STRING_DELIM] && (lexer->lookahead == '|')) {
+
+  if (!valid_symbols[ERROR_SENTINEL] &&
+      valid_symbols[RIGHT_QUOTED_STRING_DELIM] && (lexer->lookahead == '|')) {
     advance(lexer);
     lexer->result_symbol = RIGHT_QUOTED_STRING_DELIM;
     return scan_right_quoted_string_delimiter(scanner, lexer);
   }
+
   if (scanner->in_string && valid_symbols[STRING_DELIM] &&
       lexer->lookahead == '"') {
     advance(lexer);
@@ -509,8 +514,16 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     skip(lexer);
   }
 
-  if (!scanner->in_string && lexer->lookahead == '#' &&
-      lexer->get_column(lexer) == 0) {
+  if (!scanner->in_string && valid_symbols[STRING_DELIM] &&
+      lexer->lookahead == '"') {
+    advance(lexer);
+    scanner->in_string = true;
+    lexer->result_symbol = STRING_DELIM;
+    return true;
+  }
+
+  if (!scanner->in_string && valid_symbols[LINE_NUMBER_DIRECTIVE] &&
+      lexer->lookahead == '#' && lexer->get_column(lexer) == 0) {
     advance(lexer);
 
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
@@ -543,18 +556,14 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     lexer->result_symbol = LINE_NUMBER_DIRECTIVE;
     return true;
   }
-  if (!scanner->in_string && lexer->lookahead == '(') {
+
+  if (!scanner->in_string && valid_symbols[COMMENT] &&
+      lexer->lookahead == '(') {
     advance(lexer);
     lexer->result_symbol = COMMENT;
     return scan_comment(scanner, lexer);
   }
-  if (!scanner->in_string && valid_symbols[STRING_DELIM] &&
-      lexer->lookahead == '"') {
-    advance(lexer);
-    scanner->in_string = true;
-    lexer->result_symbol = STRING_DELIM;
-    return true;
-  }
+
   if (valid_symbols[NULL_CHARACTER] && lexer->lookahead == '\0' &&
       !eof(lexer)) {
     advance(lexer);

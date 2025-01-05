@@ -1966,7 +1966,8 @@ module.exports = grammar({
     $._right_quoted_string_delimiter,
     '"',
     $.line_number_directive,
-    $._null
+    $._null,
+    $._error_sentinel,
   ]
 })
 
