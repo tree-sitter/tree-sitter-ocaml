@@ -335,6 +335,12 @@ static int32_t scan_character(TSLexer *lexer) {
       break;
     case '\'':
       break;
+    case '\r':
+      advance(lexer);
+      while (lexer->lookahead == '\r') advance(lexer);
+      if (lexer->lookahead != '\n') return 0;
+      advance(lexer);
+      break;
     case '\0':
       if (eof(lexer)) return 0;
       advance(lexer);
