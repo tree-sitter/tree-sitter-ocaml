@@ -10659,6 +10659,10 @@
     {
       "type": "SYMBOL",
       "name": "_null"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_error_sentinel"
     }
   ],
   "inline": [
