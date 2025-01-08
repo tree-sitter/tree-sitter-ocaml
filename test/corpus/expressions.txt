@@ -67,6 +67,7 @@ Constants
 |};;
 {| |};;
 {xxxxxxxxxxxxxxxxxxxx||xxxxxxxxxxxxxxxxxxxx};;
+{à||à};;
 true;;
 ();;
 
@@ -110,6 +111,7 @@ true;;
     (pretty_printing_indication))))
   (expression_item (quoted_string (quoted_string_content)))
   (expression_item (quoted_string (quoted_string_content)))
+  (expression_item (quoted_string))
   (expression_item (quoted_string))
   (expression_item (boolean))
   (expression_item (unit)))

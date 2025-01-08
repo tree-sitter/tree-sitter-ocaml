@@ -44,11 +44,15 @@ Characters and comments
 (* '\" " *)
 (* '" " *)
 (* '*)
+(* é' '"' *)
+(* '🐫''"'" *)
 x
 
 ---
 
 (compilation_unit
+  (comment)
+  (comment)
   (comment)
   (comment)
   (comment)
@@ -66,12 +70,14 @@ Quoted strings and comments
 (* {|*)|} *)
 (* {%id |*)|} *)
 (* {%M.id|*)|} *)
+(* {À| *)
 {|(**)|};;
 {|(*|};;
 
 ---
 
 (compilation_unit
+  (comment)
   (comment)
   (comment)
   (comment)
