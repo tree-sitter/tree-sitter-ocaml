@@ -10,8 +10,8 @@ test:
 	$(TS) parse examples/* --quiet --time
 
 generate:
-	cd grammars/ocaml && $(TS) generate --no-bindings
-	cd grammars/interface && $(TS) generate --no-bindings
-	cd grammars/type && $(TS) generate --no-bindings
+	cd grammars/ocaml && $(TS) generate
+	cd grammars/interface && $(TS) generate
+	cd grammars/type && $(TS) generate
 
 .PHONY: all install uninstall clean test update generate

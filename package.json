@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-ocaml",
-  "version": "0.23.2",
+  "version": "0.24.0",
   "description": "OCaml grammar for tree-sitter",
   "repository": "https://github.com/tree-sitter/tree-sitter-ocaml",
   "license": "MIT",
@@ -24,15 +24,15 @@
     "*.wasm"
   ],
   "dependencies": {
-    "node-addon-api": "^8.2.2",
-    "node-gyp-build": "^4.8.2"
+    "node-addon-api": "^8.3.0",
+    "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.24.4"
+    "tree-sitter-cli": "^0.24.6"
   },
   "peerDependencies": {
-    "tree-sitter": "^0.21.1"
+    "tree-sitter": "^0.22.4"
   },
   "peerDependenciesMeta": {
     "tree-sitter": {
@@ -41,7 +41,7 @@
   },
   "scripts": {
     "install": "node-gyp-build",
-    "generate": "for dir in grammars/ocaml grammars/interface grammars/type; do cd $dir; tree-sitter generate --no-bindings; cd -; done",
+    "generate": "for dir in grammars/ocaml grammars/interface grammars/type; do cd $dir; tree-sitter generate; cd -; done",
     "prestart": "tree-sitter build grammars/ocaml --wasm -o grammars/ocaml/tree-sitter-ocaml.wasm",
     "start": "tree-sitter playground --grammar-path grammars/ocaml",
     "test": "node --test bindings/node/*_test.js",
