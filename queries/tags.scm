@@ -4,10 +4,11 @@
 (
   (comment)? @doc .
   (module_definition (module_binding (module_name) @name) @definition.module)
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 (module_path (module_name) @name) @reference.module
+(extended_module_path (module_name) @name) @reference.module
 
 ; Module types
 ;--------------
@@ -15,7 +16,7 @@
 (
   (comment)? @doc .
   (module_type_definition (module_type_name) @name) @definition.interface
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 (module_type_path (module_type_name) @name) @reference.implementation
@@ -35,13 +36,13 @@
         body: [(fun_expression) (function_expression)])
     ] @definition.function
   )
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 (
   (comment)? @doc .
   (external (value_name) @name) @definition.function
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 (application_expression
@@ -65,7 +66,7 @@
   (value_definition
     (let_binding
       pattern: (parenthesized_operator (_) @name)) @definition.function)
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 [
@@ -95,7 +96,7 @@
     (class_definition (class_binding (class_name) @name) @definition.class)
     (class_type_definition (class_type_binding (class_type_name) @name) @definition.class)
   ]
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 [
@@ -109,7 +110,7 @@
 (
   (comment)? @doc .
   (method_definition (method_name) @name) @definition.method
-  (#strip! @doc "^\\(\\*\\*?\\s*|\\s\\*\\)$")
+  (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
 (method_invocation (method_name) @name) @reference.call
