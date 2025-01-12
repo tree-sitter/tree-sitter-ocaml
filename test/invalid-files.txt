@@ -3,6 +3,7 @@ examples/lablgtk/examples/csview.ml
 examples/lablgtk/tools/introspection/stubs/stubs_Atk.ml
 examples/lablgtk/tools/introspection/stubs/stubs_Pango.ml
 examples/melange/bin/melc.ml
+examples/merlin/src/ocaml/utils/config.fixed.ml
 examples/merlin/tests/test-dirs/completion/infix.t/infix.ml
 examples/merlin/tests/test-dirs/completion/parenthesize.t/parenthesize.ml
 examples/merlin/tests/test-dirs/construct/c-modules.t/functor_app.ml
@@ -16,6 +17,7 @@ examples/ocaml/testsuite/tests/lexing/escape.ml
 examples/ocaml/testsuite/tests/lexing/reject_bad_encoding.ml
 examples/ocaml/testsuite/tests/lexing/uchar_esc.ml
 examples/ocaml/testsuite/tests/parsing/arrow_ambiguity.ml
+examples/ocaml/testsuite/tests/parsing/comments.ml
 examples/ocaml/testsuite/tests/parsing/constructor_declarations.ml
 examples/ocaml/testsuite/tests/parsing/docstrings.ml
 examples/ocaml/testsuite/tests/parsing/latin9.ml
@@ -31,7 +33,9 @@ examples/ocamlformat/test/rpc/big_margin/foo.ml
 examples/ppxlib/astlib/astlib.ml
 examples/ppxlib/astlib/location.ml
 examples/ppxlib/astlib/longident.ml
+examples/ppxlib/test/code_path/test.ml
 examples/ppxlib/test/driver/non-compressible-suffix/test.ml
 examples/ppxlib/test/expansion_helpers/mangle/test.ml
+examples/ppxlib/test/metaquot/test.ml
 examples/ppxlib/test/ppx_import_support/test.ml
 examples/ppxlib/test/quoter/test.ml
