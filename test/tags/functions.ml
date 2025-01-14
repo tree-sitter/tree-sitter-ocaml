@@ -11,5 +11,5 @@ external f : 'a -> 'a = "id"
       (* ^ definition.function *)
 
 let ( + ) a b = a + b
-   (* ^ definition.function *)
+   (* ^ definition.operator *)
                (* ^ reference.call *)
