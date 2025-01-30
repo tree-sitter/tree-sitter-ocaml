@@ -36,7 +36,7 @@ override CFLAGS += -I$(SRC_DIR) -std=c11 -fPIC
 
 # ABI versioning
 SONAME_MAJOR := $(word 1,$(subst ., ,$(VERSION)))
-SONAME_MINOR := $(shell sed -n 's/#define LANGUAGE_VERSION //p' $(PARSER))
+SONAME_MINOR := $(shell sed -n 's/\#define LANGUAGE_VERSION //p' $(PARSER))
 
 # OS-specific bits
 ifeq ($(shell uname),Darwin)
@@ -83,8 +83,8 @@ $(LANGUAGE_NAME).pc: ../../bindings/c/$(LANGUAGE_NAME).pc.in
 		-e 's|=$(PREFIX)|=$${prefix}|' \
 		-e 's|@PREFIX@|$(PREFIX)|' $< > $@
 
-$(PARSER): $(SRC_DIR)/grammar.json
-	$(TS) generate --no-bindings $^
+$(PARSER): grammar.js
+	$(TS) generate --no-bindings
 
 install: all
 	install -d '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter '$(DESTDIR)$(PCLIBDIR)' '$(DESTDIR)$(LIBDIR)'
