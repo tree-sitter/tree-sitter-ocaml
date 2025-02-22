@@ -55,17 +55,17 @@ pub const LANGUAGE_OCAML_TYPE: LanguageFn = unsafe { LanguageFn::from_raw(tree_s
 
 /// The content of the [`node-types.json`][] file for OCaml.
 ///
-/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
+/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers/6-static-node-types.html
 pub const OCAML_NODE_TYPES: &str = include_str!("../../grammars/ocaml/src/node-types.json");
 
 /// The content of the [`node-types.json`][] file for OCaml interfaces.
 ///
-/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
+/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers/6-static-node-types.html
 pub const INTERFACE_NODE_TYPES: &str = include_str!("../../grammars/interface/src/node-types.json");
 
 /// The content of the [`node-types.json`][] file for OCaml types.
 ///
-/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
+/// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers/6-static-node-types.html
 pub const TYPE_NODE_TYPES: &str = include_str!("../../grammars/type/src/node-types.json");
 
 /// The syntax highlighting query for OCaml.

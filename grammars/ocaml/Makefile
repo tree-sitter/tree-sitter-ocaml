@@ -1,3 +1,3 @@
-LANGUAGE_NAME := tree-sitter-ocaml
+PARSER_NAME := ocaml
 
 include ../../common/common.mak
