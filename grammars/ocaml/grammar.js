@@ -493,9 +493,7 @@ module.exports = grammar({
       $._module_type,
     )),
 
-    parenthesized_module_type: $ => seq(
-      parenthesize($._module_type),
-    ),
+    parenthesized_module_type: $ => parenthesize($._module_type),
 
     // Module expressions
 
@@ -660,12 +658,10 @@ module.exports = grammar({
       $.class_path,
     ),
 
-    typed_class_expression: $ => seq(
-      parenthesize(seq(
-        $._class_expression,
-        $._class_typed,
-      )),
-    ),
+    typed_class_expression: $ => parenthesize(seq(
+      $._class_expression,
+      $._class_typed,
+    )),
 
     class_function: $ => seq(
       'fun',
@@ -737,9 +733,7 @@ module.exports = grammar({
       field('body', $._class_expression),
     ),
 
-    parenthesized_class_expression: $ => seq(
-      parenthesize($._class_expression),
-    ),
+    parenthesized_class_expression: $ => parenthesize($._class_expression),
 
     // Types
 
@@ -839,13 +833,11 @@ module.exports = grammar({
       ),
     ),
 
-    polymorphic_variant_type: $ => seq(
-      choice(
-        seq('[', $.tag_specification, ']'),
-        seq('[', optional($._tag_spec), '|', sep1('|', $._tag_spec), ']'),
-        seq('[>', optional('|'), sep('|', $._tag_spec), ']'),
-        seq('[<', optional('|'), sep1('|', $._tag_spec), optional(seq('>', repeat1($.tag))), ']'),
-      ),
+    polymorphic_variant_type: $ => choice(
+      seq('[', $.tag_specification, ']'),
+      seq('[', optional($._tag_spec), '|', sep1('|', $._tag_spec), ']'),
+      seq('[>', optional('|'), sep('|', $._tag_spec), ']'),
+      seq('[<', optional('|'), sep1('|', $._tag_spec), optional(seq('>', repeat1($.tag))), ']'),
     ),
 
     _tag_spec: $ => choice(
@@ -1436,19 +1428,15 @@ module.exports = grammar({
       $._value_name,
     )),
 
-    typed_pattern: $ => seq(
-      parenthesize(seq(
-        $._pattern,
-        $._typed,
-      )),
-    ),
+    typed_pattern: $ => parenthesize(seq(
+      $._pattern,
+      $._typed,
+    )),
 
-    typed_binding_pattern: $ => seq(
-      parenthesize(seq(
-        field('pattern', $._binding_pattern),
-        $._typed,
-      )),
-    ),
+    typed_binding_pattern: $ => parenthesize(seq(
+      field('pattern', $._binding_pattern),
+      $._typed,
+    )),
 
     _or_pattern_anonymous: $ => prec.right(PREC.seq, seq(
       $._pattern,
