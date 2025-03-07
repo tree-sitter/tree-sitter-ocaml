@@ -5,12 +5,12 @@ module.exports = grammar(require('../ocaml/grammar'), {
   name: 'ocaml_type',
 
   rules: {
-    type: $ => $._type
-  }
-})
+    type: $ => $._type,
+  },
+});
 
 // Make 'type' the first rule
 module.exports.grammar.rules = Object.assign(
   {type: null},
-  module.exports.grammar.rules
-)
+  module.exports.grammar.rules,
+);
