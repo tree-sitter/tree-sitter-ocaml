@@ -1,6 +1,5 @@
 ===========================
 Type variable
-
 :language(ocaml_type)
 ===========================
 
@@ -13,7 +12,6 @@ Type variable
 
 ===========================
 Constructed type
-
 :language(ocaml_type)
 ===========================
 
@@ -40,7 +38,6 @@ M(M).t M.t t
 
 ===========================
 Polymorphic variant type
-
 :language(ocaml_type)
 ===========================
 
@@ -59,7 +56,6 @@ Polymorphic variant type
 
 ===========================
 Package types
-
 :language(ocaml_type)
 ===========================
 
@@ -74,7 +70,6 @@ Package types
 
 ===========================
 Function type
-
 :language(ocaml_type)
 ===========================
 
@@ -101,7 +96,6 @@ l:t -> ?l:t -> t -> t
 
 ===========================
 Tuple type
-
 :language(ocaml_type)
 ===========================
 
@@ -121,7 +115,6 @@ t * t * t
 
 ===========================
 Aliased type
-
 :language(ocaml_type)
 ===========================
 
@@ -137,7 +130,6 @@ t as 't
 
 ===========================
 Parenthesized type
-
 :language(ocaml_type)
 ===========================
 

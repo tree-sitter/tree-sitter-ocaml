@@ -15,33 +15,33 @@ type +!'a t = 'a
   (type_definition
     (type_binding
       (type_variable)
-      (type_constructor)
+      name: (type_constructor)
       (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
-      (type_constructor)
+      name: (type_constructor)
       (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
       (type_variable)
-      (type_constructor)
+      name: (type_constructor)
       (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
-      (type_constructor)
+      name: (type_constructor)
       (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
-      (type_constructor)
+      name: (type_constructor)
       (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
-      (type_constructor)
+      name: (type_constructor)
       (type_variable))))
 
 ===========================
@@ -59,31 +59,37 @@ type t = M(M).t
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
-      (type_constructor_path (type_constructor))))
-  (type_definition
-    (type_binding
-      (type_constructor)
-      (type_constructor_path (type_constructor))))
-  (type_definition
-    (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (type_constructor_path
-        (extended_module_path (module_name))
         (type_constructor))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (type_constructor_path
-        (extended_module_path (module_name))
         (type_constructor))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (type_constructor_path
         (extended_module_path
-          (extended_module_path (module_name))
-          (extended_module_path (module_name)))
+          (module_name))
+        (type_constructor))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      (type_constructor_path
+        (extended_module_path
+          (module_name))
+        (type_constructor))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      (type_constructor_path
+        (extended_module_path
+          (extended_module_path
+            (module_name))
+          (extended_module_path
+            (module_name)))
         (type_constructor)))))
 
 ===========================
@@ -98,17 +104,23 @@ type t = int list list
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (constructed_type
-        (type_constructor_path (type_constructor)) (type_constructor_path (type_constructor)))))
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor)))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (constructed_type
         (constructed_type
-          (type_constructor_path (type_constructor))
-          (type_constructor_path (type_constructor)))
-        (type_constructor_path (type_constructor))))))
+          (type_constructor_path
+            (type_constructor))
+          (type_constructor_path
+            (type_constructor)))
+        (type_constructor_path
+          (type_constructor))))))
 
 ===========================
 Polymorphic variant types
@@ -128,39 +140,48 @@ type t = M.[`A]
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
-      (polymorphic_variant_type
-        (tag_specification (tag))
-        (tag_specification
-          (tag)
-          (type_constructor_path (type_constructor))))))
-  (type_definition
-    (type_binding
-      (type_constructor)
-      (polymorphic_variant_type
-        (type_constructor_path (type_constructor))
-        (tag_specification (tag)))))
-  (type_definition
-    (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (polymorphic_variant_type
         (tag_specification
+          (tag))
+        (tag_specification
           (tag)
-          (type_constructor_path (type_constructor))
-          (type_constructor_path (type_constructor))))))
+          (type_constructor_path
+            (type_constructor))))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (polymorphic_variant_type
-        (tag_specification (tag))
+        (type_constructor_path
+          (type_constructor))
+        (tag_specification
+          (tag)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      (polymorphic_variant_type
+        (tag_specification
+          (tag)
+          (type_constructor_path
+            (type_constructor))
+          (type_constructor_path
+            (type_constructor))))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      (polymorphic_variant_type
+        (tag_specification
+          (tag))
         (tag))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (local_open_type
-        (extended_module_path (module_name))
+        (extended_module_path
+          (module_name))
         (polymorphic_variant_type
-          (tag_specification (tag)))))))
+          (tag_specification
+            (tag)))))))
 
 ===========================
 Package types
@@ -174,15 +195,19 @@ type t = M.(module T)
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (package_type
-        (module_type_path (module_type_name)))))
+        (module_type_path
+          (module_type_name)))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (local_open_type
-        (extended_module_path (module_name))
-        (package_type (module_type_path (module_type_name)))))))
+        (extended_module_path
+          (module_name))
+        (package_type
+          (module_type_path
+            (module_type_name)))))))
 
 ===========================
 Function types
@@ -197,28 +222,38 @@ type t = l:t -> ?l:t -> t
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (function_type
-        (type_constructor_path (type_constructor))
-        (type_constructor_path (type_constructor)))))
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor)))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (function_type
-        (type_constructor_path (type_constructor)) (function_type
-          (type_constructor_path (type_constructor)) (type_constructor_path (type_constructor))))))
+        (type_constructor_path
+          (type_constructor))
+        (function_type
+          (type_constructor_path
+            (type_constructor))
+          (type_constructor_path
+            (type_constructor))))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (function_type
         (typed_label
           (label_name)
-          (type_constructor_path (type_constructor)))
+          (type_constructor_path
+            (type_constructor)))
         (function_type
           (typed_label
             (label_name)
-            (type_constructor_path (type_constructor)))
-          (type_constructor_path (type_constructor)))))))
+            (type_constructor_path
+              (type_constructor)))
+          (type_constructor_path
+            (type_constructor)))))))
 
 ===========================
 Tuple types
@@ -232,18 +267,23 @@ type t = t * t * t
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (tuple_type
-        (type_constructor_path (type_constructor))
-        (type_constructor_path (type_constructor)))))
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor)))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (tuple_type
         (tuple_type
-          (type_constructor_path (type_constructor))
-          (type_constructor_path (type_constructor)))
-        (type_constructor_path (type_constructor))))))
+          (type_constructor_path
+            (type_constructor))
+          (type_constructor_path
+            (type_constructor)))
+        (type_constructor_path
+          (type_constructor))))))
 
 ===========================
 Aliased types
@@ -256,9 +296,10 @@ type t = t as 't
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (aliased_type
-        (type_constructor_path (type_constructor))
+        (type_constructor_path
+          (type_constructor))
         (type_variable)))))
 
 ===========================
@@ -273,12 +314,15 @@ type t = M.(t)
 (compilation_unit
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (parenthesized_type
-        (type_constructor_path (type_constructor)))))
+        (type_constructor_path
+          (type_constructor)))))
   (type_definition
     (type_binding
-      (type_constructor)
+      name: (type_constructor)
       (local_open_type
-        (extended_module_path (module_name))
-        (type_constructor_path (type_constructor))))))
+        (extended_module_path
+          (module_name))
+        (type_constructor_path
+          (type_constructor))))))

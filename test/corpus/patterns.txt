@@ -10,10 +10,14 @@ function \#function -> ();;
 (compilation_unit
   (expression_item
     (function_expression
-      (match_case (value_pattern) (unit))))
+      (match_case
+        pattern: (value_pattern)
+        body: (unit))))
   (expression_item
     (function_expression
-      (match_case (value_pattern) (unit)))))
+      (match_case
+        pattern: (value_pattern)
+        body: (unit)))))
 
 ============================
 Constant patterns
@@ -27,20 +31,25 @@ function 1 | +1.0 | - 0b1 | 'x' | "x" | {|x|} | true | () -> ()
   (expression_item
     (function_expression
       (match_case
-        (or_pattern
+        pattern: (or_pattern
           (or_pattern
             (or_pattern
               (or_pattern
                 (or_pattern
                   (or_pattern
-                    (or_pattern (number) (signed_number))
+                    (or_pattern
+                      (number)
+                      (signed_number))
                     (signed_number))
-                  (character (character_content)))
-                (string (string_content)))
-              (quoted_string (quoted_string_content)))
+                  (character
+                    (character_content)))
+                (string
+                  (string_content)))
+              (quoted_string
+                (quoted_string_content)))
             (boolean))
           (unit))
-        (unit)))))
+        body: (unit)))))
 
 ============================
 Typed patterns
@@ -54,10 +63,11 @@ function (x : t) -> ()
   (expression_item
     (function_expression
       (match_case
-        (typed_pattern
+        pattern: (typed_pattern
           (value_pattern)
-          (type_constructor_path (type_constructor)))
-        (unit)))))
+          (type_constructor_path
+            (type_constructor)))
+        body: (unit)))))
 
 ============================
 Constructors and tags
@@ -71,16 +81,20 @@ function A x | A | `A | `A x -> ()
   (expression_item
     (function_expression
       (match_case
-        (or_pattern
+        pattern: (or_pattern
           (or_pattern
             (or_pattern
               (constructor_pattern
-                (constructor_path (constructor_name))
+                (constructor_path
+                  (constructor_name))
                 (value_pattern))
-              (constructor_path (constructor_name)))
+              (constructor_path
+                (constructor_name)))
             (tag))
-          (tag_pattern (tag) (value_pattern)))
-        (unit)))))
+          (tag_pattern
+            (tag)
+            (value_pattern)))
+        body: (unit)))))
 
 ============================
 Polymorphic variant patterns
@@ -94,9 +108,10 @@ function #t -> ()
   (expression_item
     (function_expression
       (match_case
-        (polymorphic_variant_pattern
-          (type_constructor_path (type_constructor)))
-        (unit)))))
+        pattern: (polymorphic_variant_pattern
+          (type_constructor_path
+            (type_constructor)))
+        body: (unit)))))
 
 ============================
 Records, lists and arrays
@@ -110,17 +125,25 @@ function {x} | [x] | [|x|] | [|x;y;|] | x :: xs -> ()
   (expression_item
     (function_expression
       (match_case
-        (or_pattern
+        pattern: (or_pattern
           (or_pattern
             (or_pattern
               (or_pattern
                 (record_pattern
-                  (field_pattern (field_path (field_name))))
-                (list_pattern (value_pattern)))
-              (array_pattern (value_pattern)))
-            (array_pattern (value_pattern) (value_pattern)))
-          (cons_pattern (value_pattern) (value_pattern)))
-        (unit)))))
+                  (field_pattern
+                    (field_path
+                      (field_name))))
+                (list_pattern
+                  (value_pattern)))
+              (array_pattern
+                (value_pattern)))
+            (array_pattern
+              (value_pattern)
+              (value_pattern)))
+          (cons_pattern
+            (value_pattern)
+            (value_pattern)))
+        body: (unit)))))
 
 ============================
 Local open patterns
@@ -134,16 +157,20 @@ function M.(A x) | M.[x] -> ()
   (expression_item
     (function_expression
       (match_case
-        (or_pattern
+        pattern: (or_pattern
           (local_open_pattern
-            (module_path (module_name))
+            (module_path
+              (module_name))
             (constructor_pattern
-              (constructor_path (constructor_name))
+              (constructor_path
+                (constructor_name))
               (value_pattern)))
           (local_open_pattern
-            (module_path (module_name))
-            (list_pattern (value_pattern))))
-        (unit)))))
+            (module_path
+              (module_name))
+            (list_pattern
+              (value_pattern))))
+        body: (unit)))))
 
 ============================
 Package patterns
@@ -157,8 +184,9 @@ function (module M) -> ()
   (expression_item
     (function_expression
       (match_case
-        (package_pattern (module_name))
-      (unit)))))
+        pattern: (package_pattern
+          (module_name))
+        body: (unit)))))
 
 ============================
 Alias patterns
@@ -172,8 +200,10 @@ function x as t -> ()
   (expression_item
     (function_expression
       (match_case
-        (alias_pattern (value_pattern) (value_pattern))
-        (unit)))))
+        pattern: (alias_pattern
+          (value_pattern)
+          (value_pattern))
+        body: (unit)))))
 
 ============================
 Tuple patterns
@@ -187,12 +217,12 @@ function x, x, x -> ()
   (expression_item
     (function_expression
       (match_case
-        (tuple_pattern
+        pattern: (tuple_pattern
           (tuple_pattern
             (value_pattern)
             (value_pattern))
           (value_pattern))
-        (unit)))))
+        body: (unit)))))
 
 ============================
 Range patterns
@@ -206,8 +236,12 @@ function 'a' .. 'z' -> ()
   (expression_item
     (function_expression
       (match_case
-        (range_pattern (character (character_content)) (character (character_content)))
-        (unit)))))
+        pattern: (range_pattern
+          (character
+            (character_content))
+          (character
+            (character_content)))
+        body: (unit)))))
 
 ============================
 Lazy patterns
@@ -221,8 +255,9 @@ function lazy x -> ()
   (expression_item
     (function_expression
       (match_case
-        (lazy_pattern (value_pattern))
-        (unit)))))
+        pattern: (lazy_pattern
+          (value_pattern))
+        body: (unit)))))
 
 ============================
 Parenthesized patterns
@@ -236,8 +271,9 @@ function (x) -> ()
   (expression_item
     (function_expression
       (match_case
-        (parenthesized_pattern (value_pattern))
-        (unit)))))
+        pattern: (parenthesized_pattern
+          (value_pattern))
+        body: (unit)))))
 
 ============================
 Effect patterns
@@ -251,5 +287,8 @@ function effect E, k -> ()
   (expression_item
     (function_expression
       (match_case
-        (effect_pattern (constructor_path (constructor_name)) (value_pattern))
-        (unit)))))
+        pattern: (effect_pattern
+          effect: (constructor_path
+            (constructor_name))
+          continuation: (value_pattern))
+        body: (unit)))))

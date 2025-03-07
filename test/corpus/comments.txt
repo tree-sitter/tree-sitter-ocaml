@@ -15,7 +15,10 @@ Comments
   (comment)
   (comment)
   (comment)
-  (expression_item (value_path (parenthesized_operator (mult_operator)))))
+  (expression_item
+    (value_path
+      (parenthesized_operator
+        (mult_operator)))))
 
 ==============================
 Strings and comments
@@ -29,8 +32,12 @@ Strings and comments
 
 (compilation_unit
   (comment)
-  (expression_item (string (string_content)))
-  (expression_item (string (string_content))))
+  (expression_item
+    (string
+      (string_content)))
+  (expression_item
+    (string
+      (string_content))))
 
 ==============================
 Characters and comments
@@ -61,7 +68,9 @@ x
   (comment)
   (comment)
   (comment)
-  (expression_item (value_path (value_name))))
+  (expression_item
+    (value_path
+      (value_name))))
 
 ==============================
 Quoted strings and comments
@@ -81,5 +90,9 @@ Quoted strings and comments
   (comment)
   (comment)
   (comment)
-  (expression_item (quoted_string (quoted_string_content)))
-  (expression_item (quoted_string (quoted_string_content))))
+  (expression_item
+    (quoted_string
+      (quoted_string_content)))
+  (expression_item
+    (quoted_string
+      (quoted_string_content))))

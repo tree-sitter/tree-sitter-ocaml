@@ -10,13 +10,15 @@ module M : M.T
 (compilation_unit
   (module_definition
     (module_binding
-      (module_name)
-      (module_type_path (module_type_name))))
+      name: (module_name)
+      (module_type_path
+        (module_type_name))))
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (module_type_path
-        (extended_module_path (module_name))
+        (extended_module_path
+          (module_name))
         (module_type_name)))))
 
 ==============================
@@ -32,11 +34,12 @@ end
 (compilation_unit
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (signature
         (value_specification
           (value_name)
-          (type_constructor_path (type_constructor)))))))
+          (type_constructor_path
+            (type_constructor)))))))
 
 ==============================
 Constraints
@@ -49,18 +52,25 @@ module M : T with type t = t and module M := M and module type T = T
 (compilation_unit
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (module_type_constraint
-        (module_type_path (module_type_name))
+        (module_type_path
+          (module_type_name))
         (constrain_type
-          (type_constructor_path (type_constructor))
-          (type_constructor_path (type_constructor)))
+          (type_constructor_path
+            (type_constructor))
+          (type_constructor_path
+            (type_constructor)))
         (constrain_module
-          (module_path (module_name))
-          (extended_module_path (module_name)))
+          (module_path
+            (module_name))
+          (extended_module_path
+            (module_name)))
         (constrain_module_type
-          (module_type_path (module_type_name))
-          (module_type_path (module_type_name)))))))
+          (module_type_path
+            (module_type_name))
+          (module_type_path
+            (module_type_name)))))))
 
 ==============================
 Module type of
@@ -73,8 +83,10 @@ module M : module type of M
 (compilation_unit
   (module_definition
     (module_binding
-      (module_name)
-      (module_type_of (module_path (module_name))))))
+      name: (module_name)
+      (module_type_of
+        (module_path
+          (module_name))))))
 
 ==============================
 Functor types
@@ -90,37 +102,46 @@ module M : () -> T
 (compilation_unit
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (functor_type
         (module_parameter
-          (module_name)
-          (module_type_path (module_type_name)))
-        (module_type_path (module_type_name)))))
+          name: (module_name)
+          (module_type_path
+            (module_type_name)))
+        (module_type_path
+          (module_type_name)))))
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (functor_type
         (module_parameter
-          (module_name)
-          (module_type_path (module_type_name)))
+          name: (module_name)
+          (module_type_path
+            (module_type_name)))
         (module_parameter
-          (module_name)
-          (module_type_path (module_type_name)))
-        (module_type_path (module_type_name)))))
+          name: (module_name)
+          (module_type_path
+            (module_type_name)))
+        (module_type_path
+          (module_type_name)))))
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (functor_type
-        (module_type_path (module_type_name))
+        (module_type_path
+          (module_type_name))
         (functor_type
-          (module_type_path (module_type_name))
-          (module_type_path (module_type_name))))))
+          (module_type_path
+            (module_type_name))
+          (module_type_path
+            (module_type_name))))))
   (module_definition
     (module_binding
-      (module_name)
+      name: (module_name)
       (functor_type
         (module_parameter)
-        (module_type_path (module_type_name))))))
+        (module_type_path
+          (module_type_name))))))
 
 ==============================
 Parenthesized module types
@@ -133,5 +154,7 @@ module M : (T)
 (compilation_unit
   (module_definition
     (module_binding
-      (module_name)
-      (parenthesized_module_type (module_type_path (module_type_name))))))
+      name: (module_name)
+      (parenthesized_module_type
+        (module_type_path
+          (module_type_name))))))
