@@ -32,22 +32,16 @@ function 1 | +1.0 | - 0b1 | 'x' | "x" | {|x|} | true | () -> ()
     (function_expression
       (match_case
         pattern: (or_pattern
-          (or_pattern
-            (or_pattern
-              (or_pattern
-                (or_pattern
-                  (or_pattern
-                    (or_pattern
-                      (number)
-                      (signed_number))
-                    (signed_number))
-                  (character
-                    (character_content)))
-                (string
-                  (string_content)))
-              (quoted_string
-                (quoted_string_content)))
-            (boolean))
+          (number)
+          (signed_number)
+          (signed_number)
+          (character
+            (character_content))
+          (string
+            (string_content))
+          (quoted_string
+            (quoted_string_content))
+          (boolean)
           (unit))
         body: (unit)))))
 
@@ -82,15 +76,13 @@ function A x | A | `A | `A x -> ()
     (function_expression
       (match_case
         pattern: (or_pattern
-          (or_pattern
-            (or_pattern
-              (constructor_pattern
-                (constructor_path
-                  (constructor_name))
-                (value_pattern))
-              (constructor_path
-                (constructor_name)))
-            (tag))
+          (constructor_pattern
+            (constructor_path
+              (constructor_name))
+            (value_pattern))
+          (constructor_path
+            (constructor_name))
+          (tag)
           (tag_pattern
             (tag)
             (value_pattern)))
@@ -126,20 +118,17 @@ function {x} | [x] | [|x|] | [|x;y;|] | x :: xs -> ()
     (function_expression
       (match_case
         pattern: (or_pattern
-          (or_pattern
-            (or_pattern
-              (or_pattern
-                (record_pattern
-                  (field_pattern
-                    (field_path
-                      (field_name))))
-                (list_pattern
-                  (value_pattern)))
-              (array_pattern
-                (value_pattern)))
-            (array_pattern
-              (value_pattern)
-              (value_pattern)))
+          (record_pattern
+            (field_pattern
+              (field_path
+                (field_name))))
+          (list_pattern
+            (value_pattern))
+          (array_pattern
+            (value_pattern))
+          (array_pattern
+            (value_pattern)
+            (value_pattern))
           (cons_pattern
             (value_pattern)
             (value_pattern)))

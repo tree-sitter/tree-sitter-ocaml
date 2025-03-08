@@ -1391,7 +1391,7 @@ module.exports = grammar({
     _pattern: $ => choice(
       $._effect_pattern,
       $.alias_pattern,
-      $.or_pattern,
+      alias($._or_pattern_anonymous, $.or_pattern),
       alias($._tuple_pattern_anonymous, $.tuple_pattern),
       $.cons_pattern,
       $.range_pattern,
@@ -1413,7 +1413,7 @@ module.exports = grammar({
       $.package_pattern,
       alias($.parenthesized_binding_pattern, $.parenthesized_pattern),
       alias($.alias_binding_pattern, $.alias_pattern),
-      alias($.or_binding_pattern, $.or_pattern),
+      alias($._or_binding_pattern_anonymous, $.or_pattern),
       alias($.constructor_binding_pattern, $.constructor_pattern),
       alias($.tag_binding_pattern, $.tag_pattern),
       alias($._tuple_binding_pattern_anonymous, $.tuple_pattern),
@@ -1449,16 +1449,16 @@ module.exports = grammar({
       )),
     ),
 
-    or_pattern: $ => prec.left(PREC.seq, seq(
+    _or_pattern_anonymous: $ => prec.right(PREC.seq, seq(
       $._pattern,
       '|',
-      $._pattern,
+      choice($._pattern, $._or_pattern_anonymous),
     )),
 
-    or_binding_pattern: $ => prec.left(PREC.seq, seq(
+    _or_binding_pattern_anonymous: $ => prec.right(PREC.seq, seq(
       $._binding_pattern,
       '|',
-      $._binding_pattern,
+      choice($._binding_pattern, $._or_binding_pattern_anonymous),
     )),
 
     constructor_pattern: $ => prec.right(PREC.app, seq(
