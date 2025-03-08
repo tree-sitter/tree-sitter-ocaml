@@ -293,9 +293,9 @@ x.%(0).M.%(0) <- x;;
               (value_name))
             (number))
           (number))
-        (product_expression
-          left: (number)
-          right: (number)))
+        (tuple_expression
+          (number)
+          (number)))
       body: (value_path
         (value_name))))
   (expression_item
@@ -398,7 +398,7 @@ Package expressions
         (module_type_name)))))
 
 ===========================
-Product expressions
+Tuple expressions
 ===========================
 
 x, y, z;;
@@ -408,20 +408,19 @@ x, y, z;;
 
 (compilation_unit
   (expression_item
-    (product_expression
-      left: (product_expression
-        left: (value_path
-          (value_name))
-        right: (value_path
-          (value_name)))
-      right: (value_path
+    (tuple_expression
+      (value_path
+        (value_name))
+      (value_path
+        (value_name))
+      (value_path
         (value_name))))
   (expression_item
     (parenthesized_expression
-      (product_expression
-        left: (value_path
+      (tuple_expression
+        (value_path
           (value_name))
-        right: (value_path
+        (value_path
           (value_name))))))
 
 ===========================
@@ -455,10 +454,10 @@ A x;;
       function: (constructor_path
         (constructor_name))
       argument: (parenthesized_expression
-        (product_expression
-          left: (value_path
+        (tuple_expression
+          (value_path
             (value_name))
-          right: (value_path
+          (value_path
             (value_name)))))))
 
 ===========================
@@ -640,13 +639,12 @@ x; y; z;;
 (compilation_unit
   (expression_item
     (sequence_expression
-      left: (value_path
+      (value_path
         (value_name))
-      right: (sequence_expression
-        left: (value_path
-          (value_name))
-        right: (value_path
-          (value_name))))))
+      (value_path
+        (value_name))
+      (value_path
+        (value_name)))))
 
 ===========================
 Match expressions
@@ -873,7 +871,7 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
           body: (value_path
             (value_name))))
       (sequence_expression
-        left: (if_expression
+        (if_expression
           condition: (value_path
             (value_name))
           (then_clause
@@ -883,92 +881,90 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
                 left: (value_path
                   (value_name))
                 operator: (assign_operator)
-                right: (product_expression
-                  left: (product_expression
+                right: (tuple_expression
+                  (infix_expression
                     left: (infix_expression
                       left: (infix_expression
                         left: (infix_expression
                           left: (infix_expression
-                            left: (infix_expression
-                              left: (cons_expression
+                            left: (cons_expression
+                              left: (infix_expression
                                 left: (infix_expression
                                   left: (infix_expression
                                     left: (infix_expression
                                       left: (infix_expression
-                                        left: (infix_expression
-                                          left: (application_expression
-                                            function: (hash_expression
-                                              left: (field_get_expression
-                                                (prefix_expression
-                                                  operator: (prefix_operator)
-                                                  right: (value_path
-                                                    (value_name)))
-                                                (field_path
-                                                  (field_name)))
-                                              operator: (hash_operator)
-                                              right: (value_path
-                                                (value_name)))
-                                            argument: (value_path
-                                              (value_name))
-                                            argument: (value_path
-                                              (value_name)))
-                                          operator: (pow_operator)
-                                          right: (infix_expression
-                                            left: (value_path
-                                              (value_name))
-                                            operator: (pow_operator)
+                                        left: (application_expression
+                                          function: (hash_expression
+                                            left: (field_get_expression
+                                              (prefix_expression
+                                                operator: (prefix_operator)
+                                                right: (value_path
+                                                  (value_name)))
+                                              (field_path
+                                                (field_name)))
+                                            operator: (hash_operator)
                                             right: (value_path
-                                              (value_name))))
-                                        operator: (mult_operator)
-                                        right: (value_path
-                                          (value_name)))
+                                              (value_name)))
+                                          argument: (value_path
+                                            (value_name))
+                                          argument: (value_path
+                                            (value_name)))
+                                        operator: (pow_operator)
+                                        right: (infix_expression
+                                          left: (value_path
+                                            (value_name))
+                                          operator: (pow_operator)
+                                          right: (value_path
+                                            (value_name))))
                                       operator: (mult_operator)
                                       right: (value_path
                                         (value_name)))
-                                    operator: (add_operator)
+                                    operator: (mult_operator)
                                     right: (value_path
                                       (value_name)))
                                   operator: (add_operator)
                                   right: (value_path
                                     (value_name)))
-                                right: (cons_expression
-                                  left: (value_path
-                                    (value_name))
-                                  right: (value_path
-                                    (value_name))))
-                              operator: (concat_operator)
-                              right: (infix_expression
+                                operator: (add_operator)
+                                right: (value_path
+                                  (value_name)))
+                              right: (cons_expression
                                 left: (value_path
                                   (value_name))
-                                operator: (concat_operator)
                                 right: (value_path
                                   (value_name))))
-                            operator: (rel_operator)
-                            right: (value_path
-                              (value_name)))
+                            operator: (concat_operator)
+                            right: (infix_expression
+                              left: (value_path
+                                (value_name))
+                              operator: (concat_operator)
+                              right: (value_path
+                                (value_name))))
                           operator: (rel_operator)
                           right: (value_path
                             (value_name)))
-                        operator: (and_operator)
-                        right: (infix_expression
-                          left: (value_path
-                            (value_name))
-                          operator: (and_operator)
-                          right: (value_path
-                            (value_name))))
-                      operator: (or_operator)
+                        operator: (rel_operator)
+                        right: (value_path
+                          (value_name)))
+                      operator: (and_operator)
                       right: (infix_expression
                         left: (value_path
                           (value_name))
-                        operator: (or_operator)
+                        operator: (and_operator)
                         right: (value_path
                           (value_name))))
-                    right: (value_path
-                      (value_name)))
-                  right: (value_path
+                    operator: (or_operator)
+                    right: (infix_expression
+                      left: (value_path
+                        (value_name))
+                      operator: (or_operator)
+                      right: (value_path
+                        (value_name))))
+                  (value_path
+                    (value_name))
+                  (value_path
                     (value_name)))))))
-        right: (sequence_expression
-          left: (value_path
-            (value_name))
-          right: (value_path
-            (value_name)))))))
+        (value_path
+          (value_name))
+        (value_path
+          (value_name))))))

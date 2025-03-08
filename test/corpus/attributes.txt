@@ -148,10 +148,10 @@ x ;%id x
     (attribute_id))
   (expression_item
     (sequence_expression
-      left: (value_path
+      (value_path
         (value_name))
       (attribute_id)
-      right: (value_path
+      (value_path
         (value_name)))))
 
 ===========================
