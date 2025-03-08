@@ -858,7 +858,7 @@ let x = (x)
 Precedence
 ===========================
 
-let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :: x :: x @ x ^ x < x > x & x && x or x || x, x, x; x; x
+let x = x in if x then x <- x := ! x . x ## x # x x x lsl x ** x * x mod x + x - x :: x :: x @ x ^ x < x > x & x && x or x || x, x, x; x; x
 
 ---
 
@@ -894,17 +894,19 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
                                     left: (infix_expression
                                       left: (infix_expression
                                         left: (application_expression
-                                          function: (hash_expression
-                                            left: (field_get_expression
-                                              record: (prefix_expression
-                                                operator: (prefix_operator)
-                                                expression: (value_path
-                                                  (value_name)))
-                                              field: (field_path
-                                                (field_name)))
-                                            operator: (hash_operator)
-                                            right: (value_path
-                                              (value_name)))
+                                          function: (method_invocation
+                                            object: (hash_expression
+                                              left: (field_get_expression
+                                                record: (prefix_expression
+                                                  operator: (prefix_operator)
+                                                  expression: (value_path
+                                                    (value_name)))
+                                                field: (field_path
+                                                  (field_name)))
+                                              operator: (hash_operator)
+                                              right: (value_path
+                                                (value_name)))
+                                            method: (method_name))
                                           argument: (value_path
                                             (value_name))
                                           argument: (value_path
