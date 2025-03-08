@@ -36,6 +36,11 @@ module.exports = grammar({
     $._module_type_name,
     $._argument_type,
     $._label,
+    $._tuple_label,
+  ],
+
+  conflicts: $ => [
+    [$._proper_tuple_type, $.labeled_tuple_element_type],
   ],
 
   precedences: $ => [
@@ -80,6 +85,7 @@ module.exports = grammar({
       'alias_pattern',
       'exception_pattern',
       $._pattern,
+      $._simple_binding_pattern,
       $._binding_pattern,
     ],
     [$.module_path, $._constructor_name],
@@ -109,6 +115,7 @@ module.exports = grammar({
     $._simple_pattern,
     $._effect_pattern,
     $._pattern,
+    $._simple_binding_pattern,
     $._binding_pattern,
     $._constant,
     $._signed_constant,
@@ -804,7 +811,8 @@ module.exports = grammar({
 
     _type: $ => choice(
       $._simple_type,
-      alias($._tuple_type_anonymous, $.tuple_type),
+      alias($._proper_tuple_type, $.tuple_type),
+      alias($._labeled_tuple_type, $.tuple_type),
       $.function_type,
       $.aliased_type,
     ),
@@ -817,7 +825,7 @@ module.exports = grammar({
 
     _argument_type: $ => choice(
       $._simple_type,
-      alias($._tuple_type_anonymous, $.tuple_type),
+      alias($._proper_tuple_type, $.tuple_type),
       $.labeled_argument_type,
     ),
 
@@ -828,10 +836,30 @@ module.exports = grammar({
       field('type', $._argument_type),
     ),
 
-    _tuple_type_anonymous: $ => seq(
+    _proper_tuple_type: $ => seq(
       $._simple_type,
       '*',
-      choice($._simple_type, $._tuple_type_anonymous),
+      $._tuple_type_rhs,
+    ),
+
+    _labeled_tuple_type: $ => seq(
+      $.labeled_tuple_element_type,
+      '*',
+      $._tuple_type_rhs,
+    ),
+
+    labeled_tuple_element_type: $ => seq(
+      $._label_name,
+      ':',
+      field('type', $._simple_type),
+    ),
+
+    _tuple_type_rhs: $ => seq(
+      choice($._simple_type, $.labeled_tuple_element_type),
+      optional(seq(
+        '*',
+        choice($._tuple_type_rhs),
+      )),
     ),
 
     constructed_type: $ => seq(
@@ -947,7 +975,7 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._simple_expression,
-      alias($._tuple_expression_anonymous, $.tuple_expression),
+      alias($._tuple_expression, $.tuple_expression),
       $.cons_expression,
       $.application_expression,
       $.infix_expression,
@@ -978,10 +1006,20 @@ module.exports = grammar({
       $._typed,
     )),
 
-    _tuple_expression_anonymous: $ => prec.right('tuple', seq(
-      $._expression,
+    labeled_tuple_element: $ => choice(
+      $._tuple_label,
+      seq(
+        $._tuple_label,
+        token.immediate(':'),
+        field('expression', $._simple_expression)
+      ),
+      seq('~', '(', $._label_name, $._typed, ')'),
+    ),
+
+    _tuple_expression: $ => prec.right('tuple', seq(
+      choice($._expression, $.labeled_tuple_element),
       ',',
-      choice($._expression, $._tuple_expression_anonymous),
+      choice($._expression, $.labeled_tuple_element, $._tuple_expression),
     )),
 
     cons_expression: $ => prec.right('cons', seq(
@@ -1413,14 +1451,14 @@ module.exports = grammar({
       $._effect_pattern,
       $.alias_pattern,
       alias($._or_pattern_anonymous, $.or_pattern),
-      alias($._tuple_pattern_anonymous, $.tuple_pattern),
+      alias($._tuple_pattern, $.tuple_pattern),
       $.cons_pattern,
       $.range_pattern,
       $.exception_pattern,
       $.effect_pattern,
     ),
 
-    _binding_pattern: $ => choice(
+    _simple_binding_pattern: $ => choice(
       $._value_name,
       $._signed_constant,
       alias($.typed_binding_pattern, $.typed_pattern),
@@ -1433,15 +1471,19 @@ module.exports = grammar({
       alias($.local_open_binding_pattern, $.local_open_pattern),
       $.package_pattern,
       alias($.parenthesized_binding_pattern, $.parenthesized_pattern),
+      $._extension,
+    ),
+
+    _binding_pattern: $ => choice(
+      $._simple_binding_pattern,
       alias($.alias_binding_pattern, $.alias_pattern),
       alias($._or_binding_pattern_anonymous, $.or_pattern),
       alias($.constructor_binding_pattern, $.constructor_pattern),
       alias($.tag_binding_pattern, $.tag_pattern),
-      alias($._tuple_binding_pattern_anonymous, $.tuple_pattern),
+      alias($._tuple_binding_pattern, $.tuple_pattern),
       alias($.cons_binding_pattern, $.cons_pattern),
       $.range_pattern,
       alias($.lazy_binding_pattern, $.lazy_pattern),
-      $._extension,
     ),
 
     alias_pattern: $ => prec('alias_pattern', seq(
@@ -1505,16 +1547,36 @@ module.exports = grammar({
       $.type_constructor_path,
     ),
 
-    _tuple_pattern_anonymous: $ => prec.right('tuple_pattern', seq(
-      $._pattern,
+    labeled_tuple_element_pattern: $ => choice(
+      $._tuple_label,
+      seq(
+        $._tuple_label,
+        token.immediate(':'),
+        field('pattern', $._simple_pattern),
+      ),
+      seq('~', '(', $._label_name, $._typed, ')'),
+    ),
+
+    _tuple_pattern: $ => prec.right('tuple_pattern', seq(
+      choice($._pattern, $.labeled_tuple_element_pattern),
       ',',
-      choice($._pattern, $._tuple_pattern_anonymous),
+      choice($._pattern, $.labeled_tuple_element_pattern, $._tuple_pattern),
     )),
 
-    _tuple_binding_pattern_anonymous: $ => prec.right('tuple_pattern', seq(
-      $._binding_pattern,
+    labeled_tuple_element_binding_pattern: $ => choice(
+      $._tuple_label,
+      seq(
+        $._tuple_label,
+        token.immediate(':'),
+        field('pattern', $._simple_binding_pattern),
+      ),
+      seq('~', '(', $._label_name, $._typed, ')'),
+    ),
+
+    _tuple_binding_pattern: $ => prec.right('tuple_pattern', seq(
+      choice($._binding_pattern, $.labeled_tuple_element_binding_pattern),
       ',',
-      choice($._binding_pattern, $._tuple_binding_pattern_anonymous),
+      choice($._binding_pattern, $.labeled_tuple_element_binding_pattern, $._tuple_binding_pattern),
     )),
 
     record_pattern: $ => seq(
@@ -1973,6 +2035,7 @@ module.exports = grammar({
     _uppercase_identifier: $ => /[\p{Lu}][\p{XID_Continue}']*/,
 
     _label: $ => seq(choice('~', '?'), $._label_name),
+    _tuple_label: $ => seq('~', $._label_name),
     directive: $ => seq(/#/, choice($._lowercase_identifier, $._uppercase_identifier)),
     type_variable: $ => seq(/'/, choice($._lowercase_identifier, $._uppercase_identifier)),
     tag: $ => seq(/`/, choice($._lowercase_identifier, $._uppercase_identifier)),

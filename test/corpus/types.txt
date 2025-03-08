@@ -261,6 +261,7 @@ Tuple types
 
 type t = t * t
 type t = t * t * t
+type t = a:t * b:t * t
 
 ---
 
@@ -281,6 +282,20 @@ type t = t * t * t
           (type_constructor))
         (type_constructor_path
           (type_constructor))
+        (type_constructor_path
+          (type_constructor)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      equation: (tuple_type
+        (labeled_tuple_element_type
+          (label_name)
+          type: (type_constructor_path
+            (type_constructor)))
+        (labeled_tuple_element_type
+          (label_name)
+          type: (type_constructor_path
+            (type_constructor)))
         (type_constructor_path
           (type_constructor))))))
 

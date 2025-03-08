@@ -198,7 +198,8 @@ function x as t -> ()
 Tuple patterns
 ============================
 
-function x, x, x -> ()
+function x, x, x -> ();;
+function ~a:x, ~b, ~(c:int), d -> ()
 
 ---
 
@@ -209,6 +210,21 @@ function x, x, x -> ()
         pattern: (tuple_pattern
           (value_pattern)
           (value_pattern)
+          (value_pattern))
+        body: (unit))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (tuple_pattern
+          (labeled_tuple_element_pattern
+            (label_name)
+            pattern: (value_pattern))
+          (labeled_tuple_element_pattern
+            (label_name))
+          (labeled_tuple_element_pattern
+            (label_name)
+            type: (type_constructor_path
+              (type_constructor)))
           (value_pattern))
         body: (unit)))))
 
