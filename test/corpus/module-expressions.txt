@@ -10,12 +10,12 @@ module M = M.M
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_path
         (module_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_path
         (module_path
           (module_name))
@@ -35,7 +35,7 @@ module M = struct ;; end
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (structure
         (value_definition
           (let_binding
@@ -44,7 +44,7 @@ module M = struct ;; end
               (value_name)))))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (structure))))
 
 ============================
@@ -59,7 +59,7 @@ module M = M (M) (M)
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_application
         functor: (module_path
           (module_name))
@@ -68,7 +68,7 @@ module M = M (M) (M)
             (module_name))))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_application
         functor: (module_application
           functor: (module_path
@@ -91,11 +91,11 @@ module M = (M : T)
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (typed_module_expression
-        (module_path
+        module: (module_path
           (module_name))
-        (module_type_path
+        module_type: (module_type_path
           (module_type_name))))))
 
 =========================
@@ -111,26 +111,26 @@ module M = M (val m)
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (packed_module
-        (value_path
+        value: (value_path
           (value_name)))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (packed_module
-        (value_path
+        value: (value_path
           (value_name))
-        (module_type_path
+        module_type: (module_type_path
           (module_type_name)))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_application
         functor: (module_path
           (module_name))
         argument: (packed_module
-          (value_path
+          value: (value_path
             (value_name)))))))
 
 =========================
@@ -144,11 +144,11 @@ module M = functor (M : T) -> M
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (functor
         (module_parameter
-          name: (module_name)
-          (module_type_path
+          (module_name)
+          module_type: (module_type_path
             (module_type_name)))
         body: (module_path
           (module_name))))))
@@ -164,7 +164,7 @@ module M = (M)
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (parenthesized_module_expression
         (module_path
           (module_name))))))

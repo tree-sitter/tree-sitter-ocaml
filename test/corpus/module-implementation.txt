@@ -49,9 +49,9 @@ let* x and* y
   (value_definition
     (let_binding
       pattern: (value_name)
-      (polymorphic_type
+      type: (polymorphic_type
         (type_variable)
-        (constructed_type
+        type: (constructed_type
           (type_variable)
           (type_constructor_path
             (type_constructor))))
@@ -67,11 +67,11 @@ let* x and* y
         pattern: (value_pattern))
       (parameter
         pattern: (value_pattern)
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor)))
       (parameter
         pattern: (value_pattern)
-        (value_path
+        default: (value_path
           (value_name)))
       (parameter
         (label_name)
@@ -79,9 +79,9 @@ let* x and* y
           (tuple_pattern
             (value_pattern)
             (value_pattern)))
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor))
-        (value_path
+        default: (value_path
           (value_name)))
       body: (value_path
         (value_name))))
@@ -92,7 +92,7 @@ let* x and* y
         (type_constructor))
       (parameter
         pattern: (value_pattern))
-      (type_constructor_path
+      type: (type_constructor_path
         (type_constructor))
       body: (value_path
         (value_name))))
@@ -132,22 +132,22 @@ include M(M)
 
 (compilation_unit
   (include_module
-    (module_path
+    module: (module_path
       (module_name)))
   (include_module
-    (module_path
+    module: (module_path
       (module_path
         (module_name))
       (module_name)))
   (include_module
-    (module_path
+    module: (module_path
       (module_path
         (module_path
           (module_name))
         (module_name))
       (module_name)))
   (include_module
-    (module_application
+    module: (module_application
       functor: (module_path
         (module_name))
       argument: (parenthesized_module_expression

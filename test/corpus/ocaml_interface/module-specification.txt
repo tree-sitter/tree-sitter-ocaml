@@ -11,13 +11,13 @@ val x : 'a . 'a
 (compilation_unit
   (value_specification
     (value_name)
-    (type_constructor_path
+    type: (type_constructor_path
       (type_constructor)))
   (value_specification
     (value_name)
-    (polymorphic_type
+    type: (polymorphic_type
       (type_variable)
-      (type_variable))))
+      type: (type_variable))))
 
 ==============================
 Include
@@ -35,30 +35,30 @@ include M.M.t
 
 (compilation_unit
   (include_module_type
-    (module_type_path
+    module_type: (module_type_path
       (module_type_name)))
   (include_module_type
-    (module_type_path
+    module_type: (module_type_path
       (module_type_name)))
   (include_module_type
-    (module_type_path
+    module_type: (module_type_path
       (extended_module_path
         (module_name))
       (module_type_name)))
   (include_module_type
-    (module_type_path
+    module_type: (module_type_path
       (extended_module_path
         (module_name))
       (module_type_name)))
   (include_module_type
-    (module_type_path
+    module_type: (module_type_path
       (extended_module_path
         (extended_module_path
           (module_name))
         (module_name))
       (module_type_name)))
   (include_module_type
-    (module_type_path
+    module_type: (module_type_path
       (extended_module_path
         (extended_module_path
           (module_name))

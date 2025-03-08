@@ -4,7 +4,7 @@
 (
   (comment)? @doc .
   (module_definition
-    (module_binding name: (module_name) @name) @definition.module
+    (module_binding (module_name) @name) @definition.module
   )
   (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
@@ -14,7 +14,7 @@
 
 (
   (comment)? @doc .
-  (module_type_definition name: (module_type_name) @name) @definition.interface
+  (module_type_definition (module_type_name) @name) @definition.interface
   (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 
@@ -28,10 +28,10 @@
   (comment)? @doc .
   [
     (class_definition
-      (class_binding name: (class_name) @name) @definition.class
+      (class_binding (class_name) @name) @definition.class
     )
     (class_type_definition
-      (class_type_binding name: (class_type_name) @name) @definition.class
+      (class_type_binding (class_type_name) @name) @definition.class
     )
   ]
   (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
@@ -44,7 +44,7 @@
 
 (
   (comment)? @doc .
-  (method_definition name: (method_name) @name) @definition.method
+  (method_definition (method_name) @name) @definition.method
   (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
 

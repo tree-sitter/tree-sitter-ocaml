@@ -79,19 +79,19 @@ l:t -> ?l:t -> t -> t
 
 (type
   (function_type
-    (labeled_argument_type
+    domain: (labeled_argument_type
       (label_name)
-      (type_constructor_path
+      type: (type_constructor_path
         (type_constructor)))
-    (function_type
-      (labeled_argument_type
+    codomain: (function_type
+      domain: (labeled_argument_type
         (label_name)
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor)))
-      (function_type
-        (type_constructor_path
+      codomain: (function_type
+        domain: (type_constructor_path
           (type_constructor))
-        (type_constructor_path
+        codomain: (type_constructor_path
           (type_constructor))))))
 
 ===========================
@@ -123,9 +123,9 @@ t as 't
 
 (type
   (aliased_type
-    (type_constructor_path
+    type: (type_constructor_path
       (type_constructor))
-    (type_variable)))
+    alias: (type_variable)))
 
 ===========================
 Parenthesized type

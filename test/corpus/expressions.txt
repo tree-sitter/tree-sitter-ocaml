@@ -201,9 +201,9 @@ Typed expression
 (compilation_unit
   (expression_item
     (typed_expression
-      (value_path
+      expression: (value_path
         (value_name))
-      (type_constructor_path
+      type: (type_constructor_path
         (type_constructor)))))
 
 ===========================
@@ -252,12 +252,12 @@ x :: x :: xs;;
   (expression_item
     (record_expression
       (field_expression
-        name: (field_path
+        (field_path
           (field_name))
         body: (value_path
           (value_name)))
       (field_expression
-        name: (field_path
+        (field_path
           (field_name))))))
 
 ===========================
@@ -275,25 +275,25 @@ x.%(0).M.%(0) <- x;;
   (expression_item
     (set_expression
       (field_get_expression
-        (field_get_expression
-          (value_path
+        record: (field_get_expression
+          record: (value_path
             (value_name))
-          (field_path
+          field: (field_path
             (field_name)))
-        (field_path
+        field: (field_path
           (field_name)))
       body: (value_path
         (value_name))))
   (expression_item
     (set_expression
       (bigarray_get_expression
-        (string_get_expression
-          (array_get_expression
-            (value_path
+        array: (string_get_expression
+          string: (array_get_expression
+            array: (value_path
               (value_name))
-            (number))
-          (number))
-        (tuple_expression
+            index: (number))
+          index: (number))
+        index: (tuple_expression
           (number)
           (number)))
       body: (value_path
@@ -301,17 +301,17 @@ x.%(0).M.%(0) <- x;;
   (expression_item
     (set_expression
       (array_get_expression
-        (array_get_expression
-          (value_path
+        array: (array_get_expression
+          array: (value_path
             (value_name))
-          (indexing_operator_path
+          operator: (indexing_operator_path
             (indexing_operator))
-          (number))
-        (indexing_operator_path
+          index: (number))
+        operator: (indexing_operator_path
           (module_path
             (module_name))
           (indexing_operator))
-        (number))
+        index: (number))
       body: (value_path
         (value_name))))
   (expression_item
@@ -319,11 +319,11 @@ x.%(0).M.%(0) <- x;;
       left: (number)
       operator: (hash_operator)
       right: (array_get_expression
-        (value_path
+        array: (value_path
           (value_name))
-        (indexing_operator_path
+        operator: (indexing_operator_path
           (indexing_operator))
-        (number)))))
+        index: (number)))))
 
 ===========================
 Coercions
@@ -337,17 +337,17 @@ Coercions
 (compilation_unit
   (expression_item
     (coercion_expression
-      (value_path
+      expression: (value_path
         (value_name))
-      (type_constructor_path
+      coercion: (type_constructor_path
         (type_constructor))))
   (expression_item
     (coercion_expression
-      (value_path
+      expression: (value_path
         (value_name))
-      (type_constructor_path
+      type: (type_constructor_path
         (type_constructor))
-      (type_constructor_path
+      coercion: (type_constructor_path
         (type_constructor)))))
 
 ===========================
@@ -364,13 +364,13 @@ M.[x; x];;
     (local_open_expression
       (module_path
         (module_name))
-      (value_path
+      expression: (value_path
         (value_name))))
   (expression_item
     (local_open_expression
       (module_path
         (module_name))
-      (list_expression
+      expression: (list_expression
         (value_path
           (value_name))
         (value_path
@@ -388,13 +388,13 @@ Package expressions
 (compilation_unit
   (expression_item
     (package_expression
-      (module_path
+      module: (module_path
         (module_name))))
   (expression_item
     (package_expression
-      (module_path
+      module: (module_path
         (module_name))
-      (module_type_path
+      module_type: (module_type_path
         (module_type_name)))))
 
 ===========================
@@ -417,7 +417,7 @@ x, y, z;;
         (value_name))))
   (expression_item
     (parenthesized_expression
-      (tuple_expression
+      expression: (tuple_expression
         (value_path
           (value_name))
         (value_path
@@ -454,7 +454,7 @@ A x;;
       function: (constructor_path
         (constructor_name))
       argument: (parenthesized_expression
-        (tuple_expression
+        expression: (tuple_expression
           (value_path
             (value_name))
           (value_path
@@ -519,11 +519,11 @@ f ~\#type ?\#module:x ~(\#val:x);;
         (label_name))
       argument: (labeled_argument
         (label_name)
-        (value_path
+        expression: (value_path
           (value_name)))
       argument: (labeled_argument
         (label_name)
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor)))))
   (expression_item
     (application_expression
@@ -533,11 +533,11 @@ f ~\#type ?\#module:x ~(\#val:x);;
         (label_name))
       argument: (labeled_argument
         (label_name)
-        (value_path
+        expression: (value_path
           (value_name)))
       argument: (labeled_argument
         (label_name)
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor))))))
 
 ===========================
@@ -556,17 +556,17 @@ x lsl 1;;
   (expression_item
     (prefix_expression
       operator: (prefix_operator)
-      right: (value_path
+      expression: (value_path
         (value_name))))
   (expression_item
     (prefix_expression
       operator: (prefix_operator)
-      right: (value_path
+      expression: (value_path
         (value_name))))
   (expression_item
     (sign_expression
       operator: (sign_operator)
-      right: (value_path
+      expression: (value_path
         (value_name))))
   (expression_item
     (infix_expression
@@ -599,17 +599,17 @@ for i = 1 to n do x done;;
       condition: (value_path
         (value_name))
       (then_clause
-        (value_path
+        expression: (value_path
           (value_name)))))
   (expression_item
     (if_expression
       condition: (value_path
         (value_name))
       (then_clause
-        (value_path
+        expression: (value_path
           (value_name)))
       (else_clause
-        (value_path
+        expression: (value_path
           (value_name)))))
   (expression_item
     (while_expression
@@ -662,7 +662,7 @@ match+ x with x -> x;;
 (compilation_unit
   (expression_item
     (match_expression
-      (value_path
+      expression: (value_path
         (value_name))
       (match_case
         pattern: (value_pattern)
@@ -671,7 +671,7 @@ match+ x with x -> x;;
       (match_case
         pattern: (value_pattern)
         (guard
-          (value_path
+          expression: (value_path
             (value_name)))
         body: (value_path
           (value_name)))
@@ -683,13 +683,13 @@ match+ x with x -> x;;
           (value_name)))
       (match_case
         pattern: (exception_pattern
-          (value_pattern))
+          pattern: (value_pattern))
         body: (value_path
           (value_name)))))
   (expression_item
     (match_expression
       (match_operator)
-      (value_path
+      expression: (value_path
         (value_name))
       (match_case
         pattern: (value_pattern)
@@ -722,7 +722,7 @@ function A (type a) x -> 1;;
             (constructor_name))
           (abstract_type
             (type_constructor))
-          (value_pattern))
+          pattern: (value_pattern))
         body: (number)))))
 
 ===========================
@@ -736,7 +736,7 @@ try x with Exception -> ()
 (compilation_unit
   (expression_item
     (try_expression
-      (value_path
+      expression: (value_path
         (value_name))
       (match_case
         pattern: (constructor_path
@@ -759,7 +759,7 @@ let rec x = y and y = x in x;;
         (let_binding
           pattern: (value_name)
           body: (number)))
-      (value_path
+      body: (value_path
         (value_name))))
   (expression_item
     (let_expression
@@ -772,7 +772,7 @@ let rec x = y and y = x in x;;
           pattern: (value_name)
           body: (value_path
             (value_name))))
-      (value_path
+      body: (value_path
         (value_name)))))
 
 ===========================
@@ -786,7 +786,7 @@ assert x
 (compilation_unit
   (expression_item
     (assert_expression
-      (value_path
+      expression: (value_path
         (value_name)))))
 
 ===========================
@@ -800,7 +800,7 @@ lazy x
 (compilation_unit
   (expression_item
     (lazy_expression
-      (value_path
+      expression: (value_path
         (value_name)))))
 
 ===========================
@@ -818,7 +818,7 @@ let exception E in x;;
     (let_module_expression
       (module_definition
         (module_binding
-          name: (module_name)
+          (module_name)
           body: (module_path
             (module_name))))
       body: (value_path
@@ -826,7 +826,7 @@ let exception E in x;;
   (expression_item
     (let_open_expression
       (open_module
-        (module_path
+        module: (module_path
           (module_name)))
       body: (value_path
         (value_name))))
@@ -851,7 +851,7 @@ let x = (x)
     (let_binding
       pattern: (value_name)
       body: (parenthesized_expression
-        (value_path
+        expression: (value_path
           (value_name))))))
 
 ===========================
@@ -870,12 +870,12 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
           pattern: (value_name)
           body: (value_path
             (value_name))))
-      (sequence_expression
+      body: (sequence_expression
         (if_expression
           condition: (value_path
             (value_name))
           (then_clause
-            (set_expression
+            expression: (set_expression
               (instance_variable_name)
               body: (infix_expression
                 left: (value_path
@@ -896,11 +896,11 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
                                         left: (application_expression
                                           function: (hash_expression
                                             left: (field_get_expression
-                                              (prefix_expression
+                                              record: (prefix_expression
                                                 operator: (prefix_operator)
-                                                right: (value_path
+                                                expression: (value_path
                                                   (value_name)))
-                                              (field_path
+                                              field: (field_path
                                                 (field_name)))
                                             operator: (hash_operator)
                                             right: (value_path

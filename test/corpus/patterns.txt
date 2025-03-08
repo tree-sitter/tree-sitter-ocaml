@@ -58,8 +58,8 @@ function (x : t) -> ()
     (function_expression
       (match_case
         pattern: (typed_pattern
-          (value_pattern)
-          (type_constructor_path
+          pattern: (value_pattern)
+          type: (type_constructor_path
             (type_constructor)))
         body: (unit)))))
 
@@ -79,13 +79,13 @@ function A x | A | `A | `A x -> ()
           (constructor_pattern
             (constructor_path
               (constructor_name))
-            (value_pattern))
+            pattern: (value_pattern))
           (constructor_path
             (constructor_name))
           (tag)
           (tag_pattern
             (tag)
-            (value_pattern)))
+            pattern: (value_pattern)))
         body: (unit)))))
 
 ============================
@@ -130,8 +130,8 @@ function {x} | [x] | [|x|] | [|x;y;|] | x :: xs -> ()
             (value_pattern)
             (value_pattern))
           (cons_pattern
-            (value_pattern)
-            (value_pattern)))
+            left: (value_pattern)
+            right: (value_pattern)))
         body: (unit)))))
 
 ============================
@@ -150,14 +150,14 @@ function M.(A x) | M.[x] -> ()
           (local_open_pattern
             (module_path
               (module_name))
-            (constructor_pattern
+            pattern: (constructor_pattern
               (constructor_path
                 (constructor_name))
-              (value_pattern)))
+              pattern: (value_pattern)))
           (local_open_pattern
             (module_path
               (module_name))
-            (list_pattern
+            pattern: (list_pattern
               (value_pattern))))
         body: (unit)))))
 
@@ -190,8 +190,8 @@ function x as t -> ()
     (function_expression
       (match_case
         pattern: (alias_pattern
-          (value_pattern)
-          (value_pattern))
+          pattern: (value_pattern)
+          alias: (value_pattern))
         body: (unit)))))
 
 ============================
@@ -225,9 +225,9 @@ function 'a' .. 'z' -> ()
     (function_expression
       (match_case
         pattern: (range_pattern
-          (character
+          left: (character
             (character_content))
-          (character
+          right: (character
             (character_content)))
         body: (unit)))))
 
@@ -244,7 +244,7 @@ function lazy x -> ()
     (function_expression
       (match_case
         pattern: (lazy_pattern
-          (value_pattern))
+          pattern: (value_pattern))
         body: (unit)))))
 
 ============================
