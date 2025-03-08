@@ -10,15 +10,15 @@ external x : 'a . 'a = "x"
 (compilation_unit
   (external
     (value_name)
-    (type_constructor_path
+    type: (type_constructor_path
       (type_constructor))
     (string
       (string_content)))
   (external
     (value_name)
-    (polymorphic_type
+    type: (polymorphic_type
       (type_variable)
-      (type_variable))
+      type: (type_variable))
     (string
       (string_content))))
 
@@ -49,18 +49,18 @@ type t = |
     (type_binding
       (type_variable)
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (type_constructor)))
     (type_binding
       (type_variable)
       (type_variable)
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (type_constructor))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (type_constructor))))
   (type_definition
     (type_binding
@@ -83,7 +83,7 @@ type t = |
           (record_declaration
             (field_declaration
               (field_name)
-              (type_constructor_path
+              type: (type_constructor_path
                 (type_constructor))))))))
   (type_definition
     (type_binding
@@ -110,16 +110,16 @@ type t = |
       body: (record_declaration
         (field_declaration
           (field_name)
-          (type_constructor_path
+          type: (type_constructor_path
             (type_constructor))))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (type_constructor))
       (type_constraint
-        (type_variable)
-        (type_constructor_path
+        type: (type_variable)
+        constraint: (type_constructor_path
           (type_constructor)))))
   (type_definition
     (type_binding
@@ -167,71 +167,71 @@ module _ (_ : T) = M
 (compilation_unit
   (module_definition
     (module_binding
-      name: (module_name)))
+      (module_name)))
   (module_definition
     (module_binding
-      name: (module_name)
-      (module_type_path
+      (module_name)
+      module_type: (module_type_path
         (module_type_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       (module_parameter
-        name: (module_name)
-        (module_type_path
+        (module_name)
+        module_type: (module_type_path
           (module_type_name)))
-      (module_type_path
+      module_type: (module_type_path
         (module_type_name))))
   (module_definition
     (module_binding
-      name: (module_name)
-      (module_type_path
+      (module_name)
+      module_type: (module_type_path
         (module_type_name)))
     (module_binding
-      name: (module_name)
-      (module_type_path
+      (module_name)
+      module_type: (module_type_path
         (module_type_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_path
         (module_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_path
         (module_name))))
   (module_definition
     (module_binding
-      name: (module_name)
-      (module_type_path
+      (module_name)
+      module_type: (module_type_path
         (module_type_name))
       body: (module_path
         (module_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       (module_parameter
-        name: (module_name)
-        (module_type_path
+        (module_name)
+        module_type: (module_type_path
           (module_type_name)))
       body: (module_path
         (module_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_path
         (module_name)))
     (module_binding
-      name: (module_name)
+      (module_name)
       body: (module_path
         (module_name))))
   (module_definition
     (module_binding
-      name: (module_name)
+      (module_name)
       (module_parameter
-        name: (module_name)
-        (module_type_path
+        (module_name)
+        module_type: (module_type_path
           (module_type_name)))
       body: (module_path
         (module_name)))))
@@ -247,11 +247,11 @@ module type T := T
 
 (compilation_unit
   (module_type_definition
-    name: (module_type_name)
+    (module_type_name)
     body: (module_type_path
       (module_type_name)))
   (module_type_definition
-    name: (module_type_name)
+    (module_type_name)
     body: (module_type_path
       (module_type_name))))
 
@@ -267,11 +267,11 @@ open ! M
 
 (compilation_unit
   (open_module
-    (module_path
+    module: (module_path
       (module_name)))
   (open_module
-    (module_path
+    module: (module_path
       (module_name)))
   (open_module
-    (module_path
+    module: (module_path
       (module_name))))

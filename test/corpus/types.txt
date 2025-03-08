@@ -16,33 +16,33 @@ type +!'a t = 'a
     (type_binding
       (type_variable)
       name: (type_constructor)
-      (type_variable)))
+      equation: (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
       name: (type_constructor)
-      (type_variable)))
+      equation: (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
       (type_variable)
       name: (type_constructor)
-      (type_variable)))
+      equation: (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
       name: (type_constructor)
-      (type_variable)))
+      equation: (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
       name: (type_constructor)
-      (type_variable)))
+      equation: (type_variable)))
   (type_definition
     (type_binding
       (type_variable)
       name: (type_constructor)
-      (type_variable))))
+      equation: (type_variable))))
 
 ===========================
 Type constructors
@@ -60,31 +60,31 @@ type t = M(M).t
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (type_constructor))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (type_constructor))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (extended_module_path
           (module_name))
         (type_constructor))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (extended_module_path
           (module_name))
         (type_constructor))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (type_constructor_path
+      equation: (type_constructor_path
         (extended_module_path
           (extended_module_path
             (module_name))
@@ -105,7 +105,7 @@ type t = int list list
   (type_definition
     (type_binding
       name: (type_constructor)
-      (constructed_type
+      equation: (constructed_type
         (type_constructor_path
           (type_constructor))
         (type_constructor_path
@@ -113,7 +113,7 @@ type t = int list list
   (type_definition
     (type_binding
       name: (type_constructor)
-      (constructed_type
+      equation: (constructed_type
         (constructed_type
           (type_constructor_path
             (type_constructor))
@@ -141,7 +141,7 @@ type t = M.[`A]
   (type_definition
     (type_binding
       name: (type_constructor)
-      (polymorphic_variant_type
+      equation: (polymorphic_variant_type
         (tag_specification
           (tag))
         (tag_specification
@@ -151,7 +151,7 @@ type t = M.[`A]
   (type_definition
     (type_binding
       name: (type_constructor)
-      (polymorphic_variant_type
+      equation: (polymorphic_variant_type
         (type_constructor_path
           (type_constructor))
         (tag_specification
@@ -159,7 +159,7 @@ type t = M.[`A]
   (type_definition
     (type_binding
       name: (type_constructor)
-      (polymorphic_variant_type
+      equation: (polymorphic_variant_type
         (tag_specification
           (tag)
           (type_constructor_path
@@ -169,17 +169,17 @@ type t = M.[`A]
   (type_definition
     (type_binding
       name: (type_constructor)
-      (polymorphic_variant_type
+      equation: (polymorphic_variant_type
         (tag_specification
           (tag))
         (tag))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (local_open_type
+      equation: (local_open_type
         (extended_module_path
           (module_name))
-        (polymorphic_variant_type
+        type: (polymorphic_variant_type
           (tag_specification
             (tag)))))))
 
@@ -196,16 +196,16 @@ type t = M.(module T)
   (type_definition
     (type_binding
       name: (type_constructor)
-      (package_type
+      equation: (package_type
         (module_type_path
           (module_type_name)))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (local_open_type
+      equation: (local_open_type
         (extended_module_path
           (module_name))
-        (package_type
+        type: (package_type
           (module_type_path
             (module_type_name)))))))
 
@@ -223,36 +223,36 @@ type t = l:t -> ?l:t -> t
   (type_definition
     (type_binding
       name: (type_constructor)
-      (function_type
-        (type_constructor_path
+      equation: (function_type
+        domain: (type_constructor_path
           (type_constructor))
-        (type_constructor_path
+        codomain: (type_constructor_path
           (type_constructor)))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (function_type
-        (type_constructor_path
+      equation: (function_type
+        domain: (type_constructor_path
           (type_constructor))
-        (function_type
-          (type_constructor_path
+        codomain: (function_type
+          domain: (type_constructor_path
             (type_constructor))
-          (type_constructor_path
+          codomain: (type_constructor_path
             (type_constructor))))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (function_type
-        (labeled_argument_type
+      equation: (function_type
+        domain: (labeled_argument_type
           (label_name)
-          (type_constructor_path
+          type: (type_constructor_path
             (type_constructor)))
-        (function_type
-          (labeled_argument_type
+        codomain: (function_type
+          domain: (labeled_argument_type
             (label_name)
-            (type_constructor_path
+            type: (type_constructor_path
               (type_constructor)))
-          (type_constructor_path
+          codomain: (type_constructor_path
             (type_constructor)))))))
 
 ===========================
@@ -268,7 +268,7 @@ type t = t * t * t
   (type_definition
     (type_binding
       name: (type_constructor)
-      (tuple_type
+      equation: (tuple_type
         (type_constructor_path
           (type_constructor))
         (type_constructor_path
@@ -276,7 +276,7 @@ type t = t * t * t
   (type_definition
     (type_binding
       name: (type_constructor)
-      (tuple_type
+      equation: (tuple_type
         (type_constructor_path
           (type_constructor))
         (type_constructor_path
@@ -296,10 +296,10 @@ type t = t as 't
   (type_definition
     (type_binding
       name: (type_constructor)
-      (aliased_type
-        (type_constructor_path
+      equation: (aliased_type
+        type: (type_constructor_path
           (type_constructor))
-        (type_variable)))))
+        alias: (type_variable)))))
 
 ===========================
 Parenthesized types
@@ -314,14 +314,14 @@ type t = M.(t)
   (type_definition
     (type_binding
       name: (type_constructor)
-      (parenthesized_type
+      equation: (parenthesized_type
         (type_constructor_path
           (type_constructor)))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      (local_open_type
+      equation: (local_open_type
         (extended_module_path
           (module_name))
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor))))))
