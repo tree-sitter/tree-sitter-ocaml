@@ -218,9 +218,8 @@ function x, x, x -> ()
     (function_expression
       (match_case
         pattern: (tuple_pattern
-          (tuple_pattern
-            (value_pattern)
-            (value_pattern))
+          (value_pattern)
+          (value_pattern)
           (value_pattern))
         body: (unit)))))
 

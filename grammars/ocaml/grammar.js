@@ -55,6 +55,7 @@ module.exports = grammar({
     $._type_constructor,
     $._module_name,
     $._module_type_name,
+    $._argument_type,
     $._label,
   ],
 
@@ -75,7 +76,6 @@ module.exports = grammar({
     $._class_field,
     $._polymorphic_type,
     $._simple_type,
-    $._tuple_type,
     $._type,
     $._simple_expression,
     $._expression,
@@ -628,8 +628,7 @@ module.exports = grammar({
     )),
 
     class_function_type: $ => prec.right(PREC.seq, seq(
-      optional(seq(optional('?'), $._label_name, ':')),
-      $._tuple_type,
+      $._argument_type,
       '->',
       $._class_type,
     )),
@@ -783,34 +782,36 @@ module.exports = grammar({
       $._extension,
     ),
 
-    _tuple_type: $ => choice(
-      $._simple_type,
-      $.tuple_type,
-    ),
-
     _type: $ => choice(
-      $._tuple_type,
+      $._simple_type,
+      alias($._tuple_type_anonymous, $.tuple_type),
       $.function_type,
       $.aliased_type,
     ),
 
     function_type: $ => prec.right(PREC.seq, seq(
-      choice($.typed_label, $._type),
+      $._argument_type,
       '->',
       $._type,
     )),
 
-    typed_label: $ => prec.left(PREC.seq, seq(
+    _argument_type: $ => choice(
+      $._simple_type,
+      alias($._tuple_type_anonymous, $.tuple_type),
+      $.labeled_argument_type,
+    ),
+
+    labeled_argument_type: $ => seq(
       optional('?'),
       $._label_name,
       ':',
-      $._type,
-    )),
+      $._argument_type,
+    ),
 
-    tuple_type: $ => prec(PREC.prod, seq(
-      $._tuple_type,
-      '*',
+    _tuple_type_anonymous: $ => prec.right(PREC.prod, seq(
       $._simple_type,
+      '*',
+      choice($._simple_type, $._tuple_type_anonymous),
     )),
 
     constructed_type: $ => prec(PREC.app, seq(
@@ -928,7 +929,7 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._simple_expression,
-      $.product_expression,
+      alias($._tuple_expression_anonymous, $.tuple_expression),
       $.cons_expression,
       $.application_expression,
       $.infix_expression,
@@ -959,10 +960,10 @@ module.exports = grammar({
       $._typed,
     )),
 
-    product_expression: $ => prec.left(PREC.prod, seq(
-      field('left', $._expression),
+    _tuple_expression_anonymous: $ => prec.right(PREC.prod, seq(
+      $._expression,
       ',',
-      field('right', $._expression),
+      choice($._expression, $._tuple_expression_anonymous),
     )),
 
     cons_expression: $ => prec.right(PREC.cons, seq(
@@ -1391,7 +1392,7 @@ module.exports = grammar({
       $._effect_pattern,
       $.alias_pattern,
       $.or_pattern,
-      $.tuple_pattern,
+      alias($._tuple_pattern_anonymous, $.tuple_pattern),
       $.cons_pattern,
       $.range_pattern,
       $.exception_pattern,
@@ -1415,7 +1416,7 @@ module.exports = grammar({
       alias($.or_binding_pattern, $.or_pattern),
       alias($.constructor_binding_pattern, $.constructor_pattern),
       alias($.tag_binding_pattern, $.tag_pattern),
-      alias($.tuple_binding_pattern, $.tuple_pattern),
+      alias($._tuple_binding_pattern_anonymous, $.tuple_pattern),
       alias($.cons_binding_pattern, $.cons_pattern),
       $.range_pattern,
       alias($.lazy_binding_pattern, $.lazy_pattern),
@@ -1486,16 +1487,16 @@ module.exports = grammar({
       $.type_constructor_path,
     ),
 
-    tuple_pattern: $ => prec.left(PREC.prod, seq(
+    _tuple_pattern_anonymous: $ => prec.right(PREC.prod, seq(
       $._pattern,
       ',',
-      $._pattern,
+      choice($._pattern, $._tuple_pattern_anonymous),
     )),
 
-    tuple_binding_pattern: $ => prec.left(PREC.prod, seq(
+    _tuple_binding_pattern_anonymous: $ => prec.right(PREC.prod, seq(
       $._binding_pattern,
       ',',
-      $._binding_pattern,
+      choice($._binding_pattern, $._tuple_binding_pattern_anonymous),
     )),
 
     record_pattern: $ => prec.left(seq(

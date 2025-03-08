@@ -243,12 +243,12 @@ type t = l:t -> ?l:t -> t
     (type_binding
       name: (type_constructor)
       (function_type
-        (typed_label
+        (labeled_argument_type
           (label_name)
           (type_constructor_path
             (type_constructor)))
         (function_type
-          (typed_label
+          (labeled_argument_type
             (label_name)
             (type_constructor_path
               (type_constructor)))
@@ -277,11 +277,10 @@ type t = t * t * t
     (type_binding
       name: (type_constructor)
       (tuple_type
-        (tuple_type
-          (type_constructor_path
-            (type_constructor))
-          (type_constructor_path
-            (type_constructor)))
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor))
         (type_constructor_path
           (type_constructor))))))
 

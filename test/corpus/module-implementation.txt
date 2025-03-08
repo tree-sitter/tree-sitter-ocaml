@@ -41,10 +41,10 @@ let* x and* y
       pattern: (tuple_pattern
         (value_name)
         (value_name))
-      body: (product_expression
-        left: (value_path
+      body: (tuple_expression
+        (value_path
           (value_name))
-        right: (value_path
+        (value_path
           (value_name)))))
   (value_definition
     (let_binding
