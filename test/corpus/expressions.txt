@@ -639,13 +639,12 @@ x; y; z;;
 (compilation_unit
   (expression_item
     (sequence_expression
-      left: (value_path
+      (value_path
         (value_name))
-      right: (sequence_expression
-        left: (value_path
-          (value_name))
-        right: (value_path
-          (value_name))))))
+      (value_path
+        (value_name))
+      (value_path
+        (value_name)))))
 
 ===========================
 Match expressions
@@ -872,7 +871,7 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
           body: (value_path
             (value_name))))
       (sequence_expression
-        left: (if_expression
+        (if_expression
           condition: (value_path
             (value_name))
           (then_clause
@@ -965,8 +964,7 @@ let x = x in if x then x <- x := ! x . x ## x x x lsl x ** x * x mod x + x - x :
                     (value_name))
                   (value_path
                     (value_name)))))))
-        right: (sequence_expression
-          left: (value_path
-            (value_name))
-          right: (value_path
-            (value_name)))))))
+        (value_path
+          (value_name))
+        (value_path
+          (value_name))))))

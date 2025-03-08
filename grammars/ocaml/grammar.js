@@ -952,7 +952,7 @@ module.exports = grammar({
 
     _sequence_expression: $ => choice(
       $._expression,
-      $.sequence_expression,
+      alias($._sequence_expression_anonymous, $.sequence_expression),
     ),
 
     typed_expression: $ => parenthesize(seq(
@@ -1186,12 +1186,12 @@ module.exports = grammar({
       $.do_clause,
     ),
 
-    sequence_expression: $ => prec.right(PREC.seq, seq(
-      field('left', $._expression),
+    _sequence_expression_anonymous: $ => prec.right(PREC.seq, seq(
+      $._expression,
       ';',
       optional(seq(
         optional($._attribute),
-        field('right', $._sequence_expression),
+        choice($._expression, $._sequence_expression_anonymous),
       )),
     )),
 
