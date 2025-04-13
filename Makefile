@@ -7,7 +7,7 @@ all install uninstall clean:
 
 test:
 	$(TS) test
-	$(TS) parse examples/* --quiet --time
+	$(SHELL) test/parse-examples.sh
 
 generate:
 	cd grammars/ocaml && $(TS) generate
