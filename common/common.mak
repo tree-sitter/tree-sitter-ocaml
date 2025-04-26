@@ -3,7 +3,6 @@ VERSION := 0.24.0
 
 # repository
 SRC_DIR := src
-ROOT_DIR := $(shell dirname $(shell dirname $(shell pwd)))
 
 PARSER_REPO_URL := $(shell git -C $(SRC_DIR) remote get-url origin 2>/dev/null)
 
@@ -91,13 +90,13 @@ $(PARSER): $(SRC_DIR)/grammar.json
 
 install: all
 	install -d '$(DESTDIR)$(DATADIR)'/tree-sitter/queries/$(PARSER_NAME) '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter '$(DESTDIR)$(PCLIBDIR)' '$(DESTDIR)$(LIBDIR)'
-	install -m644 $(ROOT_DIR)/bindings/c/tree_sitter/$(LANGUAGE_NAME).h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
+	install -m644 ../../bindings/c/tree_sitter/$(LANGUAGE_NAME).h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
 	install -m644 $(LANGUAGE_NAME).pc '$(DESTDIR)$(PCLIBDIR)'/$(LANGUAGE_NAME).pc
 	install -m644 lib$(LANGUAGE_NAME).a '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).a
 	install -m755 lib$(LANGUAGE_NAME).$(SOEXT) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXTVER)
 	ln -sf lib$(LANGUAGE_NAME).$(SOEXTVER) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXTVER_MAJOR)
 	ln -sf lib$(LANGUAGE_NAME).$(SOEXTVER_MAJOR) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXT)
-	install -m644 $(ROOT_DIR)/queries/*.scm '$(DESTDIR)$(DATADIR)'/tree-sitter/queries/$(PARSER_NAME)
+	install -m644 ../../queries/*.scm '$(DESTDIR)$(DATADIR)'/tree-sitter/queries/$(PARSER_NAME)
 
 uninstall:
 	$(RM) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).a \
