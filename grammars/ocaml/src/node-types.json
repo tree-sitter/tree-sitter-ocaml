@@ -5753,7 +5753,8 @@
   },
   {
     "type": "comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "concat_operator",
@@ -5881,7 +5882,8 @@
   },
   {
     "type": "line_number_directive",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "match",
