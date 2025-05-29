@@ -24,6 +24,7 @@ module.exports = grammar({
       'do',
       'done',
       'downto',
+      // 'effect', // Since OCaml 5.3
       'else',
       'end',
       'exception',
@@ -45,7 +46,7 @@ module.exports = grammar({
       'module',
       'mutable',
       'new',
-      'nonrec',
+      // 'nonrec', // Since OCaml 4.2
       'object',
       'of',
       'open',
