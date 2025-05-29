@@ -1080,6 +1080,11 @@
     }
   },
   {
+    "type": "and_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "application_expression",
     "named": true,
     "fields": {
@@ -4176,6 +4181,11 @@
     }
   },
   {
+    "type": "mult_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "new_expression",
     "named": true,
     "fields": {},
@@ -4306,6 +4316,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "or_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "or_pattern",
@@ -4708,6 +4723,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "pow_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "prefix_expression",
@@ -5752,6 +5772,10 @@
     "named": false
   },
   {
+    "type": "&&",
+    "named": false
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -5892,11 +5916,11 @@
     "named": false
   },
   {
-    "type": "and_operator",
-    "named": true
+    "type": "as",
+    "named": false
   },
   {
-    "type": "as",
+    "type": "asr",
     "named": false
   },
   {
@@ -6037,6 +6061,10 @@
     "named": true
   },
   {
+    "type": "land",
+    "named": false
+  },
+  {
     "type": "lazy",
     "named": false
   },
@@ -6058,6 +6086,22 @@
     "extra": true
   },
   {
+    "type": "lor",
+    "named": false
+  },
+  {
+    "type": "lsl",
+    "named": false
+  },
+  {
+    "type": "lsr",
+    "named": false
+  },
+  {
+    "type": "lxor",
+    "named": false
+  },
+  {
     "type": "match",
     "named": false
   },
@@ -6074,6 +6118,10 @@
     "named": true
   },
   {
+    "type": "mod",
+    "named": false
+  },
+  {
     "type": "module",
     "named": false
   },
@@ -6083,10 +6131,6 @@
   },
   {
     "type": "module_type_name",
-    "named": true
-  },
-  {
-    "type": "mult_operator",
     "named": true
   },
   {
@@ -6118,12 +6162,8 @@
     "named": false
   },
   {
-    "type": "or_operator",
-    "named": true
-  },
-  {
-    "type": "pow_operator",
-    "named": true
+    "type": "or",
+    "named": false
   },
   {
     "type": "prefix_operator",
@@ -6231,6 +6271,10 @@
   },
   {
     "type": "|]",
+    "named": false
+  },
+  {
+    "type": "||",
     "named": false
   },
   {

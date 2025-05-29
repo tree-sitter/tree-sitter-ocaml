@@ -10041,23 +10041,23 @@
       }
     },
     "pow_operator": {
-      "type": "TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "lsl"
-          },
-          {
-            "type": "STRING",
-            "value": "lsr"
-          },
-          {
-            "type": "STRING",
-            "value": "asr"
-          },
-          {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "lsl"
+        },
+        {
+          "type": "STRING",
+          "value": "lsr"
+        },
+        {
+          "type": "STRING",
+          "value": "asr"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
             "type": "SEQ",
             "members": [
               {
@@ -10073,31 +10073,31 @@
               }
             ]
           }
-        ]
-      }
+        }
+      ]
     },
     "mult_operator": {
-      "type": "TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "mod"
-          },
-          {
-            "type": "STRING",
-            "value": "land"
-          },
-          {
-            "type": "STRING",
-            "value": "lor"
-          },
-          {
-            "type": "STRING",
-            "value": "lxor"
-          },
-          {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "mod"
+        },
+        {
+          "type": "STRING",
+          "value": "land"
+        },
+        {
+          "type": "STRING",
+          "value": "lor"
+        },
+        {
+          "type": "STRING",
+          "value": "lxor"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
             "type": "SEQ",
             "members": [
               {
@@ -10113,8 +10113,8 @@
               }
             ]
           }
-        ]
-      }
+        }
+      ]
     },
     "add_operator": {
       "type": "CHOICE",
@@ -10348,36 +10348,30 @@
       }
     },
     "and_operator": {
-      "type": "TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "&"
-          },
-          {
-            "type": "STRING",
-            "value": "&&"
-          }
-        ]
-      }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "&"
+        },
+        {
+          "type": "STRING",
+          "value": "&&"
+        }
+      ]
     },
     "or_operator": {
-      "type": "TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "or"
-          },
-          {
-            "type": "STRING",
-            "value": "||"
-          }
-        ]
-      }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "or"
+        },
+        {
+          "type": "STRING",
+          "value": "||"
+        }
+      ]
     },
     "assign_operator": {
       "type": "PATTERN",
@@ -11218,8 +11212,12 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_lowercase_identifier"
+              "type": "RESERVED",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_lowercase_identifier"
+              },
+              "context_name": "attribute_id"
             },
             {
               "type": "SYMBOL",
@@ -11240,8 +11238,12 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "_lowercase_identifier"
+                    "type": "RESERVED",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_lowercase_identifier"
+                    },
+                    "context_name": "attribute_id"
                   },
                   {
                     "type": "SYMBOL",
@@ -11525,5 +11527,258 @@
     "_signed_constant",
     "_infix_operator"
   ],
-  "reserved": {}
+  "reserved": {
+    "global": [
+      {
+        "type": "STRING",
+        "value": "and"
+      },
+      {
+        "type": "STRING",
+        "value": "as"
+      },
+      {
+        "type": "STRING",
+        "value": "assert"
+      },
+      {
+        "type": "STRING",
+        "value": "begin"
+      },
+      {
+        "type": "STRING",
+        "value": "class"
+      },
+      {
+        "type": "STRING",
+        "value": "constraint"
+      },
+      {
+        "type": "STRING",
+        "value": "do"
+      },
+      {
+        "type": "STRING",
+        "value": "done"
+      },
+      {
+        "type": "STRING",
+        "value": "downto"
+      },
+      {
+        "type": "STRING",
+        "value": "else"
+      },
+      {
+        "type": "STRING",
+        "value": "end"
+      },
+      {
+        "type": "STRING",
+        "value": "exception"
+      },
+      {
+        "type": "STRING",
+        "value": "external"
+      },
+      {
+        "type": "STRING",
+        "value": "false"
+      },
+      {
+        "type": "STRING",
+        "value": "for"
+      },
+      {
+        "type": "STRING",
+        "value": "fun"
+      },
+      {
+        "type": "STRING",
+        "value": "function"
+      },
+      {
+        "type": "STRING",
+        "value": "functor"
+      },
+      {
+        "type": "STRING",
+        "value": "if"
+      },
+      {
+        "type": "STRING",
+        "value": "in"
+      },
+      {
+        "type": "STRING",
+        "value": "include"
+      },
+      {
+        "type": "STRING",
+        "value": "inherit"
+      },
+      {
+        "type": "STRING",
+        "value": "initializer"
+      },
+      {
+        "type": "STRING",
+        "value": "lazy"
+      },
+      {
+        "type": "STRING",
+        "value": "let"
+      },
+      {
+        "type": "STRING",
+        "value": "match"
+      },
+      {
+        "type": "STRING",
+        "value": "method"
+      },
+      {
+        "type": "STRING",
+        "value": "module"
+      },
+      {
+        "type": "STRING",
+        "value": "mutable"
+      },
+      {
+        "type": "STRING",
+        "value": "new"
+      },
+      {
+        "type": "STRING",
+        "value": "object"
+      },
+      {
+        "type": "STRING",
+        "value": "of"
+      },
+      {
+        "type": "STRING",
+        "value": "open"
+      },
+      {
+        "type": "STRING",
+        "value": "or"
+      },
+      {
+        "type": "STRING",
+        "value": "private"
+      },
+      {
+        "type": "STRING",
+        "value": "rec"
+      },
+      {
+        "type": "STRING",
+        "value": "sig"
+      },
+      {
+        "type": "STRING",
+        "value": "struct"
+      },
+      {
+        "type": "STRING",
+        "value": "then"
+      },
+      {
+        "type": "STRING",
+        "value": "to"
+      },
+      {
+        "type": "STRING",
+        "value": "true"
+      },
+      {
+        "type": "STRING",
+        "value": "try"
+      },
+      {
+        "type": "STRING",
+        "value": "type"
+      },
+      {
+        "type": "STRING",
+        "value": "val"
+      },
+      {
+        "type": "STRING",
+        "value": "virtual"
+      },
+      {
+        "type": "STRING",
+        "value": "when"
+      },
+      {
+        "type": "STRING",
+        "value": "while"
+      },
+      {
+        "type": "STRING",
+        "value": "with"
+      },
+      {
+        "type": "STRING",
+        "value": "lor"
+      },
+      {
+        "type": "STRING",
+        "value": "lxor"
+      },
+      {
+        "type": "STRING",
+        "value": "mod"
+      },
+      {
+        "type": "STRING",
+        "value": "land"
+      },
+      {
+        "type": "STRING",
+        "value": "lsl"
+      },
+      {
+        "type": "STRING",
+        "value": "lsr"
+      },
+      {
+        "type": "STRING",
+        "value": "asr"
+      }
+    ],
+    "attribute_id": [
+      {
+        "type": "STRING",
+        "value": "lor"
+      },
+      {
+        "type": "STRING",
+        "value": "lxor"
+      },
+      {
+        "type": "STRING",
+        "value": "mod"
+      },
+      {
+        "type": "STRING",
+        "value": "land"
+      },
+      {
+        "type": "STRING",
+        "value": "lsl"
+      },
+      {
+        "type": "STRING",
+        "value": "lsr"
+      },
+      {
+        "type": "STRING",
+        "value": "asr"
+      }
+    ]
+  }
 }
