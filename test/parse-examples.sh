@@ -2,10 +2,32 @@
 
 set -ef
 
-cd "$(dirname "$0")/.."
-
 git submodule update --init --depth 1
 
-tree-sitter parse -q -s \
-  $(cat test/files.txt) \
-  $(for file in $(cat test/invalid-files.txt); do echo "!${file}"; done)
+inclusions=()
+exclusions=()
+
+add_pattern() {
+  pattern=$1
+  first=$2
+
+  if [[ "$pattern" == !* ]]; then
+    exclusions+=("!" "-path" "${pattern:1}")
+  elif [[ "$first" == true ]]; then
+    inclusions+=("-path" $pattern)
+  else
+    inclusions+=("-o" "-path" $pattern)
+  fi
+}
+
+first=true
+while read pattern; do
+  add_pattern $pattern $first
+  first=false
+done < test/files.txt
+
+while read pattern; do
+  exclusions+=("!" "-path" "$pattern")
+done < test/invalid-files.txt
+
+tree-sitter parse -q -s --paths <(find examples -type f \( "${inclusions[@]}" \) "${exclusions[@]}")

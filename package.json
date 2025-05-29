@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-ocaml",
-  "version": "0.24.2",
+  "version": "0.25.0",
   "description": "OCaml grammar for tree-sitter",
   "repository": "https://github.com/tree-sitter/tree-sitter-ocaml",
   "license": "MIT",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "eslint-config-treesitter": "^1.0.2",
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.24.6"
+    "tree-sitter-cli": "^0.25.5"
   },
   "peerDependencies": {
     "tree-sitter": "^0.22.4"

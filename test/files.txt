@@ -4,4 +4,4 @@ examples/**/*.mli
 !examples/**/*.template.*
 !examples/ocamlformat/test/failing/**/*
 !examples/ocamlformat/test/passing/**/*
-!examples/ocaml/testsuite/tests/parse-errors/**/*
+!examples/ocaml/testsuite/tests/parse-errors/*

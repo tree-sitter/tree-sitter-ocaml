@@ -16,8 +16,8 @@ way.)
 
 ```toml
 [dependencies]
-tree-sitter = "0.24"
-tree-sitter-ocaml = "0.24"
+tree-sitter = "0.25"
+tree-sitter-ocaml = "0.25"
 ```
 
 ## Usage

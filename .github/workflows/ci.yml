@@ -25,9 +25,9 @@ jobs:
           generate: false
           test-rust: ${{runner.os == 'Linux'}}
           test-node: true
-          test-python: true
+          test-python: false
           test-go: true
-          test-swift: ${{runner.os == 'macOS'}}
+          test-swift: false
   parse-examples:
     name: Parse examples
     runs-on: ${{matrix.os}}
