@@ -13,17 +13,11 @@ const NUMBER = token(choice(
 module.exports = grammar({
   name: 'ocaml',
 
-  // The keywords that are commented out in the reserved list below are omitted
-  // because of the requirement that reserved words must be tokens. These
-  // keywords all only appear within `token(choice(...))` rules, which means
-  // they are not independent tokens - instead, `pow_operator`, `mult_operator`.
-  // and `or_operator` serve as the tokens and are the leaves in the parse tree.
   reserved: {
     global: $ => [
       'and',
       'as',
       'assert',
-      // 'asr',
       'begin',
       'class',
       'constraint',
@@ -44,16 +38,10 @@ module.exports = grammar({
       'include',
       'inherit',
       'initializer',
-      // 'land',
       'lazy',
       'let',
-      // 'lor',
-      // 'lsl',
-      // 'lsr',
-      // 'lxor',
       'match',
       'method',
-      // 'mod',
       'module',
       'mutable',
       'new',
@@ -61,7 +49,7 @@ module.exports = grammar({
       'object',
       'of',
       'open',
-      // 'or',
+      'or',
       'private',
       'rec',
       'sig',
@@ -76,6 +64,13 @@ module.exports = grammar({
       'when',
       'while',
       'with',
+      'lor',
+      'lxor',
+      'mod',
+      'land',
+      'lsl',
+      'lsr',
+      'asr',
     ],
   },
 
@@ -1971,15 +1966,13 @@ module.exports = grammar({
 
     hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
 
-    pow_operator: $ => token(choice(
-      'lsl', 'lsr', 'asr',
-      seq('**', repeat(OP_CHAR)),
-    )),
+    pow_operator: $ => choice(
+      'lsl', 'lsr', 'asr', token(seq('**', repeat(OP_CHAR))),
+    ),
 
-    mult_operator: $ => token(choice(
-      'mod', 'land', 'lor', 'lxor',
-      seq(/[*/%]/, repeat(OP_CHAR)),
-    )),
+    mult_operator: $ => choice(
+      'mod', 'land', 'lor', 'lxor', token(seq(/[*/%]/, repeat(OP_CHAR))),
+    ),
 
     add_operator: $ => choice(
       /[+-]/, /[+-]\./,
@@ -2001,9 +1994,9 @@ module.exports = grammar({
       '!=',
     )),
 
-    and_operator: $ => token(choice('&', '&&')),
+    and_operator: $ => choice('&', '&&'),
 
-    or_operator: $ => token(choice('or', '||')),
+    or_operator: $ => choice('or', '||'),
 
     assign_operator: $ => /:=/,
 
