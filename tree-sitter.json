@@ -48,7 +48,7 @@
     }
   ],
   "metadata": {
-    "version": "0.24.0",
+    "version": "0.24.1",
     "license": "MIT",
     "description": "OCaml grammar for tree-sitter",
     "links": {

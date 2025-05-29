@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-ocaml
-        VERSION "0.24.0"
+        VERSION "0.24.1"
 		DESCRIPTION "OCaml grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/tree-sitter/tree-sitter-ocaml"
         LANGUAGES C)

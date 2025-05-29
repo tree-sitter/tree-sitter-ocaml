@@ -1,5 +1,5 @@
 LANGUAGE_NAME := tree-sitter-$(PARSER_NAME)
-VERSION := 0.24.0
+VERSION := 0.24.1
 
 # repository
 SRC_DIR := src
