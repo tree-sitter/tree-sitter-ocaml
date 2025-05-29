@@ -4016,7 +4016,16 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_tuple_type_anonymous"
+            "name": "_proper_tuple_type"
+          },
+          "named": true,
+          "value": "tuple_type"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_labeled_tuple_type"
           },
           "named": true,
           "value": "tuple_type"
@@ -4067,7 +4076,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_tuple_type_anonymous"
+            "name": "_proper_tuple_type"
           },
           "named": true,
           "value": "tuple_type"
@@ -4111,7 +4120,7 @@
         }
       ]
     },
-    "_tuple_type_anonymous": {
+    "_proper_tuple_type": {
       "type": "SEQ",
       "members": [
         {
@@ -4123,6 +4132,53 @@
           "value": "*"
         },
         {
+          "type": "SYMBOL",
+          "name": "_tuple_type_rhs"
+        }
+      ]
+    },
+    "_labeled_tuple_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "labeled_tuple_element_type"
+        },
+        {
+          "type": "STRING",
+          "value": "*"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_tuple_type_rhs"
+        }
+      ]
+    },
+    "labeled_tuple_element_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_label_name"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_simple_type"
+          }
+        }
+      ]
+    },
+    "_tuple_type_rhs": {
+      "type": "SEQ",
+      "members": [
+        {
           "type": "CHOICE",
           "members": [
             {
@@ -4131,7 +4187,33 @@
             },
             {
               "type": "SYMBOL",
-              "name": "_tuple_type_anonymous"
+              "name": "labeled_tuple_element_type"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "*"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_tuple_type_rhs"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
             }
           ]
         }
@@ -4912,7 +4994,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_tuple_expression_anonymous"
+            "name": "_tuple_expression"
           },
           "named": true,
           "value": "tuple_expression"
@@ -5039,15 +5121,82 @@
         }
       ]
     },
-    "_tuple_expression_anonymous": {
+    "labeled_tuple_element": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_tuple_label"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_tuple_label"
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": ":"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "expression",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_simple_expression"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "~"
+            },
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_label_name"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_typed"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "_tuple_expression": {
       "type": "PREC_RIGHT",
       "value": "tuple",
       "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "_expression"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "labeled_tuple_element"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -5062,7 +5211,11 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_tuple_expression_anonymous"
+                "name": "labeled_tuple_element"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_tuple_expression"
               }
             ]
           }
@@ -7330,7 +7483,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_tuple_pattern_anonymous"
+            "name": "_tuple_pattern"
           },
           "named": true,
           "value": "tuple_pattern"
@@ -7353,7 +7506,7 @@
         }
       ]
     },
-    "_binding_pattern": {
+    "_simple_binding_pattern": {
       "type": "CHOICE",
       "members": [
         {
@@ -7435,6 +7588,19 @@
           "value": "parenthesized_pattern"
         },
         {
+          "type": "SYMBOL",
+          "name": "_extension"
+        }
+      ]
+    },
+    "_binding_pattern": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_simple_binding_pattern"
+        },
+        {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
@@ -7474,7 +7640,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_tuple_binding_pattern_anonymous"
+            "name": "_tuple_binding_pattern"
           },
           "named": true,
           "value": "tuple_pattern"
@@ -7500,10 +7666,6 @@
           },
           "named": true,
           "value": "lazy_pattern"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_extension"
         }
       ]
     },
@@ -7816,15 +7978,82 @@
         }
       ]
     },
-    "_tuple_pattern_anonymous": {
+    "labeled_tuple_element_pattern": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_tuple_label"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_tuple_label"
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": ":"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "pattern",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_simple_pattern"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "~"
+            },
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_label_name"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_typed"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "_tuple_pattern": {
       "type": "PREC_RIGHT",
       "value": "tuple_pattern",
       "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "_pattern"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "labeled_tuple_element_pattern"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -7839,22 +8068,93 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_tuple_pattern_anonymous"
+                "name": "labeled_tuple_element_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_tuple_pattern"
               }
             ]
           }
         ]
       }
     },
-    "_tuple_binding_pattern_anonymous": {
+    "labeled_tuple_element_binding_pattern": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_tuple_label"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_tuple_label"
+            },
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": ":"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "pattern",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_simple_binding_pattern"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "~"
+            },
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_label_name"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_typed"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "_tuple_binding_pattern": {
       "type": "PREC_RIGHT",
       "value": "tuple_pattern",
       "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "_binding_pattern"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_binding_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "labeled_tuple_element_binding_pattern"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -7869,7 +8169,11 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_tuple_binding_pattern_anonymous"
+                "name": "labeled_tuple_element_binding_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_tuple_binding_pattern"
               }
             ]
           }
@@ -10828,6 +11132,19 @@
         }
       ]
     },
+    "_tuple_label": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "~"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_label_name"
+        }
+      ]
+    },
     "directive": {
       "type": "SEQ",
       "members": [
@@ -10956,7 +11273,12 @@
       "name": "attribute"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "_proper_tuple_type",
+      "labeled_tuple_element_type"
+    ]
+  ],
   "precedences": [
     [
       {
@@ -11109,6 +11431,10 @@
       },
       {
         "type": "SYMBOL",
+        "name": "_simple_binding_pattern"
+      },
+      {
+        "type": "SYMBOL",
         "name": "_binding_pattern"
       }
     ],
@@ -11168,7 +11494,8 @@
     "_module_name",
     "_module_type_name",
     "_argument_type",
-    "_label"
+    "_label",
+    "_tuple_label"
   ],
   "supertypes": [
     "_structure_item",
@@ -11192,6 +11519,7 @@
     "_simple_pattern",
     "_effect_pattern",
     "_pattern",
+    "_simple_binding_pattern",
     "_binding_pattern",
     "_constant",
     "_signed_constant",
