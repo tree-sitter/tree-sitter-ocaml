@@ -4,7 +4,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "_signed_constant",
+        "type": "_simple_binding_pattern",
         "named": true
       },
       {
@@ -12,15 +12,7 @@
         "named": true
       },
       {
-        "type": "array_pattern",
-        "named": true
-      },
-      {
         "type": "cons_pattern",
-        "named": true
-      },
-      {
-        "type": "constructor_path",
         "named": true
       },
       {
@@ -28,19 +20,7 @@
         "named": true
       },
       {
-        "type": "extension",
-        "named": true
-      },
-      {
         "type": "lazy_pattern",
-        "named": true
-      },
-      {
-        "type": "list_pattern",
-        "named": true
-      },
-      {
-        "type": "local_open_pattern",
         "named": true
       },
       {
@@ -48,35 +28,7 @@
         "named": true
       },
       {
-        "type": "package_pattern",
-        "named": true
-      },
-      {
-        "type": "parenthesized_operator",
-        "named": true
-      },
-      {
-        "type": "parenthesized_pattern",
-        "named": true
-      },
-      {
-        "type": "polymorphic_variant_pattern",
-        "named": true
-      },
-      {
-        "type": "quoted_extension",
-        "named": true
-      },
-      {
         "type": "range_pattern",
-        "named": true
-      },
-      {
-        "type": "record_pattern",
-        "named": true
-      },
-      {
-        "type": "tag",
         "named": true
       },
       {
@@ -85,14 +37,6 @@
       },
       {
         "type": "tuple_pattern",
-        "named": true
-      },
-      {
-        "type": "typed_pattern",
-        "named": true
-      },
-      {
-        "type": "value_name",
         "named": true
       }
     ]
@@ -589,6 +533,72 @@
       },
       {
         "type": "signed_number",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "_simple_binding_pattern",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "_signed_constant",
+        "named": true
+      },
+      {
+        "type": "array_pattern",
+        "named": true
+      },
+      {
+        "type": "constructor_path",
+        "named": true
+      },
+      {
+        "type": "extension",
+        "named": true
+      },
+      {
+        "type": "list_pattern",
+        "named": true
+      },
+      {
+        "type": "local_open_pattern",
+        "named": true
+      },
+      {
+        "type": "package_pattern",
+        "named": true
+      },
+      {
+        "type": "parenthesized_operator",
+        "named": true
+      },
+      {
+        "type": "parenthesized_pattern",
+        "named": true
+      },
+      {
+        "type": "polymorphic_variant_pattern",
+        "named": true
+      },
+      {
+        "type": "quoted_extension",
+        "named": true
+      },
+      {
+        "type": "record_pattern",
+        "named": true
+      },
+      {
+        "type": "tag",
+        "named": true
+      },
+      {
+        "type": "typed_pattern",
+        "named": true
+      },
+      {
+        "type": "value_name",
         "named": true
       }
     ]
@@ -3086,6 +3096,140 @@
     }
   },
   {
+    "type": "labeled_tuple_element",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_simple_expression",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "label_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "labeled_tuple_element_binding_pattern",
+    "named": true,
+    "fields": {
+      "pattern": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_simple_binding_pattern",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "label_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "labeled_tuple_element_pattern",
+    "named": true,
+    "fields": {
+      "pattern": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_simple_pattern",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "label_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "labeled_tuple_element_type",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_simple_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "label_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "lazy_expression",
     "named": true,
     "fields": {
@@ -3499,11 +3643,23 @@
             "named": true
           },
           {
+            "type": "array_pattern",
+            "named": true
+          },
+          {
             "type": "list_binding_pattern",
             "named": true
           },
           {
+            "type": "list_pattern",
+            "named": true
+          },
+          {
             "type": "record_binding_pattern",
+            "named": true
+          },
+          {
+            "type": "record_pattern",
             "named": true
           }
         ]
@@ -5076,6 +5232,10 @@
         {
           "type": "_expression",
           "named": true
+        },
+        {
+          "type": "labeled_tuple_element",
+          "named": true
         }
       ]
     }
@@ -5095,6 +5255,14 @@
         {
           "type": "_pattern",
           "named": true
+        },
+        {
+          "type": "labeled_tuple_element_binding_pattern",
+          "named": true
+        },
+        {
+          "type": "labeled_tuple_element_pattern",
+          "named": true
         }
       ]
     }
@@ -5109,6 +5277,10 @@
       "types": [
         {
           "type": "_simple_type",
+          "named": true
+        },
+        {
+          "type": "labeled_tuple_element_type",
           "named": true
         }
       ]

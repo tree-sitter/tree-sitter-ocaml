@@ -402,7 +402,8 @@ Tuple expressions
 ===========================
 
 x, y, z;;
-(x, y)
+(x, y);;
+~a:x, ~b, ~(c:int), d;;
 
 ---
 
@@ -421,7 +422,21 @@ x, y, z;;
         (value_path
           (value_name))
         (value_path
-          (value_name))))))
+          (value_name)))))
+  (expression_item
+    (tuple_expression
+      (labeled_tuple_element
+        (label_name)
+        expression: (value_path
+          (value_name)))
+      (labeled_tuple_element
+        (label_name))
+      (labeled_tuple_element
+        (label_name)
+        type: (type_constructor_path
+          (type_constructor)))
+      (value_path
+        (value_name)))))
 
 ===========================
 Constructors
