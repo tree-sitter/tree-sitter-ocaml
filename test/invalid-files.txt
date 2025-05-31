@@ -1,6 +1,8 @@
 examples/lablgtk/applications/osiris/osiris.ml
 examples/lablgtk/examples/csview.ml
 examples/lablgtk/tools/introspection/stubs/stubs_Atk.ml
+examples/lablgtk/tools/introspection/stubs/stubs_GLib.ml
+examples/lablgtk/tools/introspection/stubs/stubs_Gtk.ml
 examples/lablgtk/tools/introspection/stubs/stubs_Pango.ml
 examples/melange/bin/melc.ml
 examples/merlin/src/ocaml/utils/config.fixed.ml
@@ -9,6 +11,7 @@ examples/merlin/tests/test-dirs/completion/parenthesize.t/parenthesize.ml
 examples/merlin/tests/test-dirs/construct/c-modules.t/functor_app.ml
 examples/merlin/tests/test-dirs/construct/c-modules.t/module.ml
 examples/merlin/tests/test-dirs/errors/typing-after-parsing.t/test.ml
+examples/merlin/tests/test-dirs/locate/context-detection/cd-label.t/label.ml
 examples/merlin/tests/test-dirs/type-enclosing/issueLSP695.t/main.ml
 examples/ocaml/stdlib/templates/float.template.mli
 examples/ocaml/stdlib/templates/moreLabels.template.mli

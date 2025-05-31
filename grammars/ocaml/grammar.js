@@ -93,6 +93,78 @@ module.exports = grammar({
 
   word: $ => $._lowercase_identifier,
 
+  reserved: {
+    global: $ => [
+      'and',
+      'as',
+      'assert',
+      'begin',
+      'class',
+      'constraint',
+      'do',
+      'done',
+      'downto',
+      // 'effect', // Since OCaml 5.3
+      'else',
+      'end',
+      'exception',
+      'external',
+      'false',
+      'for',
+      'fun',
+      'function',
+      'functor',
+      'if',
+      'in',
+      'include',
+      'inherit',
+      'initializer',
+      'lazy',
+      'let',
+      'match',
+      'method',
+      'module',
+      'mutable',
+      'new',
+      // 'nonrec', // Since OCaml 4.2
+      'object',
+      'of',
+      'open',
+      'or',
+      'private',
+      'rec',
+      'sig',
+      'struct',
+      'then',
+      'to',
+      'true',
+      'try',
+      'type',
+      'val',
+      'virtual',
+      'when',
+      'while',
+      'with',
+      'lor',
+      'lxor',
+      'mod',
+      'land',
+      'lsl',
+      'lsr',
+      'asr',
+    ],
+
+    attribute_id: $ => [
+      'lor',
+      'lxor',
+      'mod',
+      'land',
+      'lsl',
+      'lsr',
+      'asr',
+    ],
+  },
+
   supertypes: $ => [
     $._structure_item,
     $._signature_item,
@@ -1905,15 +1977,13 @@ module.exports = grammar({
 
     hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
 
-    pow_operator: $ => token(choice(
-      'lsl', 'lsr', 'asr',
-      seq('**', repeat(OP_CHAR)),
-    )),
+    pow_operator: $ => choice(
+      'lsl', 'lsr', 'asr', token(seq('**', repeat(OP_CHAR))),
+    ),
 
-    mult_operator: $ => token(choice(
-      'mod', 'land', 'lor', 'lxor',
-      seq(/[*/%]/, repeat(OP_CHAR)),
-    )),
+    mult_operator: $ => choice(
+      'mod', 'land', 'lor', 'lxor', token(seq(/[*/%]/, repeat(OP_CHAR))),
+    ),
 
     add_operator: $ => choice(
       /[+-]/, /[+-]\./,
@@ -1935,9 +2005,9 @@ module.exports = grammar({
       '!=',
     )),
 
-    and_operator: $ => token(choice('&', '&&')),
+    and_operator: $ => choice('&', '&&'),
 
-    or_operator: $ => token(choice('or', '||')),
+    or_operator: $ => choice('or', '||'),
 
     assign_operator: $ => /:=/,
 
@@ -2039,7 +2109,10 @@ module.exports = grammar({
     directive: $ => seq(/#/, choice($._lowercase_identifier, $._uppercase_identifier)),
     type_variable: $ => seq(/'/, choice($._lowercase_identifier, $._uppercase_identifier)),
     tag: $ => seq(/`/, choice($._lowercase_identifier, $._uppercase_identifier)),
-    attribute_id: $ => sep1(/\./, choice($._lowercase_identifier, $._uppercase_identifier)),
+    attribute_id: $ => sep1(/\./, choice(
+      reserved('attribute_id', $._lowercase_identifier),
+      $._uppercase_identifier,
+    )),
   },
 
   externals: $ => [
