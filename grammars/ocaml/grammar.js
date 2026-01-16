@@ -166,6 +166,7 @@ export default grammar({
   },
 
   supertypes: $ => [
+    $._local_structure_item,
     $._structure_item,
     $._signature_item,
     $._parameter,
@@ -238,19 +239,23 @@ export default grammar({
 
     // Module implementation
 
-    _structure_item: $ => choice(
-      $.value_definition,
+    _local_structure_item: $ => choice(
       $.external,
       $.type_definition,
       $.exception_definition,
       $.module_definition,
       $.module_type_definition,
       $.open_module,
-      $.include_module,
       $.class_definition,
       $.class_type_definition,
       $.floating_attribute,
       $._item_extension,
+    ),
+
+    _structure_item: $ => choice(
+      $._local_structure_item,
+      $.value_definition,
+      $.include_module,
     ),
 
     value_definition: $ => seq(
@@ -1074,9 +1079,6 @@ export default grammar({
       $.let_expression,
       $.assert_expression,
       $.lazy_expression,
-      $.let_module_expression,
-      $.let_open_expression,
-      $.let_exception_expression,
     ),
 
     _sequence_expression: $ => choice(
@@ -1390,7 +1392,10 @@ export default grammar({
     ),
 
     let_expression: $ => seq(
-      $.value_definition,
+      choice(
+        $.value_definition,
+        seq('let', optional($._attribute), $._local_structure_item),
+      ),
       'in',
       field('body', $._sequence_expression),
     ),
@@ -1414,20 +1419,6 @@ export default grammar({
       field('expression', $._simple_expression),
     ),
 
-    let_module_expression: $ => seq(
-      'let',
-      $.module_definition,
-      'in',
-      field('body', $._sequence_expression),
-    ),
-
-    let_open_expression: $ => seq(
-      'let',
-      $.open_module,
-      'in',
-      field('body', $._sequence_expression),
-    ),
-
     local_open_expression: $ => seq(
       $.module_path,
       '.',
@@ -1447,13 +1438,6 @@ export default grammar({
       field('module', $._module_expression),
       optional($._module_typed),
     )),
-
-    let_exception_expression: $ => seq(
-      'let',
-      $.exception_definition,
-      'in',
-      field('body', $._sequence_expression),
-    ),
 
     new_expression: $ => seq(
       'new',
