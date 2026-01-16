@@ -336,6 +336,12 @@ export default grammar({
           repeat($.type_constraint),
         ),
         seq(
+          field('name', $._type_constructor),
+          '=',
+          field('body', $.external_declaration),
+          repeat($.type_constraint),
+        ),
+        seq(
           field('name', $.type_constructor_path),
           seq(
             '+=',
@@ -405,6 +411,11 @@ export default grammar({
       optional('mutable'),
       $._field_name,
       $._polymorphic_typed,
+    ),
+
+    external_declaration: $ => seq(
+      'external',
+      $.string,
     ),
 
     type_constraint: $ => seq(
