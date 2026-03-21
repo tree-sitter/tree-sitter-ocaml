@@ -1,18 +1,9 @@
 LANGUAGE_NAME := tree-sitter-$(PARSER_NAME)
+HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-ocaml
 VERSION := 0.25.0
 
 # repository
 SRC_DIR := src
-
-PARSER_REPO_URL := $(shell git -C $(SRC_DIR) remote get-url origin 2>/dev/null)
-
-ifeq ($(PARSER_URL),)
-	PARSER_URL := $(subst .git,,$(PARSER_REPO_URL))
-ifeq ($(shell echo $(PARSER_URL) | grep '^[a-z][-+.0-9a-z]*://'),)
-	PARSER_URL := $(subst :,/,$(PARSER_URL))
-	PARSER_URL := $(subst git@,https://,$(PARSER_URL))
-endif
-endif
 
 TS ?= tree-sitter
 
@@ -21,6 +12,7 @@ PREFIX ?= /usr/local
 DATADIR ?= $(PREFIX)/share
 INCLUDEDIR ?= $(PREFIX)/include
 LIBDIR ?= $(PREFIX)/lib
+BINDIR ?= $(PREFIX)/bin
 PCLIBDIR ?= $(LIBDIR)/pkgconfig
 
 # source/object files
@@ -33,35 +25,28 @@ ARFLAGS ?= rcs
 override CFLAGS += -I$(SRC_DIR) -std=c11 -fPIC
 
 # ABI versioning
-SONAME_MAJOR := $(word 1,$(subst ., ,$(VERSION)))
-SONAME_MINOR := $(shell sed -n 's/#define LANGUAGE_VERSION //p' $(PARSER))
+SONAME_MAJOR = $(shell sed -n 's/\#define LANGUAGE_VERSION //p' $(PARSER))
+SONAME_MINOR = $(word 1,$(subst ., ,$(VERSION)))
 
 # OS-specific bits
-ifeq ($(shell uname),Darwin)
+MACHINE := $(shell $(CC) -dumpmachine)
+
+ifneq ($(findstring darwin,$(MACHINE)),)
 	SOEXT = dylib
 	SOEXTVER_MAJOR = $(SONAME_MAJOR).$(SOEXT)
 	SOEXTVER = $(SONAME_MAJOR).$(SONAME_MINOR).$(SOEXT)
-	LINKSHARED := $(LINKSHARED)-dynamiclib -Wl,
-	ifneq ($(ADDITIONAL_LIBS),)
-	LINKSHARED := $(LINKSHARED)$(ADDITIONAL_LIBS),
-	endif
-	LINKSHARED := $(LINKSHARED)-install_name,$(LIBDIR)/lib$(LANGUAGE_NAME).$(SOEXTVER),-rpath,@executable_path/../Frameworks
-else ifneq ($(findstring mingw32,$(shell $(CC) -dumpmachine)),)
+	LINKSHARED = -dynamiclib -Wl,-install_name,$(LIBDIR)/lib$(LANGUAGE_NAME).$(SOEXTVER),-rpath,@executable_path/../Frameworks
+else ifneq ($(findstring mingw32,$(MACHINE)),)
 	SOEXT = dll
-	LINKSHARED += -s -shared -Wl,--out-implib,$(@:dll=lib)
-lib$(LANGUAGE_NAME).lib: lib$(LANGUAGE_NAME).$(SOEXT)
+	LINKSHARED += -s -shared -Wl,--out-implib,lib$(LANGUAGE_NAME).dll.a
 else
 	SOEXT = so
 	SOEXTVER_MAJOR = $(SOEXT).$(SONAME_MAJOR)
 	SOEXTVER = $(SOEXT).$(SONAME_MAJOR).$(SONAME_MINOR)
-	LINKSHARED := $(LINKSHARED)-shared -Wl,
-	ifneq ($(ADDITIONAL_LIBS),)
-	LINKSHARED := $(LINKSHARED)$(ADDITIONAL_LIBS)
-	endif
-	LINKSHARED := $(LINKSHARED)-soname,lib$(LANGUAGE_NAME).$(SOEXTVER)
-endif
+	LINKSHARED = -shared -Wl,-soname,lib$(LANGUAGE_NAME).$(SOEXTVER)
 ifneq ($(filter $(shell uname),FreeBSD NetBSD DragonFly),)
 	PCLIBDIR := $(PREFIX)/libdata/pkgconfig
+endif
 endif
 
 all: lib$(LANGUAGE_NAME).a lib$(LANGUAGE_NAME).$(SOEXT) $(LANGUAGE_NAME).pc
@@ -75,28 +60,41 @@ ifneq ($(STRIP),)
 	$(STRIP) $@
 endif
 
+ifneq ($(findstring mingw32,$(MACHINE)),)
+lib$(LANGUAGE_NAME).dll.a: lib$(LANGUAGE_NAME).$(SOEXT)
+endif
+
 $(LANGUAGE_NAME).pc: ../../bindings/c/$(LANGUAGE_NAME).pc.in
-	sed  -e 's|@URL@|$(PARSER_URL)|' \
-		-e 's|@VERSION@|$(VERSION)|' \
-		-e 's|@LIBDIR@|$(LIBDIR)|' \
-		-e 's|@INCLUDEDIR@|$(INCLUDEDIR)|' \
-		-e 's|@REQUIRES@|$(REQUIRES)|' \
-		-e 's|@ADDITIONAL_LIBS@|$(ADDITIONAL_LIBS)|' \
-		-e 's|=$(PREFIX)|=$${prefix}|' \
-		-e 's|@PREFIX@|$(PREFIX)|' $< > $@
+	sed -e 's|@PROJECT_VERSION@|$(VERSION)|' \
+		-e 's|@CMAKE_INSTALL_LIBDIR@|$(LIBDIR:$(PREFIX)/%=%)|' \
+		-e 's|@CMAKE_INSTALL_INCLUDEDIR@|$(INCLUDEDIR:$(PREFIX)/%=%)|' \
+		-e 's|@PROJECT_DESCRIPTION@|$(DESCRIPTION)|' \
+		-e 's|@PROJECT_HOMEPAGE_URL@|$(HOMEPAGE_URL)|' \
+		-e 's|@CMAKE_INSTALL_PREFIX@|$(PREFIX)|' $< > $@
+
+$(SRC_DIR)/grammar.json: grammar.js
+	$(TS) generate --no-parser $^
 
 $(PARSER): $(SRC_DIR)/grammar.json
-	$(TS) generate --no-bindings $^
+	$(TS) generate $^
 
 install: all
 	install -d '$(DESTDIR)$(DATADIR)'/tree-sitter/queries/$(PARSER_NAME) '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter '$(DESTDIR)$(PCLIBDIR)' '$(DESTDIR)$(LIBDIR)'
 	install -m644 ../../bindings/c/tree_sitter/$(LANGUAGE_NAME).h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
 	install -m644 $(LANGUAGE_NAME).pc '$(DESTDIR)$(PCLIBDIR)'/$(LANGUAGE_NAME).pc
 	install -m644 lib$(LANGUAGE_NAME).a '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).a
+ifneq ($(findstring mingw32,$(MACHINE)),)
+	install -d '$(DESTDIR)$(BINDIR)'
+	install -m755 lib$(LANGUAGE_NAME).dll '$(DESTDIR)$(BINDIR)'/lib$(LANGUAGE_NAME).dll
+	install -m755 lib$(LANGUAGE_NAME).dll.a '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).dll.a
+else
 	install -m755 lib$(LANGUAGE_NAME).$(SOEXT) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXTVER)
-	ln -sf lib$(LANGUAGE_NAME).$(SOEXTVER) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXTVER_MAJOR)
-	ln -sf lib$(LANGUAGE_NAME).$(SOEXTVER_MAJOR) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXT)
+	cd '$(DESTDIR)$(LIBDIR)' && ln -sf lib$(LANGUAGE_NAME).$(SOEXTVER) lib$(LANGUAGE_NAME).$(SOEXTVER_MAJOR)
+	cd '$(DESTDIR)$(LIBDIR)' && ln -sf lib$(LANGUAGE_NAME).$(SOEXTVER_MAJOR) lib$(LANGUAGE_NAME).$(SOEXT)
+endif
+ifneq ($(wildcard queries/*.scm),)
 	install -m644 ../../queries/*.scm '$(DESTDIR)$(DATADIR)'/tree-sitter/queries/$(PARSER_NAME)
+endif
 
 uninstall:
 	$(RM) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).a \
@@ -108,6 +106,6 @@ uninstall:
 	$(RM) -r '$(DESTDIR)$(DATADIR)'/tree-sitter/queries/$(PARSER_NAME)
 
 clean:
-	$(RM) $(OBJS) $(LANGUAGE_NAME).pc lib$(LANGUAGE_NAME).a lib$(LANGUAGE_NAME).$(SOEXT) lib$(LANGUAGE_NAME).lib
+	$(RM) $(OBJS) $(LANGUAGE_NAME).pc lib$(LANGUAGE_NAME).a lib$(LANGUAGE_NAME).$(SOEXT) lib$(LANGUAGE_NAME).dll.a
 
-.PHONY: all install uninstall clean
+.PHONY: all install uninstall clean test
