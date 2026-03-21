@@ -1,9 +1,9 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import ocaml from '../ocaml/grammar';
+import ocaml from '../ocaml/grammar.js';
 
-export default grammar(ocaml, {
+const ocaml_type_grammar = grammar(ocaml, {
   name: 'ocaml_type',
 
   rules: {
@@ -12,7 +12,9 @@ export default grammar(ocaml, {
 });
 
 // Make 'type' the first rule
-module.exports.grammar.rules = Object.assign(
+ocaml_type_grammar.grammar.rules = Object.assign(
   {type: null},
-  module.exports.grammar.rules,
+  ocaml_type_grammar.grammar.rules,
 );
+
+export default ocaml_type_grammar;
