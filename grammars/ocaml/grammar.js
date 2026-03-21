@@ -10,7 +10,7 @@ const NUMBER = token(choice(
   /0[bB][01][01_]*[g-zG-Z]?/,
 ));
 
-module.exports = grammar({
+export default grammar({
   name: 'ocaml',
 
   extras: $ => [

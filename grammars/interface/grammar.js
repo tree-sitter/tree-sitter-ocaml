@@ -1,7 +1,9 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-module.exports = grammar(require('../ocaml/grammar'), {
+import ocaml from '../ocaml/grammar';
+
+export default grammar(ocaml, {
   name: 'ocaml_interface',
 
   rules: {

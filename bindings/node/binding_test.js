@@ -1,20 +1,18 @@
-/// <reference types="node" />
+import assert from 'node:assert';
+import {describe, it} from 'node:test';
+import Parser from 'tree-sitter';
 
-const assert = require("node:assert");
-const { describe, it } = require("node:test");
+import {ocaml, ocaml_interface, ocaml_type} from './index.js';
 
-const Parser = require("tree-sitter");
-const { ocaml, ocaml_interface, ocaml_type } = require("../..");
-
-describe("OCaml", () => {
+describe('OCaml', () => {
   const parser = new Parser();
   parser.setLanguage(ocaml);
 
-  it("should be named ocaml", () => {
-    assert.strictEqual(parser.getLanguage().name, "ocaml");
+  it('should be named ocaml', () => {
+    assert.strictEqual(parser.getLanguage().name, 'ocaml');
   });
 
-  it("should parse source code", () => {
+  it('should parse source code', () => {
     const sourceCode = `
     module M = struct
       let x = 0
@@ -25,15 +23,15 @@ describe("OCaml", () => {
   });
 });
 
-describe("OCamlInterface", () => {
+describe('OCamlInterface', () => {
   const parser = new Parser();
   parser.setLanguage(ocaml_interface);
 
-  it("should be named ocaml_interface", () => {
-    assert.strictEqual(parser.getLanguage().name, "ocaml_interface");
+  it('should be named ocaml_interface', () => {
+    assert.strictEqual(parser.getLanguage().name, 'ocaml_interface');
   });
 
-  it("should parse source code", () => {
+  it('should parse source code', () => {
     const sourceCode = `
     module M : sig
       val x : int
@@ -44,15 +42,15 @@ describe("OCamlInterface", () => {
   });
 });
 
-describe("OCamlType", () => {
+describe('OCamlType', () => {
   const parser = new Parser();
   parser.setLanguage(ocaml_type);
 
-  it("should be named ocaml_type", () => {
-    assert.strictEqual(parser.getLanguage().name, "ocaml_type");
+  it('should be named ocaml_type', () => {
+    assert.strictEqual(parser.getLanguage().name, 'ocaml_type');
   });
 
-  it("should parse source code", () => {
+  it('should parse source code', () => {
     const sourceCode = `
     int list
     `;

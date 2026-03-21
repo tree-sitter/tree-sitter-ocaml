@@ -18,16 +18,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Set up tree-sitter
-        uses: tree-sitter/setup-action/cli@v1
+        uses: tree-sitter/setup-action@v2
+        with:
+          install-lib: false
       - name: Run tests
-        uses: tree-sitter/parser-test-action@v2
+        uses: tree-sitter/parser-test-action@v3
         with:
           generate: false
-          test-rust: ${{runner.os == 'Linux'}}
+          test-rust: true
           test-node: true
-          test-python: false
+          node-version: "22.x"
+          test-python: true
           test-go: true
-          test-swift: false
+          go-version: "1.23"
+          test-swift: ${{runner.os == 'macOS'}}
   parse-examples:
     name: Parse examples
     runs-on: ${{matrix.os}}
@@ -41,7 +45,9 @@ jobs:
         with:
           submodules: true
       - name: Set up tree-sitter
-        uses: tree-sitter/setup-action/cli@v1
+        uses: tree-sitter/setup-action@v2
+        with:
+          install-lib: false
       - name: Parse examples
         uses: tree-sitter/parse-action@v4
         with:

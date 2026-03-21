@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=62.4.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -22,7 +22,7 @@ readme = "bindings/python/README.md"
 Homepage = "https://github.com/tree-sitter/tree-sitter-ocaml"
 
 [project.optional-dependencies]
-core = ["tree-sitter~=0.24"]
+core = ["tree-sitter~=0.25"]
 
 [tool.cibuildwheel]
 build = "cp310-*"

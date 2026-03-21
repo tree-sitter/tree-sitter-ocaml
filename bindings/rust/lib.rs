@@ -32,7 +32,7 @@
 
 use tree_sitter_language::LanguageFn;
 
-extern "C" {
+unsafe extern "C" {
     fn tree_sitter_ocaml() -> *const ();
     fn tree_sitter_ocaml_interface() -> *const ();
     fn tree_sitter_ocaml_type() -> *const ();
@@ -45,12 +45,12 @@ pub const LANGUAGE_OCAML: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter
 
 /// The tree-sitter [`LanguageFn`] for OCaml interfaces.
 ///
-/// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
+/// [LanguageFn]: https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html
 pub const LANGUAGE_OCAML_INTERFACE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_ocaml_interface) };
 
 /// The tree-sitter [`LanguageFn`] for OCaml types.
 ///
-/// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
+/// [LanguageFn]: https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html
 pub const LANGUAGE_OCAML_TYPE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_ocaml_type) };
 
 /// The content of the [`node-types.json`][] file for OCaml.
@@ -68,12 +68,15 @@ pub const INTERFACE_NODE_TYPES: &str = include_str!("../../grammars/interface/sr
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers/6-static-node-types.html
 pub const TYPE_NODE_TYPES: &str = include_str!("../../grammars/type/src/node-types.json");
 
+#[cfg(with_highlights_query)]
 /// The syntax highlighting query for OCaml.
 pub const HIGHLIGHTS_QUERY: &str = include_str!("../../queries/highlights.scm");
 
-/// The local-variable syntax highlighting query for OCaml.
+#[cfg(with_locals_query)]
+/// The local variable query for OCaml.
 pub const LOCALS_QUERY: &str = include_str!("../../queries/locals.scm");
 
+#[cfg(with_tags_query)]
 /// The symbol tagging query for OCaml.
 pub const TAGS_QUERY: &str = include_str!("../../queries/tags.scm");
 
