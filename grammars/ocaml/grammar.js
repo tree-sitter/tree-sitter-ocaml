@@ -998,7 +998,8 @@ export default grammar({
     package_type: $ => parenthesize(seq(
       'module',
       optional($._attribute),
-      $._module_type,
+      optional(seq(field('module', $._module_name), ':')),
+      field('module_type', $._module_type),
     )),
 
     object_type: $ => seq(

@@ -197,7 +197,7 @@ type t = M.(module T)
     (type_binding
       name: (type_constructor)
       equation: (package_type
-        (module_type_path
+        module_type: (module_type_path
           (module_type_name)))))
   (type_definition
     (type_binding
@@ -206,7 +206,7 @@ type t = M.(module T)
         (extended_module_path
           (module_name))
         type: (package_type
-          (module_type_path
+          module_type: (module_type_path
             (module_type_name)))))))
 
 ===========================
@@ -216,6 +216,8 @@ Function types
 type t = t -> t
 type t = t -> t -> t
 type t = l:t -> ?l:t -> t
+type t = (module T) -> t
+type t = (module M : T) -> t
 
 ---
 
@@ -253,7 +255,26 @@ type t = l:t -> ?l:t -> t
             type: (type_constructor_path
               (type_constructor)))
           codomain: (type_constructor_path
-            (type_constructor)))))))
+            (type_constructor))))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      equation: (function_type
+        domain: (package_type
+          module_type: (module_type_path
+            (module_type_name)))
+        codomain: (type_constructor_path
+          (type_constructor)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      equation: (function_type
+        domain: (package_type
+          module: (module_name)
+          module_type: (module_type_path
+            (module_type_name)))
+        codomain: (type_constructor_path
+          (type_constructor))))))
 
 ===========================
 Tuple types

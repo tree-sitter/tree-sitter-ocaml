@@ -65,7 +65,7 @@ Package types
 
 (type
   (package_type
-    (module_type_path
+    module_type: (module_type_path
       (module_type_name))))
 
 ===========================
