@@ -46,6 +46,7 @@ Constraints
 ==============================
 
 module M : T with type t = t and module M := M and module type T = T
+module M : T with type t = t -> t
 
 ---
 
@@ -70,7 +71,21 @@ module M : T with type t = t and module M := M and module type T = T
           (module_type_path
             (module_type_name))
           constraint: (module_type_path
-            (module_type_name)))))))
+            (module_type_name))))))
+  (module_definition
+    (module_binding
+      (module_name)
+      module_type: (module_type_constraint
+        module_type: (module_type_path
+          (module_type_name))
+        (constrain_type
+          (type_constructor_path
+            (type_constructor))
+          equation: (function_type
+            domain: (type_constructor_path
+              (type_constructor))
+            codomain: (type_constructor_path
+              (type_constructor))))))))
 
 ==============================
 Module type of
