@@ -242,19 +242,7 @@
         "named": true
       },
       {
-        "type": "let_exception_expression",
-        "named": true
-      },
-      {
         "type": "let_expression",
-        "named": true
-      },
-      {
-        "type": "let_module_expression",
-        "named": true
-      },
-      {
-        "type": "let_open_expression",
         "named": true
       },
       {
@@ -317,6 +305,56 @@
       },
       {
         "type": "rel_operator",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "_local_structure_item",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "class_definition",
+        "named": true
+      },
+      {
+        "type": "class_type_definition",
+        "named": true
+      },
+      {
+        "type": "exception_definition",
+        "named": true
+      },
+      {
+        "type": "external",
+        "named": true
+      },
+      {
+        "type": "floating_attribute",
+        "named": true
+      },
+      {
+        "type": "item_extension",
+        "named": true
+      },
+      {
+        "type": "module_definition",
+        "named": true
+      },
+      {
+        "type": "module_type_definition",
+        "named": true
+      },
+      {
+        "type": "open_module",
+        "named": true
+      },
+      {
+        "type": "quoted_item_extension",
+        "named": true
+      },
+      {
+        "type": "type_definition",
         "named": true
       }
     ]
@@ -920,51 +958,11 @@
     "named": true,
     "subtypes": [
       {
-        "type": "class_definition",
-        "named": true
-      },
-      {
-        "type": "class_type_definition",
-        "named": true
-      },
-      {
-        "type": "exception_definition",
-        "named": true
-      },
-      {
-        "type": "external",
-        "named": true
-      },
-      {
-        "type": "floating_attribute",
+        "type": "_local_structure_item",
         "named": true
       },
       {
         "type": "include_module",
-        "named": true
-      },
-      {
-        "type": "item_extension",
-        "named": true
-      },
-      {
-        "type": "module_definition",
-        "named": true
-      },
-      {
-        "type": "module_type_definition",
-        "named": true
-      },
-      {
-        "type": "open_module",
-        "named": true
-      },
-      {
-        "type": "quoted_item_extension",
-        "named": true
-      },
-      {
-        "type": "type_definition",
         "named": true
       },
       {
@@ -2167,6 +2165,21 @@
         },
         {
           "type": "value_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "external_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "string",
           "named": true
         }
       ]
@@ -3394,32 +3407,6 @@
     }
   },
   {
-    "type": "let_exception_expression",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_sequence_expression",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "exception_definition",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "let_expression",
     "named": true,
     "fields": {
@@ -3435,37 +3422,19 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "_local_structure_item",
+          "named": true
+        },
+        {
+          "type": "attribute_id",
+          "named": true
+        },
         {
           "type": "value_definition",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "let_module_expression",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_sequence_expression",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "module_definition",
           "named": true
         }
       ]
@@ -3507,32 +3476,6 @@
         "types": [
           {
             "type": "_simple_class_type",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "open_module",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "let_open_expression",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_sequence_expression",
             "named": true
           }
         ]
@@ -4399,15 +4342,32 @@
   {
     "type": "package_type",
     "named": true,
-    "fields": {},
+    "fields": {
+      "module": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "module_name",
+            "named": true
+          }
+        ]
+      },
+      "module_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_module_type",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
-        {
-          "type": "_module_type",
-          "named": true
-        },
         {
           "type": "attribute_id",
           "named": true
@@ -5334,6 +5294,10 @@
           {
             "type": "..",
             "named": false
+          },
+          {
+            "type": "external_declaration",
+            "named": true
           },
           {
             "type": "record_declaration",
