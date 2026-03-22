@@ -27,7 +27,7 @@ External
 ==============================
 
 external x : int = "x"
-external x : 'a . 'a = "x"
+external x : 'a . 'a = "x" {|x|}
 
 ---
 
@@ -44,7 +44,9 @@ external x : 'a . 'a = "x"
       (type_variable)
       type: (type_variable))
     (string
-      (string_content))))
+      (string_content))
+    (quoted_string
+      (quoted_string_content))))
 
 ==============================
 Type definition

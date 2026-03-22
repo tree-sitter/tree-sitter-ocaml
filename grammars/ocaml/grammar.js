@@ -317,7 +317,7 @@ export default grammar({
       $._value_name,
       $._polymorphic_typed,
       '=',
-      repeat1($.string),
+      repeat1(choice($.string, $.quoted_string)),
       repeat($.item_attribute),
     ),
 
