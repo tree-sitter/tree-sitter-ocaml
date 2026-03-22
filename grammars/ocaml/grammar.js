@@ -335,11 +335,19 @@ export default grammar({
       choice(
         seq(
           field('name', $._type_constructor),
-          optional($._type_equation),
           optional(seq(
-            '=',
-            optional('private'),
-            field('body', choice($.variant_declaration, $.record_declaration, '..')),
+            choice('=', ':='),
+            choice(
+              seq(optional('private'), field('body', $._type)),
+              seq(
+                optional(seq(field('synonym', $._type), '=')),
+                optional('private'),
+                field(
+                  'body',
+                  choice($.variant_declaration, $.record_declaration, '..'),
+                ),
+              ),
+            ),
           )),
           repeat($.type_constraint),
         ),
@@ -373,12 +381,6 @@ export default grammar({
         seq('!', optional(choice('+', '-'))),
       )),
       choice($.type_variable, alias('_', $.type_variable)),
-    ),
-
-    _type_equation: $ => seq(
-      choice('=', ':='),
-      optional('private'),
-      field('equation', $._type),
     ),
 
     variant_declaration: $ => choice(
@@ -584,7 +586,9 @@ export default grammar({
       'type',
       optional($._type_params),
       $.type_constructor_path,
-      $._type_equation,
+      choice('=', ':='),
+      optional('private'),
+      field('equation', $._type),
       repeat($.type_constraint),
     ),
 

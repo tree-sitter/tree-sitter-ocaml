@@ -844,7 +844,7 @@ let module type T = sig end in x
       (type_definition
         (type_binding
           name: (type_constructor)
-          equation: (type_constructor_path
+          body: (type_constructor_path
             (type_constructor))))
       body: (value_path
         (value_name))))
