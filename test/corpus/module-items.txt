@@ -1,5 +1,29 @@
 ==============================
+Value specification
+:language(ocaml)
+:language(ocaml_interface)
+==============================
+
+val x : t
+val x : 'a . 'a
+
+---
+
+(compilation_unit
+  (value_specification
+    (value_name)
+    type: (type_constructor_path
+      (type_constructor)))
+  (value_specification
+    (value_name)
+    type: (polymorphic_type
+      (type_variable)
+      type: (type_variable))))
+
+==============================
 External
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 external x : int = "x"
@@ -24,6 +48,8 @@ external x : 'a . 'a = "x"
 
 ==============================
 Type definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 type t
@@ -135,6 +161,8 @@ type t = external "x"
 
 ==============================
 Exception definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 exception E
@@ -154,6 +182,8 @@ exception E of t
 
 ==============================
 Module definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 module M
@@ -245,6 +275,8 @@ module _ (_ : T) = M
 
 ==============================
 Module type definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 module type T = T
@@ -264,6 +296,8 @@ module type T := T
 
 ==============================
 Open
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 open M

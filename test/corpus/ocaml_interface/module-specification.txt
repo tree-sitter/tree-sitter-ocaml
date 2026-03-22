@@ -1,25 +1,4 @@
 ==============================
-Value specification
-:language(ocaml_interface)
-==============================
-
-val x : t
-val x : 'a . 'a
-
----
-
-(compilation_unit
-  (value_specification
-    (value_name)
-    type: (type_constructor_path
-      (type_constructor)))
-  (value_specification
-    (value_name)
-    type: (polymorphic_type
-      (type_variable)
-      type: (type_variable))))
-
-==============================
 Include
 :language(ocaml_interface)
 ==============================

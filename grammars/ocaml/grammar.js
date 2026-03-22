@@ -255,6 +255,7 @@ export default grammar({
     _structure_item: $ => choice(
       $._local_structure_item,
       $.value_definition,
+      $.value_specification,
       $.include_module,
     ),
 
