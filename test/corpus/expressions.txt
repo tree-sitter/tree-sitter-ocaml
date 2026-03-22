@@ -80,6 +80,7 @@ Constants
 {à||à};;
 true;;
 ();;
+begin%ext end;;
 
 ---
 
@@ -188,7 +189,10 @@ true;;
   (expression_item
     (boolean))
   (expression_item
-    (unit)))
+    (unit))
+  (expression_item
+    (unit
+      (attribute_id))))
 
 ===========================
 Typed expression

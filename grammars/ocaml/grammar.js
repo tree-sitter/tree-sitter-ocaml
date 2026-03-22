@@ -1947,7 +1947,7 @@ export default grammar({
 
     unit: $ => choice(
       seq('(', ')'),
-      seq('begin', 'end'),
+      seq('begin', optional($._attribute), 'end'),
     ),
 
     // Operators
