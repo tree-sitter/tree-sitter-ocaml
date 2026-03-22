@@ -1329,7 +1329,7 @@ export default grammar({
     for_expression: $ => seq(
       'for',
       optional($._attribute),
-      field('name', $._value_pattern),
+      field('name', $._pattern),
       '=',
       field('from', $._sequence_expression),
       choice('to', 'downto'),
