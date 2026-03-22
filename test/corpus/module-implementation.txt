@@ -9,6 +9,7 @@ let x, y = y, x
 let x : 'a . 'a t = y
 let f ~x ~l:y ~(x : t) ?(l = y) ?l:((x, y) : t = xy) = x
 let f (type t) x : t = x
+let f x :> t = x
 let+ x = a and+ y = b
 let%ext x
 let* x and* y
@@ -93,6 +94,15 @@ let* x and* y
       (parameter
         pattern: (value_pattern))
       type: (type_constructor_path
+        (type_constructor))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      coercion: (type_constructor_path
         (type_constructor))
       body: (value_path
         (value_name))))

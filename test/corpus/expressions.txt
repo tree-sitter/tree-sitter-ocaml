@@ -194,7 +194,9 @@ true;;
 Typed expression
 ===========================
 
-(x : t)
+(x : t);;
+(x :> t);;
+(x : t :> t);;
 
 ---
 
@@ -204,6 +206,20 @@ Typed expression
       expression: (value_path
         (value_name))
       type: (type_constructor_path
+        (type_constructor))))
+  (expression_item
+    (typed_expression
+      expression: (value_path
+        (value_name))
+      coercion: (type_constructor_path
+        (type_constructor))))
+  (expression_item
+    (typed_expression
+      expression: (value_path
+        (value_name))
+      type: (type_constructor_path
+        (type_constructor))
+      coercion: (type_constructor_path
         (type_constructor)))))
 
 ===========================
@@ -216,6 +232,7 @@ x :: x :: xs;;
 [||];;
 [| x; x; x |];;
 { x = x; x; };;
+{ x :> t };;
 
 ---
 
@@ -258,7 +275,14 @@ x :: x :: xs;;
           (value_name)))
       (field_expression
         (field_path
-          (field_name))))))
+          (field_name)))))
+  (expression_item
+    (record_expression
+      (field_expression
+        (field_path
+          (field_name))
+        coercion: (type_constructor_path
+          (type_constructor))))))
 
 ===========================
 Get and set expressions
@@ -326,31 +350,6 @@ x.%(0).M.%(0) <- x;;
         index: (number)))))
 
 ===========================
-Coercions
-===========================
-
-(x :> t);;
-(x : t :> t);;
-
----
-
-(compilation_unit
-  (expression_item
-    (coercion_expression
-      expression: (value_path
-        (value_name))
-      coercion: (type_constructor_path
-        (type_constructor))))
-  (expression_item
-    (coercion_expression
-      expression: (value_path
-        (value_name))
-      type: (type_constructor_path
-        (type_constructor))
-      coercion: (type_constructor_path
-        (type_constructor)))))
-
-===========================
 Local opens
 ===========================
 
@@ -403,7 +402,7 @@ Tuple expressions
 
 x, y, z;;
 (x, y);;
-~a:x, ~b, ~(c:int), d;;
+~a:x, ~b, ~(c : int), ~(d :> t), e;;
 
 ---
 
@@ -434,6 +433,10 @@ x, y, z;;
       (labeled_tuple_element
         (label_name)
         type: (type_constructor_path
+          (type_constructor)))
+      (labeled_tuple_element
+        (label_name)
+        coercion: (type_constructor_path
           (type_constructor)))
       (value_path
         (value_name)))))
@@ -500,7 +503,7 @@ Function application
 f x;;
 f \#let;;
 f x x;;
-f ~x ?x:x ~(x:x);;
+f ~x ?x:x ~(x : x) ~(x :> t);;
 f ~\#type ?\#module:x ~(\#val:x);;
 
 ---
@@ -539,6 +542,10 @@ f ~\#type ?\#module:x ~(\#val:x);;
       argument: (labeled_argument
         (label_name)
         type: (type_constructor_path
+          (type_constructor)))
+      argument: (labeled_argument
+        (label_name)
+        coercion: (type_constructor_path
           (type_constructor)))))
   (expression_item
     (application_expression

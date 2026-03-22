@@ -268,7 +268,7 @@ export default grammar({
       optional(seq(
         repeat($._parameter),
         optional($._polymorphic_typed),
-        optional(seq(':>', field('coercion', $._type))),
+        optional($._coerced),
         '=',
         field('body', $._sequence_expression),
       )),
@@ -823,8 +823,7 @@ export default grammar({
       optional('!'),
       repeat(choice('mutable', 'virtual')),
       $._instance_variable_name,
-      optional($._typed),
-      optional(seq(':>', field('coercion', $._type))),
+      optional($._type_constrained),
       optional(seq('=', field('body', $._sequence_expression))),
       repeat($.item_attribute),
     ),
@@ -860,6 +859,13 @@ export default grammar({
     _typed: $ => seq(':', field('type', $._type)),
 
     _simple_typed: $ => seq(':', field('type', $._simple_type)),
+
+    _coerced: $ => seq(':>', field('coercion', $._type)),
+
+    _type_constrained: $ => choice(
+      seq($._typed, optional($._coerced)),
+      $._coerced,
+    ),
 
     _polymorphic_typed: $ => seq(':', field('type', $._polymorphic_type)),
 
@@ -1050,7 +1056,6 @@ export default grammar({
       $.array_get_expression,
       $.string_get_expression,
       $.bigarray_get_expression,
-      $.coercion_expression,
       $.local_open_expression,
       $.package_expression,
       $.new_expression,
@@ -1089,7 +1094,7 @@ export default grammar({
 
     typed_expression: $ => parenthesize(seq(
       field('expression', $._sequence_expression),
-      $._typed,
+      $._type_constrained,
     )),
 
     labeled_tuple_element: $ => choice(
@@ -1097,9 +1102,9 @@ export default grammar({
       seq(
         $._tuple_label,
         token.immediate(':'),
-        field('expression', $._simple_expression)
+        field('expression', $._simple_expression),
       ),
-      seq('~', '(', $._label_name, $._typed, ')'),
+      seq('~', '(', $._label_name, $._type_constrained, ')'),
     ),
 
     _tuple_expression: $ => prec.right('tuple', seq(
@@ -1145,7 +1150,7 @@ export default grammar({
 
     field_expression: $ => seq(
       $.field_path,
-      optional($._typed),
+      optional($._type_constrained),
       optional(seq('=', field('body', $._expression))),
     ),
 
@@ -1170,7 +1175,7 @@ export default grammar({
         choice('~', '?'),
         '(',
         $._label_name,
-        $._typed,
+        $._type_constrained,
         ')',
       ),
     ),
@@ -1400,13 +1405,6 @@ export default grammar({
       'in',
       field('body', $._sequence_expression),
     ),
-
-    coercion_expression: $ => parenthesize(seq(
-      field('expression', $._sequence_expression),
-      optional($._typed),
-      ':>',
-      field('coercion', $._type),
-    )),
 
     assert_expression: $ => seq(
       'assert',
