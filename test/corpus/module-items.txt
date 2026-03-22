@@ -38,6 +38,7 @@ type t = {
 }
 type t = t constraint 'a = t
 type t = |
+type t = external "x"
 
 ---
 
@@ -124,7 +125,13 @@ type t = |
   (type_definition
     (type_binding
       name: (type_constructor)
-      body: (variant_declaration))))
+      body: (variant_declaration)))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (external_declaration
+        (string
+          (string_content))))))
 
 ==============================
 Exception definition

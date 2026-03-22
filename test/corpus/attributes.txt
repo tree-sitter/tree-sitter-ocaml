@@ -97,7 +97,8 @@ let%id x = x and [@id] x = x [@id]
 type t = A [@id] [@id]
 type t = { x : t [@id]; [@id] }
 module M = struct [@id] end [@id];;
-x ;%id x
+x ;%id x;;
+let%id module M = N in x;;
 
 ---
 
@@ -152,6 +153,16 @@ x ;%id x
         (value_name))
       (attribute_id)
       (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (attribute_id)
+      (module_definition
+        (module_binding
+          (module_name)
+          body: (module_path
+            (module_name))))
+      body: (value_path
         (value_name)))))
 
 ===========================
@@ -161,6 +172,7 @@ Item extension
 [%%id];;
 {%%M.id|payload|};;
 {%%id ab|payload|ab};;
+let [%%id module M = N] in x;;
 
 ---
 
@@ -172,7 +184,19 @@ Item extension
     (quoted_string_content))
   (quoted_item_extension
     (attribute_id)
-    (quoted_string_content)))
+    (quoted_string_content))
+  (expression_item
+    (let_expression
+      (item_extension
+        (attribute_id)
+        (attribute_payload
+          (module_definition
+            (module_binding
+              (module_name)
+              body: (module_path
+                (module_name))))))
+      body: (value_path
+        (value_name)))))
 
 ===========================
 Extension

@@ -764,6 +764,12 @@ Let expressions
 
 let x = 0 in x;;
 let rec x = y and y = x in x;;
+let module M = M in x;;
+let open M in x;;
+let exception E in x;;
+let external x : int = "x" in x;;
+let type t = int in x;;
+let module type T = sig end in x
 
 ---
 
@@ -787,6 +793,55 @@ let rec x = y and y = x in x;;
           pattern: (value_name)
           body: (value_path
             (value_name))))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (module_definition
+        (module_binding
+          (module_name)
+          body: (module_path
+            (module_name))))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (open_module
+        module: (module_path
+          (module_name)))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (exception_definition
+        (constructor_declaration
+          (constructor_name)))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (external
+        (value_name)
+        type: (type_constructor_path
+          (type_constructor))
+        (string
+          (string_content)))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (type_definition
+        (type_binding
+          name: (type_constructor)
+          equation: (type_constructor_path
+            (type_constructor))))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (let_expression
+      (module_type_definition
+        (module_type_name)
+        body: (signature))
       body: (value_path
         (value_name)))))
 
@@ -816,41 +871,6 @@ lazy x
   (expression_item
     (lazy_expression
       expression: (value_path
-        (value_name)))))
-
-===========================
-Let module, open, exception
-===========================
-
-let module M = M in x;;
-let open M in x;;
-let exception E in x;;
-
----
-
-(compilation_unit
-  (expression_item
-    (let_module_expression
-      (module_definition
-        (module_binding
-          (module_name)
-          body: (module_path
-            (module_name))))
-      body: (value_path
-        (value_name))))
-  (expression_item
-    (let_open_expression
-      (open_module
-        module: (module_path
-          (module_name)))
-      body: (value_path
-        (value_name))))
-  (expression_item
-    (let_exception_expression
-      (exception_definition
-        (constructor_declaration
-          (constructor_name)))
-      body: (value_path
         (value_name)))))
 
 ===========================
