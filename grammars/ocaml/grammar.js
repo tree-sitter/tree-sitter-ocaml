@@ -1066,6 +1066,7 @@ export default grammar({
       $.unit,
       $.list_expression,
       $.array_expression,
+      $.iarray_expression,
       $.record_expression,
       $.package_expression,
       $.object_copy_expression,
@@ -1155,6 +1156,12 @@ export default grammar({
       '[|',
       optional($._sequence_expression_content),
       '|]',
+    ),
+
+    iarray_expression: $ => seq(
+      '[:',
+      optional($._sequence_expression_content),
+      ':]',
     ),
 
     _sequence_expression_content: $ => seq(
@@ -1513,6 +1520,7 @@ export default grammar({
       $.record_pattern,
       $.list_pattern,
       $.array_pattern,
+      $.iarray_pattern,
       $.parenthesized_pattern,
     ),
 
@@ -1552,6 +1560,7 @@ export default grammar({
       alias($.record_binding_pattern, $.record_pattern),
       alias($.list_binding_pattern, $.list_pattern),
       alias($.array_binding_pattern, $.array_pattern),
+      alias($.iarray_binding_pattern, $.iarray_pattern),
       alias($.parenthesized_binding_pattern, $.parenthesized_pattern),
     ),
 
@@ -1789,6 +1798,18 @@ export default grammar({
       '[|',
       optional($._sequence_binding_pattern_content),
       '|]',
+    ),
+
+    iarray_pattern: $ => seq(
+      '[:',
+      optional($._sequence_pattern_content),
+      ':]',
+    ),
+
+    iarray_binding_pattern: $ => seq(
+      '[:',
+      optional($._sequence_binding_pattern_content),
+      ':]',
     ),
 
     _sequence_pattern_content: $ => seq(
