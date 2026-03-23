@@ -1147,20 +1147,19 @@ export default grammar({
 
     list_expression: $ => seq(
       '[',
-      optional(seq(
-        sep1(';', $._expression),
-        optional(';'),
-      )),
+      optional($._sequence_expression_content),
       ']',
     ),
 
     array_expression: $ => seq(
       '[|',
-      optional(seq(
-        sep1(';', $._expression),
-        optional(';'),
-      )),
+      optional($._sequence_expression_content),
       '|]',
+    ),
+
+    _sequence_expression_content: $ => seq(
+      sep1(';', $._expression),
+      optional(';'),
     ),
 
     record_expression: $ => seq(
@@ -1752,19 +1751,13 @@ export default grammar({
 
     list_pattern: $ => seq(
       '[',
-      optional(seq(
-        sep1(';', $._pattern),
-        optional(';'),
-      )),
+      optional($._sequence_pattern_content),
       ']',
     ),
 
     list_binding_pattern: $ => seq(
       '[',
-      optional(seq(
-        sep1(';', $._binding_pattern),
-        optional(';'),
-      )),
+      optional($._sequence_binding_pattern_content),
       ']',
     ),
 
@@ -1788,20 +1781,24 @@ export default grammar({
 
     array_pattern: $ => seq(
       '[|',
-      optional(seq(
-        sep1(';', $._pattern),
-        optional(';'),
-      )),
+      optional($._sequence_pattern_content),
       '|]',
     ),
 
     array_binding_pattern: $ => seq(
       '[|',
-      optional(seq(
-        sep1(';', $._binding_pattern),
-        optional(';'),
-      )),
+      optional($._sequence_binding_pattern_content),
       '|]',
+    ),
+
+    _sequence_pattern_content: $ => seq(
+      sep1(';', $._pattern),
+      optional(';'),
+    ),
+
+    _sequence_binding_pattern_content: $ => seq(
+      sep1(';', $._binding_pattern),
+      optional(';'),
     ),
 
     range_pattern: $ => prec('range_pattern', seq(
