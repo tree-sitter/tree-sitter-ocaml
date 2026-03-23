@@ -594,6 +594,7 @@ export default grammar({
         $.constrain_type,
         $.constrain_module,
         $.constrain_module_type,
+        $.extended_module_path,
       )),
     )),
 

@@ -72,3 +72,21 @@ include functor F
   (include_module_type
     module_type: (module_type_path
       (module_type_name))))
+
+===========================
+Module strengthening
+===========================
+
+module M : S with M
+
+---
+
+(compilation_unit
+  (module_definition
+    (module_binding
+      (module_name)
+      module_type: (module_type_constraint
+        module_type: (module_type_path
+          (module_type_name))
+        (extended_module_path
+          (module_name))))))
