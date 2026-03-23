@@ -55,3 +55,18 @@
 [submodule "examples/owl"]
 	path = examples/owl
 	url = https://github.com/owlbarn/owl
+[submodule "examples/async_iterator"]
+	path = examples/async_iterator
+	url = https://github.com/janestreet/async_iterator
+[submodule "examples/parallel"]
+	path = examples/parallel
+	url = https://github.com/janestreet/parallel
+[submodule "examples/portable"]
+	path = examples/portable
+	url = https://github.com/janestreet/portable
+[submodule "examples/unboxed"]
+	path = examples/unboxed
+	url = https://github.com/janestreet/unboxed
+[submodule "examples/unique"]
+	path = examples/unique
+	url = https://github.com/janestreet/unique
