@@ -488,10 +488,14 @@ export default grammar({
     ),
 
     include_module: $ => seq(
-      'include',
+      $._include_or_include_functor,
       optional($._attribute),
       field('module', $._module_expression),
       repeat($.item_attribute),
+    ),
+
+    _include_or_include_functor: $ => prec.right(
+      seq('include', optional('functor')),
     ),
 
     class_definition: $ => seq(
@@ -557,7 +561,7 @@ export default grammar({
     ),
 
     include_module_type: $ => seq(
-      'include',
+      $._include_or_include_functor,
       optional($._attribute),
       field('module_type', $._module_type),
       repeat($.item_attribute),

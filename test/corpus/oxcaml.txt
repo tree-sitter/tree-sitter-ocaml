@@ -45,3 +45,30 @@ function M.[: x :] -> ();;
           pattern: (iarray_pattern
             (value_pattern)))
         body: (unit)))))
+
+===========================
+Include functor
+===========================
+
+include functor F
+
+---
+
+(compilation_unit
+  (include_module
+    module: (module_path
+      (module_name))))
+
+===========================
+Include functor
+:language(ocaml_interface)
+===========================
+
+include functor F
+
+---
+
+(compilation_unit
+  (include_module_type
+    module_type: (module_type_path
+      (module_type_name))))
