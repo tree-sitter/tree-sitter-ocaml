@@ -224,7 +224,7 @@ let x = {%id ab|payload|ab};;
   (type_definition
     (type_binding
       name: (type_constructor)
-      equation: (extension
+      body: (extension
         (attribute_id))))
   (value_definition
     (let_binding

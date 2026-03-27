@@ -280,6 +280,29 @@ function (x) -> ()
         body: (unit)))))
 
 ============================
+Exception patterns
+============================
+
+function exception e -> ();;
+let (exception e) = ();;
+
+---
+
+(compilation_unit
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (exception_pattern
+          pattern: (value_pattern))
+        body: (unit))))
+  (value_definition
+    (let_binding
+      pattern: (parenthesized_pattern
+        (exception_pattern
+          pattern: (value_name)))
+      body: (unit))))
+
+============================
 Effect patterns
 ============================
 

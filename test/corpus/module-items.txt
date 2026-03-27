@@ -1,9 +1,33 @@
 ==============================
+Value specification
+:language(ocaml)
+:language(ocaml_interface)
+==============================
+
+val x : t
+val x : 'a . 'a
+
+---
+
+(compilation_unit
+  (value_specification
+    (value_name)
+    type: (type_constructor_path
+      (type_constructor)))
+  (value_specification
+    (value_name)
+    type: (polymorphic_type
+      (type_variable)
+      type: (type_variable))))
+
+==============================
 External
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 external x : int = "x"
-external x : 'a . 'a = "x"
+external x : 'a . 'a = "x" {|x|}
 
 ---
 
@@ -20,10 +44,14 @@ external x : 'a . 'a = "x"
       (type_variable)
       type: (type_variable))
     (string
-      (string_content))))
+      (string_content))
+    (quoted_string
+      (quoted_string_content))))
 
 ==============================
 Type definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 type t
@@ -39,6 +67,8 @@ type t = {
 type t = t constraint 'a = t
 type t = |
 type t = external "x"
+type t := A | B
+type t = t = ..
 
 ---
 
@@ -50,18 +80,18 @@ type t = external "x"
     (type_binding
       (type_variable)
       name: (type_constructor)
-      equation: (type_constructor_path
+      body: (type_constructor_path
         (type_constructor)))
     (type_binding
       (type_variable)
       (type_variable)
       name: (type_constructor)
-      equation: (type_constructor_path
+      body: (type_constructor_path
         (type_constructor))))
   (type_definition
     (type_binding
       name: (type_constructor)
-      equation: (type_constructor_path
+      body: (type_constructor_path
         (type_constructor))))
   (type_definition
     (type_binding
@@ -116,7 +146,7 @@ type t = external "x"
   (type_definition
     (type_binding
       name: (type_constructor)
-      equation: (type_constructor_path
+      body: (type_constructor_path
         (type_constructor))
       (type_constraint
         type: (type_variable)
@@ -131,10 +161,26 @@ type t = external "x"
       name: (type_constructor)
       body: (external_declaration
         (string
-          (string_content))))))
+          (string_content)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (variant_declaration
+        (constructor_declaration
+          (constructor_name))
+        (constructor_declaration
+          (constructor_name)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      synonym: (type_constructor_path
+        (type_constructor)))))
+
 
 ==============================
 Exception definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 exception E
@@ -154,6 +200,8 @@ exception E of t
 
 ==============================
 Module definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 module M
@@ -245,6 +293,8 @@ module _ (_ : T) = M
 
 ==============================
 Module type definition
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 module type T = T
@@ -264,6 +314,8 @@ module type T := T
 
 ==============================
 Open
+:language(ocaml)
+:language(ocaml_interface)
 ==============================
 
 open M
