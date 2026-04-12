@@ -218,6 +218,7 @@ type t = t -> t -> t
 type t = l:t -> ?l:t -> t
 type t = (module T) -> t
 type t = (module M : T) -> t
+type t = ('a . 'a -> t) -> l:('a . 'a -> t) -> ?l:('a . 'a -> t) -> t
 
 ---
 
@@ -274,7 +275,37 @@ type t = (module M : T) -> t
           module_type: (module_type_path
             (module_type_name)))
         codomain: (type_constructor_path
-          (type_constructor))))))
+          (type_constructor)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (function_type
+        domain: (polymorphic_type
+          (type_variable)
+          type: (function_type
+            domain: (type_variable)
+            codomain: (type_constructor_path
+              (type_constructor))))
+        codomain: (function_type
+          domain: (labeled_argument_type
+            (label_name)
+            type: (polymorphic_type
+              (type_variable)
+              type: (function_type
+                domain: (type_variable)
+                codomain: (type_constructor_path
+                  (type_constructor)))))
+          codomain: (function_type
+            domain: (labeled_argument_type
+              (label_name)
+              type: (polymorphic_type
+                (type_variable)
+                type: (function_type
+                  domain: (type_variable)
+                  codomain: (type_constructor_path
+                    (type_constructor)))))
+            codomain: (type_constructor_path
+              (type_constructor))))))))
 
 ===========================
 Tuple types

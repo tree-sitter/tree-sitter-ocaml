@@ -13,6 +13,7 @@ let f x :> t = x
 let+ x = a and+ y = b
 let%ext x
 let* x and* y
+let f (x : 'a . 'a) ~l:(x : 'a . 'a) ?(x : 'a . 'a = y) ?l:(x : 'a . 'a = y) = x
 
 ---
 
@@ -127,7 +128,38 @@ let* x and* y
       pattern: (value_name))
     (let_and_operator)
     (let_binding
-      pattern: (value_name))))
+      pattern: (value_name)))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        type: (polymorphic_type
+          (type_variable)
+          type: (type_variable)))
+      (parameter
+        (label_name)
+        pattern: (value_pattern)
+        type: (polymorphic_type
+          (type_variable)
+          type: (type_variable)))
+      (parameter
+        pattern: (value_pattern)
+        type: (polymorphic_type
+          (type_variable)
+          type: (type_variable))
+        default: (value_path
+          (value_name)))
+      (parameter
+        (label_name)
+        pattern: (value_pattern)
+        type: (polymorphic_type
+          (type_variable)
+          type: (type_variable))
+        default: (value_path
+          (value_name)))
+      body: (value_path
+        (value_name)))))
 
 ==============================
 Include
