@@ -127,7 +127,7 @@
 
 (
   (type_constructor) @type.builtin
-  (#match? @type.builtin "^(int|char|bytes|string|float|bool|unit|exn|array|list|option|int32|int64|nativeint|format6|lazy_t)$")
+  (#match? @type.builtin "^(int|int8|int16|int32|int64|char|bytes|string|float|float32|bool|unit|exn|array|list|option|nativeint|format6|lazy_t)$")
 )
 
 [(constructor_name) (tag)] @constructor
