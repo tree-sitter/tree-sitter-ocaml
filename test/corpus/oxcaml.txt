@@ -90,3 +90,46 @@ module M : S with M
           (module_type_name))
         (extended_module_path
           (module_name))))))
+
+===========================
+Comprehensions
+===========================
+
+[x when x];;
+[|x for x = 1 to 5|];;
+[:x for x in xs when x:];;
+
+---
+
+(compilation_unit
+  (expression_item
+    (list_expression
+      (comprehension
+        expression: (value_path
+          (value_name))
+        (comprehension_guard
+          (value_path
+            (value_name))))))
+  (expression_item
+    (array_expression
+      (comprehension
+        expression: (value_path
+          (value_name))
+        (comprehension_iterator
+          (comprehension_binding
+            name: (value_pattern)
+            from: (number)
+            to: (number))))))
+  (expression_item
+    (iarray_expression
+      (comprehension
+        expression: (value_path
+          (value_name))
+        (comprehension_iterator
+          (comprehension_binding
+            name: (value_pattern)
+            in: (value_path
+              (value_name))))
+        (comprehension_guard
+          (value_path
+            (value_name)))))))

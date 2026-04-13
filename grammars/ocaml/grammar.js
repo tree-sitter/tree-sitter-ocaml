@@ -1169,7 +1169,48 @@ export default grammar({
       ':]',
     ),
 
-    _sequence_expression_content: $ => seq(
+    _sequence_expression_content: $ => choice(
+      seq(
+        sep1(';', $._expression),
+        optional(';'),
+      ),
+      $.comprehension,
+    ),
+
+    comprehension: $ => seq(
+      field('expression', $._expression),
+      repeat1($._comprehension_clause),
+    ),
+
+    _comprehension_clause: $ => choice(
+      $.comprehension_iterator,
+      $.comprehension_guard,
+    ),
+
+    comprehension_iterator: $ => seq(
+      'for',
+      sep1('and', $.comprehension_binding),
+    ),
+
+    comprehension_binding: $ => seq(
+      field('name', $._pattern),
+      choice(
+        seq(
+          '=',
+          field('from', $._expression),
+          choice('to', 'downto'),
+          field('to', $._expression),
+        ),
+        seq('in', field('in', $._expression)),
+      ),
+    ),
+
+    comprehension_guard: $ => seq(
+      'when',
+      $._expression,
+    ),
+
+    _sequence_content: $ => seq(
       sep1(';', $._expression),
       optional(';'),
     ),
