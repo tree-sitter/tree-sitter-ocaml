@@ -472,20 +472,6 @@
     ]
   },
   {
-    "type": "_parameter",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "abstract_type",
-        "named": true
-      },
-      {
-        "type": "parameter",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "_pattern",
     "named": true,
     "subtypes": [
@@ -1470,7 +1456,7 @@
       "required": true,
       "types": [
         {
-          "type": "_parameter",
+          "type": "abstract_type",
           "named": true
         },
         {
@@ -1479,6 +1465,10 @@
         },
         {
           "type": "item_attribute",
+          "named": true
+        },
+        {
+          "type": "parameter",
           "named": true
         },
         {
@@ -1557,7 +1547,11 @@
       "required": true,
       "types": [
         {
-          "type": "_parameter",
+          "type": "abstract_type",
+          "named": true
+        },
+        {
+          "type": "parameter",
           "named": true
         }
       ]
@@ -1578,15 +1572,27 @@
         ]
       },
       "domain": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
           {
             "type": "_simple_type",
             "named": true
           },
           {
             "type": "labeled_argument_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           },
           {
@@ -2489,11 +2495,15 @@
       "required": true,
       "types": [
         {
-          "type": "_parameter",
+          "type": "abstract_type",
           "named": true
         },
         {
           "type": "attribute_id",
+          "named": true
+        },
+        {
+          "type": "parameter",
           "named": true
         }
       ]
@@ -2533,15 +2543,27 @@
         ]
       },
       "domain": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
           {
             "type": "_simple_type",
             "named": true
           },
           {
             "type": "labeled_argument_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           },
           {
@@ -3165,15 +3187,27 @@
     "named": true,
     "fields": {
       "type": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
           {
             "type": "_simple_type",
             "named": true
           },
           {
             "type": "labeled_argument_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           },
           {
@@ -3444,11 +3478,15 @@
       "required": false,
       "types": [
         {
-          "type": "_parameter",
+          "type": "abstract_type",
           "named": true
         },
         {
           "type": "item_attribute",
+          "named": true
+        },
+        {
+          "type": "parameter",
           "named": true
         }
       ]
@@ -3853,7 +3891,7 @@
       "required": true,
       "types": [
         {
-          "type": "_parameter",
+          "type": "abstract_type",
           "named": true
         },
         {
@@ -3862,6 +3900,10 @@
         },
         {
           "type": "method_name",
+          "named": true
+        },
+        {
+          "type": "parameter",
           "named": true
         }
       ]
@@ -4522,7 +4564,7 @@
         "required": false,
         "types": [
           {
-            "type": "_type",
+            "type": "_polymorphic_type",
             "named": true
           }
         ]

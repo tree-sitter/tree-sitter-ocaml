@@ -386,7 +386,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "_polymorphic_typed"
+                      "name": "_maybe_polymorphic_typed"
                     },
                     {
                       "type": "BLANK"
@@ -492,15 +492,20 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_label"
-            },
-            {
-              "type": "IMMEDIATE_TOKEN",
-              "content": {
-                "type": "STRING",
-                "value": ":"
-              }
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_label"
+                },
+                {
+                  "type": "IMMEDIATE_TOKEN",
+                  "content": {
+                    "type": "STRING",
+                    "value": ":"
+                  }
+                }
+              ]
             },
             {
               "type": "FIELD",
@@ -545,7 +550,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_typed"
+                  "name": "_maybe_polymorphic_typed"
                 },
                 {
                   "type": "BLANK"
@@ -587,15 +592,20 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_label"
-            },
-            {
-              "type": "IMMEDIATE_TOKEN",
-              "content": {
-                "type": "STRING",
-                "value": ":"
-              }
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_label"
+                },
+                {
+                  "type": "IMMEDIATE_TOKEN",
+                  "content": {
+                    "type": "STRING",
+                    "value": ":"
+                  }
+                }
+              ]
             },
             {
               "type": "STRING",
@@ -614,7 +624,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_typed"
+                  "name": "_maybe_polymorphic_typed"
                 },
                 {
                   "type": "BLANK"
@@ -637,6 +647,55 @@
                   }
                 }
               ]
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_label"
+                    },
+                    {
+                      "type": "IMMEDIATE_TOKEN",
+                      "content": {
+                        "type": "STRING",
+                        "value": ":"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "FIELD",
+              "name": "pattern",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_pattern"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_polymorphic_typed"
             },
             {
               "type": "STRING",
@@ -671,7 +730,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_polymorphic_typed"
+          "name": "_maybe_polymorphic_typed"
         },
         {
           "type": "STRING",
@@ -1489,7 +1548,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_polymorphic_typed"
+          "name": "_maybe_polymorphic_typed"
         }
       ]
     },
@@ -2288,7 +2347,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_polymorphic_typed"
+          "name": "_maybe_polymorphic_typed"
         },
         {
           "type": "REPEAT",
@@ -3252,7 +3311,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_polymorphic_typed"
+          "name": "_maybe_polymorphic_typed"
         },
         {
           "type": "REPEAT",
@@ -3774,7 +3833,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_polymorphic_typed"
+              "name": "_maybe_polymorphic_typed"
             },
             {
               "type": "BLANK"
@@ -3962,7 +4021,7 @@
         }
       ]
     },
-    "_polymorphic_typed": {
+    "_maybe_polymorphic_typed": {
       "type": "SEQ",
       "members": [
         {
@@ -3975,6 +4034,23 @@
           "content": {
             "type": "SYMBOL",
             "name": "_polymorphic_type"
+          }
+        }
+      ]
+    },
+    "_polymorphic_typed": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "polymorphic_type"
           }
         }
       ]
@@ -4187,6 +4263,23 @@
         {
           "type": "SYMBOL",
           "name": "labeled_argument_type"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "polymorphic_type"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
         }
       ]
     },
@@ -4925,7 +5018,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_polymorphic_typed"
+          "name": "_maybe_polymorphic_typed"
         }
       ]
     },
@@ -11805,7 +11898,6 @@
     "_local_structure_item",
     "_structure_item",
     "_signature_item",
-    "_parameter",
     "_module_type",
     "_simple_module_expression",
     "_module_expression",

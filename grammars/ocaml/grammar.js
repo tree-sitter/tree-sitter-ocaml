@@ -169,7 +169,6 @@ export default grammar({
     $._local_structure_item,
     $._structure_item,
     $._signature_item,
-    $._parameter,
     $._module_type,
     $._simple_module_expression,
     $._module_expression,
@@ -270,7 +269,7 @@ export default grammar({
       field('pattern', $._binding_pattern_no_exn),
       optional(seq(
         repeat($._parameter),
-        optional($._polymorphic_typed),
+        optional($._maybe_polymorphic_typed),
         optional($._coerced),
         '=',
         field('body', $._sequence_expression),
@@ -290,25 +289,30 @@ export default grammar({
         field('pattern', $._simple_value_pattern),
       ),
       seq(
-        $._label,
-        token.immediate(':'),
+        seq($._label, token.immediate(':')),
         field('pattern', $._simple_pattern),
       ),
       seq(
         choice('~', '?'),
         '(',
         field('pattern', $._simple_value_pattern),
-        optional($._typed),
+        optional($._maybe_polymorphic_typed),
         optional(seq('=', field('default', $._sequence_expression))),
         ')',
       ),
       seq(
-        $._label,
-        token.immediate(':'),
+        seq($._label, token.immediate(':')),
         '(',
         field('pattern', $._pattern),
-        optional($._typed),
+        optional($._maybe_polymorphic_typed),
         seq('=', field('default', $._sequence_expression)),
+        ')',
+      ),
+      seq(
+        optional(seq($._label, token.immediate(':'))),
+        '(',
+        field('pattern', $._pattern),
+        $._polymorphic_typed,
         ')',
       ),
     ),
@@ -317,7 +321,7 @@ export default grammar({
       'external',
       optional($._attribute),
       $._value_name,
-      $._polymorphic_typed,
+      $._maybe_polymorphic_typed,
       '=',
       repeat1(choice($.string, $.quoted_string)),
       repeat($.item_attribute),
@@ -420,7 +424,7 @@ export default grammar({
     field_declaration: $ => seq(
       optional('mutable'),
       $._field_name,
-      $._polymorphic_typed,
+      $._maybe_polymorphic_typed,
     ),
 
     external_declaration: $ => seq(
@@ -541,7 +545,7 @@ export default grammar({
       'val',
       optional($._attribute),
       $._value_name,
-      $._polymorphic_typed,
+      $._maybe_polymorphic_typed,
       repeat($.item_attribute),
     ),
 
@@ -734,7 +738,7 @@ export default grammar({
       'method',
       repeat(choice('private', 'virtual')),
       $._method_name,
-      $._polymorphic_typed,
+      $._maybe_polymorphic_typed,
       repeat($.item_attribute),
     ),
 
@@ -841,7 +845,7 @@ export default grammar({
       repeat(choice('private', 'virtual')),
       $._method_name,
       repeat($._parameter),
-      optional($._polymorphic_typed),
+      optional($._maybe_polymorphic_typed),
       optional(seq('=', field('body', $._sequence_expression))),
       repeat($.item_attribute),
     ),
@@ -874,7 +878,9 @@ export default grammar({
       $._coerced,
     ),
 
-    _polymorphic_typed: $ => seq(':', field('type', $._polymorphic_type)),
+    _maybe_polymorphic_typed: $ => seq(':', field('type', $._polymorphic_type)),
+
+    _polymorphic_typed: $ => seq(':', field('type', $.polymorphic_type)),
 
     _polymorphic_type: $ => choice(
       $.polymorphic_type,
@@ -928,6 +934,7 @@ export default grammar({
       $._simple_type,
       alias($._proper_tuple_type, $.tuple_type),
       $.labeled_argument_type,
+      parenthesize($.polymorphic_type),
     ),
 
     labeled_argument_type: $ => seq(
@@ -1032,7 +1039,7 @@ export default grammar({
 
     method_type: $ => seq(
       $._method_name,
-      $._polymorphic_typed,
+      $._maybe_polymorphic_typed,
     ),
 
     hash_type: $ => seq(
