@@ -133,3 +133,49 @@ Comprehensions
         (comprehension_guard
           (value_path
             (value_name)))))))
+
+===========================
+Unboxed types
+===========================
+
+#3.14;;
+function -#1e9 -> #1.0s;;
+#42n;;
+#'a';;
+#();;
+#true;;
+type t = int64#
+type 'a t = 'a t#
+
+---
+
+(compilation_unit
+  (expression_item
+    (number))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (signed_number)
+        body: (number))))
+  (expression_item
+    (number))
+  (expression_item
+    (character
+      (character_content)))
+  (expression_item
+    (unit))
+  (expression_item
+    (boolean))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (type_constructor_path
+        (type_constructor))))
+  (type_definition
+    (type_binding
+      (type_variable)
+      name: (type_constructor)
+      body: (constructed_type
+        (type_variable)
+        (type_constructor_path
+          (type_constructor))))))

@@ -123,11 +123,15 @@
 ; Types
 ;------
 
-[(class_name) (class_type_name) (type_constructor)] @type
+[
+  (class_name)
+  (class_type_name)
+  (type_constructor)
+] @type
 
 (
   (type_constructor) @type.builtin
-  (#match? @type.builtin "^(int|int8|int16|int32|int64|char|bytes|string|float|float32|bool|unit|exn|array|list|option|nativeint|format6|lazy_t)$")
+  (#match? @type.builtin "^(int|int8|int16|int32|int64|char|bytes|string|float|float32|bool|unit|exn|array|list|option|nativeint|format6|lazy_t|int8#|int16#|int32#|int64#|nativeint#|float#|float32#|int8x16#|int16x8#|int32x4#|int64x2#|float16x8|float32x4|float64x2#|char#|bool#|unit#)$")
 )
 
 [(constructor_name) (tag)] @constructor

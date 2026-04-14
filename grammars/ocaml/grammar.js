@@ -4,10 +4,10 @@
 const OP_CHAR = /[!$%&*+\-./:<=>?@^|~]/;
 const HASH_OP_CHAR = /[#!$%&*+\-./:<=>?@^|~]/;
 const NUMBER = token(choice(
-  /[0-9][0-9_]*(\.[0-9_]*)?([eE][+\-]?[0-9][0-9_]*)?[g-zG-Z]?/,
-  /0[xX][0-9A-Fa-f][0-9A-Fa-f_]*(\.[0-9A-Fa-f_]*)?([pP][+\-]?[0-9][0-9_]*)?[g-zG-Z]?/,
-  /0[oO][0-7][0-7_]*[g-zG-Z]?/,
-  /0[bB][01][01_]*[g-zG-Z]?/,
+  /#?[0-9][0-9_]*(\.[0-9_]*)?([eE][+\-]?[0-9][0-9_]*)?[g-zG-Z]?/,
+  /#?0[xX][0-9A-Fa-f][0-9A-Fa-f_]*(\.[0-9A-Fa-f_]*)?([pP][+\-]?[0-9][0-9_]*)?[g-zG-Z]?/,
+  /#?0[oO][0-7][0-7_]*[g-zG-Z]?/,
+  /#?0[bB][01][01_]*[g-zG-Z]?/,
 ));
 
 export default grammar({
@@ -31,7 +31,6 @@ export default grammar({
     $._class_name,
     $._class_type_name,
     $._method_name,
-    $._type_constructor,
     $._module_name,
     $._module_type_name,
     $._argument_type,
@@ -342,7 +341,7 @@ export default grammar({
       optional($._type_params),
       choice(
         seq(
-          field('name', $._type_constructor),
+          field('name', $.type_constructor),
           optional(seq(
             choice('=', ':='),
             choice(
@@ -360,7 +359,7 @@ export default grammar({
           repeat($.type_constraint),
         ),
         seq(
-          field('name', $._type_constructor),
+          field('name', $.type_constructor),
           '=',
           field('body', $.external_declaration),
           repeat($.type_constraint),
@@ -910,7 +909,7 @@ export default grammar({
 
     _abstract_type: $ => seq(
       'type',
-      repeat1($._type_constructor),
+      repeat1($.type_constructor),
     ),
 
     _parenthesized_abstract_type: $ => parenthesize($._abstract_type),
@@ -2031,7 +2030,11 @@ export default grammar({
 
     signed_number: $ => seq(/[+-]/, NUMBER),
 
-    character: $ => seq('\'', $.character_content, token.immediate('\'')),
+    character: $ => seq(
+      choice('\'', '#\''),
+      $.character_content,
+      token.immediate('\''),
+    ),
 
     character_content: $ => choice(
       token.immediate(/\r*\n/),
@@ -2091,10 +2094,10 @@ export default grammar({
 
     pretty_printing_indication: $ => /@([\[\], ;.{}?]|\\n|<[0-9]+>)/,
 
-    boolean: $ => choice('true', 'false'),
+    boolean: $ => choice('true', 'false', '#true', '#false'),
 
     unit: $ => choice(
-      seq('(', ')'),
+      seq(choice('(', '#('), ')'),
       seq('begin', optional($._attribute), 'end'),
     ),
 
@@ -2223,7 +2226,7 @@ export default grammar({
 
     constructor_path: $ => path($.module_path, $._constructor_name),
 
-    type_constructor_path: $ => path($.extended_module_path, $._type_constructor),
+    type_constructor_path: $ => path($.extended_module_path, $.type_constructor),
 
     class_path: $ => path($.module_path, $._class_name),
 
@@ -2234,7 +2237,10 @@ export default grammar({
     _class_name: $ => alias($._lowercase_identifier, $.class_name),
     _class_type_name: $ => alias($._lowercase_identifier, $.class_type_name),
     _method_name: $ => alias($._lowercase_identifier, $.method_name),
-    _type_constructor: $ => alias($._lowercase_identifier, $.type_constructor),
+    type_constructor: $ => seq(
+      $._lowercase_identifier,
+      optional(token.immediate('#')),
+    ),
     _instance_variable_name: $ => alias($._lowercase_identifier, $.instance_variable_name),
 
     _module_name: $ => alias($._uppercase_identifier, $.module_name),
@@ -2245,6 +2251,7 @@ export default grammar({
     ),
 
     _lowercase_identifier: $ => /(\\#)?[\p{Ll}_][\p{XID_Continue}']*/,
+    _lowercase_identifier_trailing_hash: $ => seq($._lowercase_identifier, token.immediate('#')),
     _uppercase_identifier: $ => /[\p{Lu}][\p{XID_Continue}']*/,
 
     _label: $ => seq(choice('~', '?'), $._label_name),
