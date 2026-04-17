@@ -1913,6 +1913,11 @@
     }
   },
   {
+    "type": "constructor_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "constructor_path",
     "named": true,
     "fields": {},
@@ -6048,10 +6053,6 @@
   {
     "type": "constraint",
     "named": false
-  },
-  {
-    "type": "constructor_name",
-    "named": true
   },
   {
     "type": "conversion_specification",

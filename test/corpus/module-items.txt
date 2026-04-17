@@ -57,7 +57,7 @@ Type definition
 type t
 type nonrec 'a t = t and ('a, 'b) t = t
 type t = private t
-type t = A | B of t | C of t * t | D of {x : t}
+type t = A | B of t | C of t * t | D of {x : t} | []
 type _ t =
   | A : t -> t
   | B : 'a . 'a -> 'a t
@@ -115,7 +115,9 @@ type t = t = ..
             (field_declaration
               (field_name)
               type: (type_constructor_path
-                (type_constructor))))))))
+                (type_constructor)))))
+        (constructor_declaration
+          (constructor_name)))))
   (type_definition
     (type_binding
       (type_variable)
