@@ -395,7 +395,7 @@ export default grammar({
     constructor_declaration: $ => seq(
       choice(
         $._constructor_name,
-        alias(choice(seq('[', ']'), seq('(', ')'), 'true', 'false'), $.constructor_name),
+        alias($._constructor_declaration_name, $.constructor_name),
       ),
       optional(choice(
         seq('of', $._constructor_argument),
@@ -407,6 +407,13 @@ export default grammar({
         ),
         seq('=', $.constructor_path),
       )),
+    ),
+
+    _constructor_declaration_name: $ => choice(
+      seq('[', ']'),
+      seq('(', ')'),
+      'true',
+      'false',
     ),
 
     _constructor_argument: $ => choice(
