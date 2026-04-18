@@ -1670,7 +1670,12 @@ export default grammar({
     _tuple_pattern: $ => prec.right('tuple_pattern', seq(
       choice($._pattern, $.labeled_tuple_element_pattern),
       ',',
-      choice($._pattern, $.labeled_tuple_element_pattern, $._tuple_pattern),
+      choice(
+        $._pattern,
+        $.labeled_tuple_element_pattern,
+        $._tuple_pattern,
+        '..',
+      ),
     )),
 
     labeled_tuple_element_binding_pattern: $ => choice(
@@ -1686,13 +1691,23 @@ export default grammar({
     _tuple_binding_pattern_no_exn: $ => prec.right('tuple_pattern', seq(
       choice($._binding_pattern_no_exn, $.labeled_tuple_element_binding_pattern),
       ',',
-      choice($._binding_pattern, $.labeled_tuple_element_binding_pattern, $._tuple_binding_pattern),
+      choice(
+        $._binding_pattern,
+        $.labeled_tuple_element_binding_pattern,
+        $._tuple_binding_pattern,
+        '..',
+      ),
     )),
 
     _tuple_binding_pattern: $ => prec.right('tuple_pattern', seq(
       choice($._binding_pattern, $.labeled_tuple_element_binding_pattern),
       ',',
-      choice($._binding_pattern, $.labeled_tuple_element_binding_pattern, $._tuple_binding_pattern),
+      choice(
+        $._binding_pattern,
+        $.labeled_tuple_element_binding_pattern,
+        $._tuple_binding_pattern,
+        '..',
+      ),
     )),
 
     record_pattern: $ => seq(

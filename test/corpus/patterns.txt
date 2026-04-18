@@ -199,7 +199,8 @@ Tuple patterns
 ============================
 
 function x, x, x -> ();;
-function ~a:x, ~b, ~(c:int), d -> ()
+function ~a:x, ~b, ~(c:int), d -> ();;
+function x, .. -> ()
 
 ---
 
@@ -225,6 +226,12 @@ function ~a:x, ~b, ~(c:int), d -> ()
             (label_name)
             type: (type_constructor_path
               (type_constructor)))
+          (value_pattern))
+        body: (unit))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (tuple_pattern
           (value_pattern))
         body: (unit)))))
 
