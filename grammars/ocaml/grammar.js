@@ -915,6 +915,7 @@ export default grammar({
     _parenthesized_abstract_type: $ => parenthesize($._abstract_type),
 
     _delimited_type: $ => choice(
+      alias($._unboxed_tuple_type, $.tuple_type),
       $.polymorphic_variant_type,
       $.package_type,
       $.parenthesized_type,
@@ -983,6 +984,12 @@ export default grammar({
         '*',
         choice($._tuple_type_rhs),
       )),
+    ),
+
+    _unboxed_tuple_type: $ => seq(
+      '#(',
+      choice($._proper_tuple_type, $._labeled_tuple_type),
+      ')',
     ),
 
     constructed_type: $ => seq(
@@ -1084,6 +1091,7 @@ export default grammar({
       $.typed_expression,
       $.constructor_path,
       $.tag,
+      alias($._unboxed_tuple_expression, $.tuple_expression),
       $.prefix_expression,
       $.hash_expression,
       $.field_get_expression,
@@ -1143,6 +1151,12 @@ export default grammar({
       ',',
       choice($._expression, $.labeled_tuple_element, $._tuple_expression),
     )),
+
+    _unboxed_tuple_expression: $ => seq(
+      '#(',
+      $._tuple_expression,
+      ')',
+    ),
 
     cons_expression: $ => prec.right('cons', seq(
       field('left', $._expression),
@@ -1577,6 +1591,7 @@ export default grammar({
       $.constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
+      alias($._unboxed_tuple_pattern, $.tuple_pattern),
       $.local_open_pattern,
       $.package_pattern,
       $._extension,
@@ -1617,6 +1632,7 @@ export default grammar({
       $.constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
+      alias($._unboxed_tuple_binding_pattern, $.tuple_pattern),
       alias($.local_open_binding_pattern, $.local_open_pattern),
       $.package_pattern,
       $._extension,
@@ -1774,6 +1790,18 @@ export default grammar({
         '..',
       ),
     )),
+
+    _unboxed_tuple_pattern: $ => seq(
+      '#(',
+      $._tuple_pattern,
+      ')',
+    ),
+
+    _unboxed_tuple_binding_pattern: $ => seq(
+      '$(',
+      optional($._tuple_binding_pattern),
+      ')',
+    ),
 
     record_pattern: $ => seq(
       '{',

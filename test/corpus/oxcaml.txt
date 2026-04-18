@@ -179,3 +179,42 @@ type 'a t = 'a t#
         (type_variable)
         (type_constructor_path
           (type_constructor))))))
+
+===========================
+Unboxed products
+===========================
+
+type t = #(int * float# * lbl:string)
+let f #(x, ~lbl:y) = #(x, ~lbl:y)
+
+---
+
+(compilation_unit
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (tuple_type
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor))
+        (labeled_tuple_element_type
+          (label_name)
+          type: (type_constructor_path
+            (type_constructor))))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (tuple_pattern
+          (value_pattern)
+          (labeled_tuple_element_pattern
+            (label_name)
+            pattern: (value_pattern))))
+      body: (tuple_expression
+        (value_path
+          (value_name))
+        (labeled_tuple_element
+          (label_name)
+          expression: (value_path
+            (value_name)))))))
