@@ -185,7 +185,10 @@ Unboxed products
 ===========================
 
 type t = #(int * float# * lbl:string)
-let f #(x, ~lbl:y) = #(x, ~lbl:y)
+type t = #{f : float#; s : string}
+let f #(x, ~lbl:y) = #(x, ~lbl:y);;
+let f #{f; s} = #{f = #1.0; s};;
+let f x = x.#s;;
 
 ---
 
@@ -200,6 +203,18 @@ let f #(x, ~lbl:y) = #(x, ~lbl:y)
           (type_constructor))
         (labeled_tuple_element_type
           (label_name)
+          type: (type_constructor_path
+            (type_constructor))))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (record_declaration
+        (field_declaration
+          (field_name)
+          type: (type_constructor_path
+            (type_constructor)))
+        (field_declaration
+          (field_name)
           type: (type_constructor_path
             (type_constructor))))))
   (value_definition
@@ -217,4 +232,33 @@ let f #(x, ~lbl:y) = #(x, ~lbl:y)
         (labeled_tuple_element
           (label_name)
           expression: (value_path
-            (value_name)))))))
+            (value_name))))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (record_pattern
+          (field_pattern
+            (field_path
+              (field_name)))
+          (field_pattern
+            (field_path
+              (field_name)))))
+      body: (record_expression
+        (field_expression
+          (field_path
+            (field_name))
+          body: (number))
+        (field_expression
+          (field_path
+            (field_name))))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      body: (field_get_expression
+        record: (value_path
+          (value_name))
+        field: (field_path
+          (field_name))))))

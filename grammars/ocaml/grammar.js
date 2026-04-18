@@ -421,7 +421,7 @@ export default grammar({
     ),
 
     record_declaration: $ => seq(
-      '{',
+      choice('{', '#{'),
       sep1(';', $.field_declaration),
       optional(';'),
       '}',
@@ -1229,7 +1229,7 @@ export default grammar({
     ),
 
     record_expression: $ => seq(
-      '{',
+      choice('{', '#{'),
       optional(seq(
         field('record', $._simple_expression),
         'with',
@@ -1342,7 +1342,7 @@ export default grammar({
 
     field_get_expression: $ => prec.left('dot', seq(
       field('record', $._simple_expression),
-      '.',
+      choice('.', '.#'),
       field('field', $.field_path),
     )),
 
@@ -1804,7 +1804,7 @@ export default grammar({
     ),
 
     record_pattern: $ => seq(
-      '{',
+      choice('{', '#{'),
       sep1(';', $.field_pattern),
       optional(seq(';', '_')),
       optional(';'),
@@ -1818,7 +1818,7 @@ export default grammar({
     ),
 
     record_binding_pattern: $ => seq(
-      '{',
+      choice('{', '#{'),
       sep1(';', alias($.field_binding_pattern, $.field_pattern)),
       optional(seq(';', '_')),
       optional(';'),
