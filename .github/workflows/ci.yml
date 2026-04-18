@@ -16,7 +16,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action@v2
         with:
@@ -41,7 +41,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: true
       - name: Set up tree-sitter
@@ -53,3 +53,33 @@ jobs:
         with:
           files-list: test/files.txt
           invalid-files-list: test/invalid-files.txt
+  build-cmake:
+    name: CMake build
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action@v2
+        with:
+          install-lib: false
+      - name: Configure
+        run: cmake -B build
+      - name: Build
+        run: cmake --build build
+  build-make:
+    name: Make build
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Build
+        run: make
