@@ -282,3 +282,42 @@ Block indices
       (block_access
         field: (field_path
           (field_name))))))
+
+===========================
+Stack allocation
+===========================
+
+stack_ x;;
+stack_ A x;;
+stack_ function x -> x;;
+stack_ a + b;;
+
+---
+
+(compilation_unit
+  (expression_item
+    (stack_expression
+      expression: (value_path
+        (value_name))))
+  (expression_item
+    (stack_expression
+      expression: (application_expression
+        function: (constructor_path
+          (constructor_name))
+        argument: (value_path
+          (value_name)))))
+  (expression_item
+    (stack_expression
+      expression: (function_expression
+        (match_case
+          pattern: (value_pattern)
+          body: (value_path
+            (value_name))))))
+  (expression_item
+    (infix_expression
+      left: (stack_expression
+        expression: (value_path
+          (value_name)))
+      operator: (add_operator)
+      right: (value_path
+        (value_name)))))

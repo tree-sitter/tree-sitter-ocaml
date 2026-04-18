@@ -1125,6 +1125,7 @@ export default grammar({
       $.let_expression,
       $.assert_expression,
       $.lazy_expression,
+      $.stack_expression,
     ),
 
     _sequence_expression: $ => choice(
@@ -1522,6 +1523,11 @@ export default grammar({
       optional($._attribute),
       field('expression', $._simple_expression),
     ),
+
+    stack_expression: $ => prec('app', seq(
+      'stack_',
+      field('expression', $._expression),
+    )),
 
     local_open_expression: $ => seq(
       $.module_path,
