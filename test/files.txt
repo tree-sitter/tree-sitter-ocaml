@@ -2,6 +2,8 @@ examples/**/*.ml
 examples/**/*.mli
 !examples/**/*.cppo.*
 !examples/**/*.template.*
+!examples/js_of_ocaml/compiler/tests-oxcaml/**/*
 !examples/ocamlformat/test/failing/**/*
 !examples/ocamlformat/test/passing/**/*
 !examples/ocaml/testsuite/tests/parse-errors/*
+!examples/ppxlib/test/**/*
