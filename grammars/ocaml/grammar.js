@@ -379,11 +379,7 @@ export default grammar({
     ),
 
     _type_param: $ => seq(
-      optional(choice(
-        seq('+', optional('!')),
-        seq('-', optional('!')),
-        seq('!', optional(choice('+', '-'))),
-      )),
+      repeat(choice('+', '-', '!')),
       choice($.type_variable, alias('_', $.type_variable)),
     ),
 
