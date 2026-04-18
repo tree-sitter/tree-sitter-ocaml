@@ -262,3 +262,23 @@ let f x = x.#s;;
           (value_name))
         field: (field_path
           (field_name))))))
+
+===========================
+Block indices
+===========================
+
+(.x.idx_mut(0).#y)
+
+---
+
+(compilation_unit
+  (expression_item
+    (block_index_expression
+      (block_access
+        field: (field_path
+          (field_name)))
+      (block_access
+        index: (number))
+      (block_access
+        field: (field_path
+          (field_name))))))

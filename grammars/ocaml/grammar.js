@@ -1098,6 +1098,7 @@ export default grammar({
       $.array_get_expression,
       $.string_get_expression,
       $.bigarray_get_expression,
+      $.block_index_expression,
       $.local_open_expression,
       $.new_expression,
       $.method_invocation,
@@ -1384,6 +1385,19 @@ export default grammar({
       '<-',
       field('body', $._expression),
     )),
+
+    block_index_expression: $ => parenthesize(
+      repeat1($.block_access),
+    ),
+
+    block_access: $ => choice(
+      seq(choice('.', '.#'), field('field', $.field_path)),
+      seq(
+        '.',
+        choice('idx_imm', 'idx_mut'),
+        parenthesize(field('index', $._sequence_expression)),
+      ),
+    ),
 
     if_expression: $ => prec.right(seq(
       'if',

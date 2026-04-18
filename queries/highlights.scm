@@ -134,6 +134,8 @@
   (#match? @type.builtin "^(int|int8|int16|int32|int64|char|bytes|string|float|float32|bool|unit|exn|array|list|option|nativeint|format6|lazy_t|int8#|int16#|int32#|int64#|nativeint#|float#|float32#|int8x16#|int16x8#|int32x4#|int64x2#|float16x8|float32x4|float64x2#|char#|bool#|unit#)$")
 )
 
+(block_access ["idx_imm" "idx_mut"] @type.builtin)
+
 [(constructor_name) (tag)] @constructor
 
 ; Modules
