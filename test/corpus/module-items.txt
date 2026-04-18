@@ -67,6 +67,7 @@ type t = {
 type t = t constraint 'a = t
 type t = |
 type t = external "x"
+type t = external {a|x|a}
 type t := A | B
 type t = t = ..
 
@@ -164,6 +165,12 @@ type t = t = ..
       body: (external_declaration
         (string
           (string_content)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (external_declaration
+        (quoted_string
+          (quoted_string_content)))))
   (type_definition
     (type_binding
       name: (type_constructor)

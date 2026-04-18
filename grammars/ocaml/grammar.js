@@ -432,7 +432,7 @@ export default grammar({
 
     external_declaration: $ => seq(
       'external',
-      $.string,
+      choice($.string, $.quoted_string),
     ),
 
     type_constraint: $ => seq(
