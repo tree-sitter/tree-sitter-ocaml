@@ -179,14 +179,18 @@ export default grammar({
     $._class_expression,
     $._class_field,
     $._polymorphic_type,
+    $._delimited_type,
     $._simple_type,
     $._type,
+    $._delimited_expression,
     $._simple_expression,
     $._expression,
     $._sequence_expression,
+    $._delimited_pattern,
     $._simple_pattern,
     $._effect_pattern,
     $._pattern,
+    $._delimited_binding_pattern,
     $._simple_binding_pattern,
     $._effect_binding_pattern,
     $._binding_pattern,
@@ -906,16 +910,20 @@ export default grammar({
 
     _parenthesized_abstract_type: $ => parenthesize($._abstract_type),
 
+    _delimited_type: $ => choice(
+      $.polymorphic_variant_type,
+      $.package_type,
+      $.parenthesized_type,
+    ),
+
     _simple_type: $ => choice(
+      $._delimited_type,
       $.type_variable,
       $.type_constructor_path,
       $.constructed_type,
       $.local_open_type,
-      $.polymorphic_variant_type,
-      $.package_type,
       $.hash_type,
       $.object_type,
-      $.parenthesized_type,
       $._extension,
     ),
 
@@ -990,11 +998,7 @@ export default grammar({
     local_open_type: $ => seq(
       $.extended_module_path,
       '.',
-      choice(
-        parenthesize(field('type', $._type)),
-        field('type', $.package_type),
-        field('type', $.polymorphic_variant_type),
-      ),
+      field('type', $._delimited_type),
     ),
 
     polymorphic_variant_type: $ => choice(
@@ -1058,15 +1062,23 @@ export default grammar({
 
     // Expressions
 
+    _delimited_expression: $ => choice(
+      $.unit,
+      $.list_expression,
+      $.array_expression,
+      $.record_expression,
+      $.package_expression,
+      $.object_copy_expression,
+      $.parenthesized_expression,
+    ),
+
     _simple_expression: $ => choice(
+      $._delimited_expression,
       $.value_path,
       $._constant,
       $.typed_expression,
       $.constructor_path,
       $.tag,
-      $.list_expression,
-      $.array_expression,
-      $.record_expression,
       $.prefix_expression,
       $.hash_expression,
       $.field_get_expression,
@@ -1074,12 +1086,9 @@ export default grammar({
       $.string_get_expression,
       $.bigarray_get_expression,
       $.local_open_expression,
-      $.package_expression,
       $.new_expression,
-      $.object_copy_expression,
       $.method_invocation,
       $.object_expression,
-      $.parenthesized_expression,
       $.ocamlyacc_value,
       $._extension,
     ),
@@ -1438,14 +1447,7 @@ export default grammar({
     local_open_expression: $ => seq(
       $.module_path,
       '.',
-      choice(
-        parenthesize(optional(field('expression', $._sequence_expression))),
-        field('expression', $.list_expression),
-        field('expression', $.array_expression),
-        field('expression', $.record_expression),
-        field('expression', $.object_copy_expression),
-        field('expression', $.package_expression),
-      ),
+      field('expression', $._delimited_expression),
     ),
 
     package_expression: $ => parenthesize(seq(
@@ -1507,19 +1509,24 @@ export default grammar({
 
     // Patterns
 
+    _delimited_pattern: $ => choice(
+      $.unit,
+      $.record_pattern,
+      $.list_pattern,
+      $.array_pattern,
+      $.parenthesized_pattern,
+    ),
+
     _simple_pattern: $ => choice(
+      $._delimited_pattern,
       $._value_pattern,
       $._signed_constant,
       $.typed_pattern,
       $.constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
-      $.record_pattern,
-      $.list_pattern,
-      $.array_pattern,
       $.local_open_pattern,
       $.package_pattern,
-      $.parenthesized_pattern,
       $._extension,
     ),
 
@@ -1541,19 +1548,24 @@ export default grammar({
       $.effect_pattern,
     ),
 
+    _delimited_binding_pattern: $ => choice(
+      $.unit,
+      alias($.record_binding_pattern, $.record_pattern),
+      alias($.list_binding_pattern, $.list_pattern),
+      alias($.array_binding_pattern, $.array_pattern),
+      alias($.parenthesized_binding_pattern, $.parenthesized_pattern),
+    ),
+
     _simple_binding_pattern: $ => choice(
+      $._delimited_binding_pattern,
       $._value_name,
       $._signed_constant,
       alias($.typed_binding_pattern, $.typed_pattern),
       $.constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
-      alias($.record_binding_pattern, $.record_pattern),
-      alias($.list_binding_pattern, $.list_pattern),
-      alias($.array_binding_pattern, $.array_pattern),
       alias($.local_open_binding_pattern, $.local_open_pattern),
       $.package_pattern,
-      alias($.parenthesized_binding_pattern, $.parenthesized_pattern),
       $._extension,
     ),
 
@@ -1813,23 +1825,13 @@ export default grammar({
     local_open_pattern: $ => seq(
       $.module_path,
       '.',
-      choice(
-        parenthesize(optional(field('pattern', $._pattern))),
-        field('pattern', $.list_pattern),
-        field('pattern', $.array_pattern),
-        field('pattern', $.record_pattern),
-      ),
+      field('pattern', $._delimited_pattern),
     ),
 
     local_open_binding_pattern: $ => seq(
       $.module_path,
       '.',
-      choice(
-        parenthesize(optional(field('pattern', $._binding_pattern))),
-        field('pattern', $.list_binding_pattern),
-        field('pattern', $.array_binding_pattern),
-        field('pattern', $.record_binding_pattern),
-      ),
+      field('pattern', $._delimited_binding_pattern),
     ),
 
     package_pattern: $ => parenthesize(seq(
@@ -1954,7 +1956,6 @@ export default grammar({
       $.string,
       $.quoted_string,
       $.boolean,
-      $.unit,
     ),
 
     _signed_constant: $ => choice(
