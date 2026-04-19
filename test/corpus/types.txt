@@ -395,5 +395,6 @@ type t = M.(t)
       body: (local_open_type
         (extended_module_path
           (module_name))
-        type: (type_constructor_path
-          (type_constructor))))))
+        type: (parenthesized_type
+          (type_constructor_path
+            (type_constructor)))))))

@@ -150,10 +150,11 @@ function M.(A x) | M.[x] -> ()
           (local_open_pattern
             (module_path
               (module_name))
-            pattern: (constructor_pattern
-              (constructor_path
-                (constructor_name))
-              pattern: (value_pattern)))
+            pattern: (parenthesized_pattern
+              (constructor_pattern
+                (constructor_path
+                  (constructor_name))
+                pattern: (value_pattern))))
           (local_open_pattern
             (module_path
               (module_name))

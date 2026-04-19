@@ -367,8 +367,9 @@ M.[x; x];;
     (local_open_expression
       (module_path
         (module_name))
-      expression: (value_path
-        (value_name))))
+      expression: (parenthesized_expression
+        expression: (value_path
+          (value_name)))))
   (expression_item
     (local_open_expression
       (module_path
