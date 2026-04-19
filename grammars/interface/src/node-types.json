@@ -206,6 +206,10 @@
         "named": true
       },
       {
+        "type": "iarray_pattern",
+        "named": true
+      },
+      {
         "type": "list_pattern",
         "named": true
       },
@@ -229,6 +233,10 @@
     "subtypes": [
       {
         "type": "array_expression",
+        "named": true
+      },
+      {
+        "type": "iarray_expression",
         "named": true
       },
       {
@@ -266,6 +274,10 @@
         "named": true
       },
       {
+        "type": "iarray_pattern",
+        "named": true
+      },
+      {
         "type": "list_pattern",
         "named": true
       },
@@ -297,6 +309,10 @@
       },
       {
         "type": "polymorphic_variant_type",
+        "named": true
+      },
+      {
+        "type": "tuple_type",
         "named": true
       }
     ]
@@ -403,6 +419,10 @@
       },
       {
         "type": "sign_expression",
+        "named": true
+      },
+      {
+        "type": "stack_expression",
         "named": true
       },
       {
@@ -754,6 +774,10 @@
         "named": true
       },
       {
+        "type": "tuple_pattern",
+        "named": true
+      },
+      {
         "type": "typed_pattern",
         "named": true
       },
@@ -848,6 +872,10 @@
         "named": true
       },
       {
+        "type": "block_index_expression",
+        "named": true
+      },
+      {
         "type": "constructor_path",
         "named": true
       },
@@ -897,6 +925,10 @@
       },
       {
         "type": "tag",
+        "named": true
+      },
+      {
+        "type": "tuple_expression",
         "named": true
       },
       {
@@ -977,6 +1009,10 @@
       },
       {
         "type": "tag",
+        "named": true
+      },
+      {
+        "type": "tuple_pattern",
         "named": true
       },
       {
@@ -1209,6 +1245,10 @@
         {
           "type": "_expression",
           "named": true
+        },
+        {
+          "type": "comprehension",
+          "named": true
         }
       ]
     }
@@ -1392,6 +1432,47 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "block_access",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "field_path",
+            "named": true
+          }
+        ]
+      },
+      "index": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_sequence_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "block_index_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block_access",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1764,6 +1845,112 @@
       "types": [
         {
           "type": "_signature_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comprehension",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comprehension_guard",
+          "named": true
+        },
+        {
+          "type": "comprehension_iterator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comprehension_binding",
+    "named": true,
+    "fields": {
+      "from": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "in": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ]
+      },
+      "to": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "comprehension_guard",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comprehension_iterator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comprehension_binding",
           "named": true
         }
       ]
@@ -2738,6 +2925,44 @@
     }
   },
   {
+    "type": "iarray_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        },
+        {
+          "type": "comprehension",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "iarray_pattern",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "_binding_pattern",
+          "named": true
+        },
+        {
+          "type": "_pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "if_expression",
     "named": true,
     "fields": {
@@ -3645,6 +3870,10 @@
         {
           "type": "_expression",
           "named": true
+        },
+        {
+          "type": "comprehension",
+          "named": true
         }
       ]
     }
@@ -4117,6 +4346,10 @@
         },
         {
           "type": "constrain_type",
+          "named": true
+        },
+        {
+          "type": "extended_module_path",
           "named": true
         }
       ]
@@ -5063,6 +5296,22 @@
     "fields": {}
   },
   {
+    "type": "stack_expression",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "string",
     "named": true,
     "fields": {},
@@ -5311,7 +5560,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "_binding_pattern",
@@ -5454,6 +5703,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "type_constructor",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "type_constructor_path",
@@ -5813,6 +6067,30 @@
     "named": false
   },
   {
+    "type": "#'",
+    "named": false
+  },
+  {
+    "type": "#(",
+    "named": false
+  },
+  {
+    "type": "#false",
+    "named": false
+  },
+  {
+    "type": "#true",
+    "named": false
+  },
+  {
+    "type": "#{",
+    "named": false
+  },
+  {
+    "type": "$(",
+    "named": false
+  },
+  {
     "type": "%",
     "named": false
   },
@@ -5865,6 +6143,10 @@
     "named": false
   },
   {
+    "type": ".#",
+    "named": false
+  },
+  {
     "type": "..",
     "named": false
   },
@@ -5882,6 +6164,10 @@
   },
   {
     "type": ":>",
+    "named": false
+  },
+  {
+    "type": ":]",
     "named": false
   },
   {
@@ -5926,6 +6212,10 @@
   },
   {
     "type": "[%%",
+    "named": false
+  },
+  {
+    "type": "[:",
     "named": false
   },
   {
@@ -6072,6 +6362,14 @@
   {
     "type": "hash_operator",
     "named": true
+  },
+  {
+    "type": "idx_imm",
+    "named": false
+  },
+  {
+    "type": "idx_mut",
+    "named": false
   },
   {
     "type": "if",
@@ -6235,6 +6533,10 @@
     "named": false
   },
   {
+    "type": "stack_",
+    "named": false
+  },
+  {
     "type": "struct",
     "named": false
   },
@@ -6257,10 +6559,6 @@
   {
     "type": "type",
     "named": false
-  },
-  {
-    "type": "type_constructor",
-    "named": true
   },
   {
     "type": "val",
