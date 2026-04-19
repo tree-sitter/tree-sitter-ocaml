@@ -1,0 +1,323 @@
+===========================
+Immutable arrays
+===========================
+
+[::];;
+[: x; y; z :];;
+M.[: x; y; :];;
+function [: x :] -> ();;
+function M.[: x :] -> ();;
+
+---
+
+(compilation_unit
+  (expression_item
+    (iarray_expression))
+  (expression_item
+    (iarray_expression
+      (value_path
+        (value_name))
+      (value_path
+        (value_name))
+      (value_path
+        (value_name))))
+  (expression_item
+    (local_open_expression
+      (module_path
+        (module_name))
+      expression: (iarray_expression
+        (value_path
+          (value_name))
+        (value_path
+          (value_name)))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (iarray_pattern
+          (value_pattern))
+        body: (unit))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (local_open_pattern
+          (module_path
+            (module_name))
+          pattern: (iarray_pattern
+            (value_pattern)))
+        body: (unit)))))
+
+===========================
+Include functor
+===========================
+
+include functor F
+
+---
+
+(compilation_unit
+  (include_module
+    module: (module_path
+      (module_name))))
+
+===========================
+Include functor
+:language(ocaml_interface)
+===========================
+
+include functor F
+
+---
+
+(compilation_unit
+  (include_module_type
+    module_type: (module_type_path
+      (module_type_name))))
+
+===========================
+Module strengthening
+===========================
+
+module M : S with M
+
+---
+
+(compilation_unit
+  (module_definition
+    (module_binding
+      (module_name)
+      module_type: (module_type_constraint
+        module_type: (module_type_path
+          (module_type_name))
+        (extended_module_path
+          (module_name))))))
+
+===========================
+Comprehensions
+===========================
+
+[x when x];;
+[|x for x = 1 to 5|];;
+[:x for x in xs when x:];;
+
+---
+
+(compilation_unit
+  (expression_item
+    (list_expression
+      (comprehension
+        expression: (value_path
+          (value_name))
+        (comprehension_guard
+          (value_path
+            (value_name))))))
+  (expression_item
+    (array_expression
+      (comprehension
+        expression: (value_path
+          (value_name))
+        (comprehension_iterator
+          (comprehension_binding
+            name: (value_pattern)
+            from: (number)
+            to: (number))))))
+  (expression_item
+    (iarray_expression
+      (comprehension
+        expression: (value_path
+          (value_name))
+        (comprehension_iterator
+          (comprehension_binding
+            name: (value_pattern)
+            in: (value_path
+              (value_name))))
+        (comprehension_guard
+          (value_path
+            (value_name)))))))
+
+===========================
+Unboxed types
+===========================
+
+#3.14;;
+function -#1e9 -> #1.0s;;
+#42n;;
+#'a';;
+#();;
+#true;;
+type t = int64#
+type 'a t = 'a t#
+
+---
+
+(compilation_unit
+  (expression_item
+    (number))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (signed_number)
+        body: (number))))
+  (expression_item
+    (number))
+  (expression_item
+    (character
+      (character_content)))
+  (expression_item
+    (unit))
+  (expression_item
+    (boolean))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (type_constructor_path
+        (type_constructor))))
+  (type_definition
+    (type_binding
+      (type_variable)
+      name: (type_constructor)
+      body: (constructed_type
+        (type_variable)
+        (type_constructor_path
+          (type_constructor))))))
+
+===========================
+Unboxed products
+===========================
+
+type t = #(int * float# * lbl:string)
+type t = #{f : float#; s : string}
+let f #(x, ~lbl:y) = #(x, ~lbl:y);;
+let f #{f; s} = #{f = #1.0; s};;
+let f x = x.#s;;
+
+---
+
+(compilation_unit
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (tuple_type
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor))
+        (labeled_tuple_element_type
+          (label_name)
+          type: (type_constructor_path
+            (type_constructor))))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (record_declaration
+        (field_declaration
+          (field_name)
+          type: (type_constructor_path
+            (type_constructor)))
+        (field_declaration
+          (field_name)
+          type: (type_constructor_path
+            (type_constructor))))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (tuple_pattern
+          (value_pattern)
+          (labeled_tuple_element_pattern
+            (label_name)
+            pattern: (value_pattern))))
+      body: (tuple_expression
+        (value_path
+          (value_name))
+        (labeled_tuple_element
+          (label_name)
+          expression: (value_path
+            (value_name))))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (record_pattern
+          (field_pattern
+            (field_path
+              (field_name)))
+          (field_pattern
+            (field_path
+              (field_name)))))
+      body: (record_expression
+        (field_expression
+          (field_path
+            (field_name))
+          body: (number))
+        (field_expression
+          (field_path
+            (field_name))))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      body: (field_get_expression
+        record: (value_path
+          (value_name))
+        field: (field_path
+          (field_name))))))
+
+===========================
+Block indices
+===========================
+
+(.x.idx_mut(0).#y)
+
+---
+
+(compilation_unit
+  (expression_item
+    (block_index_expression
+      (block_access
+        field: (field_path
+          (field_name)))
+      (block_access
+        index: (number))
+      (block_access
+        field: (field_path
+          (field_name))))))
+
+===========================
+Stack allocation
+===========================
+
+stack_ x;;
+stack_ A x;;
+stack_ function x -> x;;
+stack_ a + b;;
+
+---
+
+(compilation_unit
+  (expression_item
+    (stack_expression
+      expression: (value_path
+        (value_name))))
+  (expression_item
+    (stack_expression
+      expression: (application_expression
+        function: (constructor_path
+          (constructor_name))
+        argument: (value_path
+          (value_name)))))
+  (expression_item
+    (stack_expression
+      expression: (function_expression
+        (match_case
+          pattern: (value_pattern)
+          body: (value_path
+            (value_name))))))
+  (expression_item
+    (infix_expression
+      left: (stack_expression
+        expression: (value_path
+          (value_name)))
+      operator: (add_operator)
+      right: (value_path
+        (value_name)))))
