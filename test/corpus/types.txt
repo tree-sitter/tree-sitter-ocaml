@@ -6,8 +6,8 @@ type 'a t = 'a
 type '\#if \#then = '\#else
 type ('a, 'b) t = 'a
 type +'a t = 'a
-type !+'a t = 'a
-type +!'a t = 'a
+type (-'a, +-'b, -+'c) t = 'a
+type (!+'a, -!'b, !+-'c, -+!'d) t = 'a
 
 ---
 
@@ -36,10 +36,15 @@ type +!'a t = 'a
   (type_definition
     (type_binding
       (type_variable)
+      (type_variable)
+      (type_variable)
       name: (type_constructor)
       body: (type_variable)))
   (type_definition
     (type_binding
+      (type_variable)
+      (type_variable)
+      (type_variable)
       (type_variable)
       name: (type_constructor)
       body: (type_variable))))

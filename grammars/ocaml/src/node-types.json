@@ -2238,6 +2238,10 @@
       "required": true,
       "types": [
         {
+          "type": "quoted_string",
+          "named": true
+        },
+        {
           "type": "string",
           "named": true
         }

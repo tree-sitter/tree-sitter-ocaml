@@ -1,3 +1,4 @@
+examples/dune/test/blackbox-tests/test-cases/watching/multiple-errors-output.t/src/foo.ml
 examples/lablgtk/applications/osiris/osiris.ml
 examples/lablgtk/examples/csview.ml
 examples/lablgtk/tools/introspection/stubs/stubs_Atk.ml
@@ -33,12 +34,5 @@ examples/ocaml/testsuite/tests/typing-misc/typecore_errors.ml
 examples/ocaml/testsuite/tests/typing-sigsubst/sig_local_aliases_syntax_errors.ml
 examples/ocaml/testsuite/tests/typing-warnings/pr7261.ml
 examples/ocamlformat/test/rpc/big_margin/foo.ml
-examples/ppxlib/astlib/astlib.ml
 examples/ppxlib/astlib/location.ml
 examples/ppxlib/astlib/longident.ml
-examples/ppxlib/test/code_path/test.ml
-examples/ppxlib/test/driver/non-compressible-suffix/test.ml
-examples/ppxlib/test/expansion_helpers/mangle/test.ml
-examples/ppxlib/test/metaquot/test.ml
-examples/ppxlib/test/ppx_import_support/test.ml
-examples/ppxlib/test/quoter/test.ml

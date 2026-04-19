@@ -1128,89 +1128,24 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "+"
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "!"
-                        },
-                        {
-                          "type": "BLANK"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "-"
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "!"
-                        },
-                        {
-                          "type": "BLANK"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "!"
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "STRING",
-                              "value": "+"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "-"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "BLANK"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "+"
+              },
+              {
+                "type": "STRING",
+                "value": "-"
+              },
+              {
+                "type": "STRING",
+                "value": "!"
+              }
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -1580,8 +1515,17 @@
           "value": "external"
         },
         {
-          "type": "SYMBOL",
-          "name": "string"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "string"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "quoted_string"
+            }
+          ]
         }
       ]
     },
@@ -8342,6 +8286,10 @@
               {
                 "type": "SYMBOL",
                 "name": "_tuple_pattern"
+              },
+              {
+                "type": "STRING",
+                "value": ".."
               }
             ]
           }
@@ -8443,6 +8391,10 @@
               {
                 "type": "SYMBOL",
                 "name": "_tuple_binding_pattern"
+              },
+              {
+                "type": "STRING",
+                "value": ".."
               }
             ]
           }
@@ -8486,6 +8438,10 @@
               {
                 "type": "SYMBOL",
                 "name": "_tuple_binding_pattern"
+              },
+              {
+                "type": "STRING",
+                "value": ".."
               }
             ]
           }
