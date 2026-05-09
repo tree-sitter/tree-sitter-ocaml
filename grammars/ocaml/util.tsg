@@ -1,0 +1,17 @@
+// Shared helpers for the OCaml grammar.
+// Mirrors the functions defined at the bottom of grammars/ocaml/grammar.js.
+
+// One or more `r` separated by `d`.
+macro sep1(d: rule_t, r: rule_t) rule_t { seq(r, repeat(seq(d, r))) }
+
+// Zero or more `r` separated by `d`.
+macro sep(d: rule_t, r: rule_t) rule_t { optional(sep1(d, r)) }
+
+// Two or more occurrences of `r`.
+macro repeat2(r: rule_t) rule_t { seq(r, repeat1(r)) }
+
+// `r` surrounded by parentheses.
+macro parens(r: rule_t) rule_t { seq("(", r, ")") }
+
+// `fin` optionally prefixed by `pre.`. Used for module paths and friends.
+macro path(pre: rule_t, fin: rule_t) rule_t { choice(fin, seq(pre, ".", fin)) }

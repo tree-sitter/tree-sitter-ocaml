@@ -1,0 +1,16 @@
+// OCaml type expression grammar - native DSL.
+// Mirrors grammars/type/grammar.js: inherit ocaml and add a new top-level
+// `type` rule that aliases `_type`, so the dialect parses bare type
+// expressions. Pick `type` as the start rule via `start: type`. The JS
+// uses an Object.assign hack on the post-creation rules object to splice
+// `type` to the front; the `start:` field replaces that.
+
+let base = inherit("../ocaml/grammar.tsg")
+
+grammar {
+    language: "ocaml_type",
+    inherits: base,
+    start: type,
+}
+
+rule type { _type }

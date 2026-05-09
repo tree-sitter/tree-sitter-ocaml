@@ -1,0 +1,12 @@
+// OCaml interface grammar (.mli files) - native DSL.
+// Mirrors grammars/interface/grammar.js: inherit ocaml, override
+// `compilation_unit` to be just an optional signature.
+
+let base = inherit("../ocaml/grammar.tsg")
+
+grammar {
+    language: "ocaml_interface",
+    inherits: base,
+}
+
+override rule compilation_unit { optional(_signature) }

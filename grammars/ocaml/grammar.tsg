@@ -1,0 +1,2025 @@
+// OCaml grammar (ocaml dialect) - native DSL.
+// Mirrors grammars/ocaml/grammar.js. ocaml_interface and ocaml_type are
+// thin overrides on top of this base; see ../interface/grammar.tsg and
+// ../type/grammar.tsg.
+
+let u = import("util.tsg")
+
+let OP_CHAR = regexp(r"[!$%&*+\-./:<=>?@^|~]")
+let HASH_OP_CHAR = regexp(r"[#!$%&*+\-./:<=>?@^|~]")
+
+let NUMBER = token(choice(
+    regexp(r"[0-9][0-9_]*(\.[0-9_]*)?([eE][+\-]?[0-9][0-9_]*)?[g-zG-Z]?"),
+    regexp(r"0[xX][0-9A-Fa-f][0-9A-Fa-f_]*(\.[0-9A-Fa-f_]*)?([pP][+\-]?[0-9][0-9_]*)?[g-zG-Z]?"),
+    regexp(r"0[oO][0-7][0-7_]*[g-zG-Z]?"),
+    regexp(r"0[bB][01][01_]*[g-zG-Z]?"),
+))
+
+let RESERVED_GLOBAL: list_t<str_t> = [
+    "and", "as", "assert", "begin", "class", "constraint", "do", "done",
+    "downto", "else", "end", "exception", "external", "false", "for",
+    "fun", "function", "functor", "if", "in", "include", "inherit",
+    "initializer", "lazy", "let", "match", "method", "module", "mutable",
+    "new", "object", "of", "open", "or", "private", "rec", "sig", "struct",
+    "then", "to", "true", "try", "type", "val", "virtual", "when", "while",
+    "with", "lor", "lxor", "mod", "land", "lsl", "lsr", "asr",
+]
+
+let RESERVED_ATTRIBUTE_ID: list_t<str_t> = [
+    "lor", "lxor", "mod", "land", "lsl", "lsr", "asr",
+]
+
+grammar {
+    language: "ocaml",
+
+    extras: [
+        regexp(r"\s"),
+        comment,
+        line_number_directive,
+        attribute,
+    ],
+
+    inline: [
+        _parameter, _argument, _extension, _item_extension,
+        _value_pattern, _label_name, _field_name, _class_name,
+        _class_type_name, _method_name, _type_constructor,
+        _module_name, _module_type_name, _argument_type, _label,
+        _tuple_label,
+    ],
+
+    conflicts: [
+        [_proper_tuple_type, labeled_tuple_element_type],
+    ],
+
+    precedences: [
+        [
+            constructed_type, hash_type, parenthesized_type,
+            function_type, aliased_type, _type,
+        ],
+        [
+            "prefix", "dot", "hash", "method", "app", "sign", "pow",
+            "mult", "add", "cons", "concat", "rel", "and", "or",
+            "tuple", "assign", "set", "if", "seq",
+            _expression, _sequence_expression,
+        ],
+        [
+            "range_pattern", "lazy_pattern", "constructor_pattern",
+            "cons_pattern", "tuple_pattern", "or_pattern",
+            "alias_pattern", "exception_pattern",
+            _pattern, _simple_binding_pattern, _binding_pattern,
+        ],
+        [module_path, _constructor_name],
+    ],
+
+    word: _lowercase_identifier,
+
+    reserved: {
+        global: RESERVED_GLOBAL,
+        attribute_id: RESERVED_ATTRIBUTE_ID,
+    },
+
+    supertypes: [
+        _structure_item, _signature_item, _parameter,
+        _module_type, _simple_module_expression, _module_expression,
+        _simple_class_type, _class_type, _class_field_specification,
+        _simple_class_expression, _class_expression, _class_field,
+        _polymorphic_type, _simple_type, _type,
+        _simple_expression, _expression, _sequence_expression,
+        _simple_pattern, _effect_pattern, _pattern,
+        _simple_binding_pattern, _binding_pattern,
+        _constant, _signed_constant, _infix_operator,
+    ],
+
+    externals: [
+        comment,
+        _left_quoted_string_delimiter,
+        _right_quoted_string_delimiter,
+        "\"",
+        line_number_directive,
+        _null,
+        _error_sentinel,
+    ],
+}
+
+// ---------------------------------------------------------------------------
+// Top level
+// ---------------------------------------------------------------------------
+
+rule compilation_unit { seq(optional(shebang), optional(_structure)) }
+
+rule shebang { regexp(r"#!.*") }
+
+rule _structure {
+    choice(
+        repeat1(";;"),
+        seq(
+            repeat(";;"),
+            choice(_structure_item, toplevel_directive, expression_item),
+            repeat(choice(
+                seq(repeat(";;"), choice(_structure_item, toplevel_directive)),
+                seq(repeat1(";;"), expression_item),
+            )),
+            repeat(";;"),
+        ),
+    )
+}
+
+rule expression_item {
+    seq(_sequence_expression, repeat(item_attribute))
+}
+
+rule _signature {
+    choice(
+        repeat1(";;"),
+        seq(repeat1(seq(repeat(";;"), _signature_item)), repeat(";;")),
+    )
+}
+
+// Toplevel
+
+rule toplevel_directive {
+    seq(directive, optional(choice(_constant, value_path, module_path)))
+}
+
+// ---------------------------------------------------------------------------
+// Module implementation
+// ---------------------------------------------------------------------------
+
+rule _structure_item {
+    choice(
+        value_definition, r#external, type_definition, exception_definition,
+        module_definition, module_type_definition, open_module, include_module,
+        class_definition, class_type_definition, floating_attribute,
+        _item_extension,
+    )
+}
+
+rule value_definition {
+    seq(
+        choice(seq("let", optional(_attribute), optional("rec")), let_operator),
+        u::sep1(choice("and", let_and_operator), let_binding),
+    )
+}
+
+rule let_binding {
+    seq(
+        field(pattern, _binding_pattern),
+        optional(seq(
+            repeat(_parameter),
+            optional(_polymorphic_typed),
+            optional(seq(":>", field(coercion, _type))),
+            "=",
+            field(body, _sequence_expression),
+        )),
+        repeat(item_attribute),
+    )
+}
+
+rule _parameter {
+    choice(parameter, alias(_parenthesized_abstract_type, abstract_type))
+}
+
+rule parameter {
+    choice(
+        field(pattern, _simple_pattern),
+        seq(choice("~", "?"), field(pattern, _simple_value_pattern)),
+        seq(_label, token_immediate(":"), field(pattern, _simple_pattern)),
+        seq(
+            choice("~", "?"), "(",
+            field(pattern, _simple_value_pattern),
+            optional(_typed),
+            optional(seq("=", field(default, _sequence_expression))),
+            ")",
+        ),
+        seq(
+            _label, token_immediate(":"), "(",
+            field(pattern, _pattern),
+            optional(_typed),
+            seq("=", field(default, _sequence_expression)),
+            ")",
+        ),
+    )
+}
+
+rule r#external {
+    seq(
+        "external",
+        optional(_attribute),
+        _value_name,
+        _polymorphic_typed,
+        "=",
+        repeat1(string),
+        repeat(item_attribute),
+    )
+}
+
+rule type_definition {
+    seq(
+        "type",
+        optional(_attribute),
+        optional("nonrec"),
+        u::sep1("and", type_binding),
+    )
+}
+
+rule type_binding {
+    seq(
+        optional(_type_params),
+        choice(
+            seq(
+                field(name, _type_constructor),
+                optional(_type_equation),
+                optional(seq(
+                    "=",
+                    optional("private"),
+                    field(body, choice(variant_declaration, record_declaration, "..")),
+                )),
+                repeat(type_constraint),
+            ),
+            seq(
+                field(name, type_constructor_path),
+                seq(
+                    "+=",
+                    optional("private"),
+                    field(body, variant_declaration),
+                ),
+            ),
+        ),
+        repeat(item_attribute),
+    )
+}
+
+rule _type_params {
+    choice(_type_param, u::parens(u::sep1(",", _type_param)))
+}
+
+rule _type_param {
+    seq(
+        optional(choice(
+            seq("+", optional("!")),
+            seq("-", optional("!")),
+            seq("!", optional(choice("+", "-"))),
+        )),
+        choice(type_variable, alias("_", type_variable)),
+    )
+}
+
+rule _type_equation {
+    seq(choice("=", ":="), optional("private"), field(equation, _type))
+}
+
+rule variant_declaration {
+    choice(
+        seq("|", u::sep("|", constructor_declaration)),
+        u::sep1("|", constructor_declaration),
+    )
+}
+
+rule constructor_declaration {
+    seq(
+        choice(
+            _constructor_name,
+            alias(choice(seq("[", "]"), seq("(", ")"), "true", "false"), constructor_name),
+        ),
+        optional(choice(
+            seq("of", _constructor_argument),
+            seq(
+                ":",
+                optional(seq(repeat1(type_variable), ".")),
+                optional(seq(_constructor_argument, "->")),
+                _simple_type,
+            ),
+            seq("=", constructor_path),
+        )),
+    )
+}
+
+rule _constructor_argument {
+    choice(u::sep1("*", _simple_type), record_declaration)
+}
+
+rule record_declaration {
+    seq("{", u::sep1(";", field_declaration), optional(";"), "}")
+}
+
+rule field_declaration {
+    seq(optional("mutable"), _field_name, _polymorphic_typed)
+}
+
+rule type_constraint {
+    seq(
+        "constraint",
+        field(type, _type),
+        "=",
+        field(constraint, _type),
+    )
+}
+
+rule exception_definition {
+    seq(
+        "exception",
+        optional(_attribute),
+        constructor_declaration,
+        repeat(item_attribute),
+    )
+}
+
+rule module_definition {
+    seq(
+        "module", optional(_attribute), optional("rec"),
+        u::sep1("and", module_binding),
+    )
+}
+
+rule module_binding {
+    seq(
+        choice(_module_name, alias("_", module_name)),
+        repeat(module_parameter),
+        optional(_module_typed),
+        optional(seq(choice("=", ":="), field(body, _module_expression))),
+        repeat(item_attribute),
+    )
+}
+
+rule module_parameter {
+    u::parens(optional(seq(
+        choice(_module_name, alias("_", module_name)),
+        _module_typed,
+    )))
+}
+
+rule module_type_definition {
+    seq(
+        "module", "type",
+        optional(_attribute),
+        _module_type_name,
+        optional(seq(choice("=", ":="), field(body, _module_type))),
+        repeat(item_attribute),
+    )
+}
+
+rule open_module {
+    seq(
+        "open",
+        optional("!"),
+        optional(_attribute),
+        field(module, _module_expression),
+        repeat(item_attribute),
+    )
+}
+
+rule include_module {
+    seq(
+        "include",
+        optional(_attribute),
+        field(module, _module_expression),
+        repeat(item_attribute),
+    )
+}
+
+rule class_definition {
+    seq(
+        "class", optional(_attribute),
+        u::sep1("and", class_binding),
+    )
+}
+
+rule class_binding {
+    seq(
+        optional("virtual"),
+        optional(seq("[", u::sep1(",", _type_param), "]")),
+        _class_name,
+        repeat(_parameter),
+        optional(_class_typed),
+        optional(seq("=", field(body, _class_expression))),
+        repeat(item_attribute),
+    )
+}
+
+rule class_type_definition {
+    seq(
+        "class", "type", optional(_attribute),
+        u::sep1("and", class_type_binding),
+    )
+}
+
+rule class_type_binding {
+    seq(
+        optional("virtual"),
+        optional(seq("[", u::sep1(",", _type_param), "]")),
+        _class_type_name,
+        "=",
+        field(body, _simple_class_type),
+        repeat(item_attribute),
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Module signature
+// ---------------------------------------------------------------------------
+
+rule _signature_item {
+    choice(
+        value_specification, r#external, type_definition, exception_definition,
+        module_definition, module_type_definition, open_module,
+        include_module_type, class_definition, class_type_definition,
+        floating_attribute, _item_extension,
+    )
+}
+
+rule value_specification {
+    seq(
+        "val",
+        optional(_attribute),
+        _value_name,
+        _polymorphic_typed,
+        repeat(item_attribute),
+    )
+}
+
+rule include_module_type {
+    seq(
+        "include",
+        optional(_attribute),
+        field(module_type, _module_type),
+        repeat(item_attribute),
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Module types
+// ---------------------------------------------------------------------------
+
+rule _module_typed { seq(":", field(module_type, _module_type)) }
+
+rule _module_type {
+    choice(
+        module_type_path, signature, module_type_constraint,
+        module_type_of, functor_type, parenthesized_module_type, _extension,
+    )
+}
+
+rule signature { seq("sig", optional(_signature), "end") }
+
+rule module_type_constraint {
+    prec_right(0, seq(
+        field(module_type, _module_type),
+        "with",
+        u::sep1("and", choice(constrain_type, constrain_module, constrain_module_type)),
+    ))
+}
+
+rule constrain_type {
+    seq(
+        "type",
+        optional(_type_params),
+        type_constructor_path,
+        _type_equation,
+        repeat(type_constraint),
+    )
+}
+
+rule constrain_module {
+    seq(
+        "module",
+        module_path,
+        choice("=", ":="),
+        field(constraint, extended_module_path),
+    )
+}
+
+rule constrain_module_type {
+    prec_left(0, seq(
+        "module", "type",
+        module_type_path,
+        choice("=", ":="),
+        field(constraint, _module_type),
+    ))
+}
+
+rule module_type_of {
+    seq("module", "type", "of", field(module, _module_expression))
+}
+
+rule functor_type {
+    prec_right(0, seq(
+        choice(
+            seq(optional("functor"), repeat(module_parameter)),
+            field(domain, _module_type),
+        ),
+        "->",
+        field(codomain, _module_type),
+    ))
+}
+
+rule parenthesized_module_type { u::parens(_module_type) }
+
+// ---------------------------------------------------------------------------
+// Module expressions
+// ---------------------------------------------------------------------------
+
+rule _simple_module_expression {
+    choice(
+        typed_module_expression, parenthesized_module_expression,
+        packed_module, _extension,
+    )
+}
+
+rule _module_expression {
+    choice(
+        _simple_module_expression, module_path, structure, functor,
+        module_application,
+    )
+}
+
+rule structure { seq("struct", optional(_structure), "end") }
+
+rule functor {
+    prec_right(0, seq(
+        "functor",
+        repeat1(module_parameter),
+        "->",
+        field(body, _module_expression),
+    ))
+}
+
+rule module_application {
+    seq(
+        field(functor, _module_expression),
+        choice(field(argument, _simple_module_expression), seq("(", ")")),
+    )
+}
+
+rule typed_module_expression {
+    u::parens(seq(field(module, _module_expression), _module_typed))
+}
+
+rule packed_module {
+    u::parens(seq(
+        "val",
+        field(value, _expression),
+        optional(_module_typed),
+        optional(seq(":>", field(coercion, _module_type))),
+    ))
+}
+
+rule parenthesized_module_expression { u::parens(_module_expression) }
+
+// ---------------------------------------------------------------------------
+// Class types
+// ---------------------------------------------------------------------------
+
+rule _class_typed { seq(":", field(class_type, _class_type)) }
+
+rule _simple_class_type {
+    choice(
+        class_type_path, instantiated_class_type, class_body_type,
+        let_open_class_type, _extension,
+    )
+}
+
+rule _class_type { choice(_simple_class_type, class_function_type) }
+
+rule instantiated_class_type {
+    seq("[", u::sep1(",", _type), "]", class_type_path)
+}
+
+rule class_body_type {
+    seq(
+        "object",
+        optional(u::parens(field(self_type, _type))),
+        repeat(choice(_class_field_specification, floating_attribute)),
+        "end",
+    )
+}
+
+rule _class_field_specification {
+    choice(
+        inheritance_specification, instance_variable_specification,
+        method_specification, type_parameter_constraint, _item_extension,
+    )
+}
+
+rule inheritance_specification {
+    seq("inherit", field(class_type, _simple_class_type), repeat(item_attribute))
+}
+
+rule instance_variable_specification {
+    seq(
+        "val",
+        repeat(choice("mutable", "virtual")),
+        _instance_variable_name,
+        _typed,
+        repeat(item_attribute),
+    )
+}
+
+rule method_specification {
+    seq(
+        "method",
+        repeat(choice("private", "virtual")),
+        _method_name,
+        _polymorphic_typed,
+        repeat(item_attribute),
+    )
+}
+
+rule type_parameter_constraint {
+    seq(
+        "constraint",
+        field(type, _type),
+        "=",
+        field(constraint, _type),
+        repeat(item_attribute),
+    )
+}
+
+rule let_open_class_type {
+    seq(
+        "let",
+        open_module,
+        "in",
+        field(body, _simple_class_type),
+    )
+}
+
+rule class_function_type {
+    seq(field(domain, _argument_type), "->", field(codomain, _class_type))
+}
+
+// ---------------------------------------------------------------------------
+// Class expressions
+// ---------------------------------------------------------------------------
+
+rule _simple_class_expression {
+    choice(
+        class_path, instantiated_class, object_expression,
+        typed_class_expression, parenthesized_class_expression, _extension,
+    )
+}
+
+rule _class_expression {
+    choice(
+        _simple_class_expression, class_function, class_application,
+        let_class_expression, let_open_class_expression,
+    )
+}
+
+rule instantiated_class {
+    seq("[", u::sep1(",", _type), "]", class_path)
+}
+
+rule typed_class_expression {
+    u::parens(seq(field(class, _class_expression), _class_typed))
+}
+
+rule class_function {
+    seq("fun", repeat1(_parameter), "->", field(body, _class_expression))
+}
+
+rule class_application {
+    seq(
+        field(class, _simple_class_expression),
+        repeat1(field(argument, _argument)),
+    )
+}
+
+rule let_class_expression {
+    seq(value_definition, "in", field(body, _class_expression))
+}
+
+rule _class_field {
+    choice(
+        inheritance_definition, instance_variable_definition,
+        method_definition, type_parameter_constraint, class_initializer,
+        _item_extension,
+    )
+}
+
+rule inheritance_definition {
+    seq(
+        "inherit",
+        optional("!"),
+        field(class, _class_expression),
+        optional(seq("as", field(alias, _value_pattern))),
+        repeat(item_attribute),
+    )
+}
+
+rule instance_variable_definition {
+    seq(
+        "val",
+        optional("!"),
+        repeat(choice("mutable", "virtual")),
+        _instance_variable_name,
+        optional(_typed),
+        optional(seq(":>", field(coercion, _type))),
+        optional(seq("=", field(body, _sequence_expression))),
+        repeat(item_attribute),
+    )
+}
+
+rule method_definition {
+    seq(
+        "method",
+        optional("!"),
+        repeat(choice("private", "virtual")),
+        _method_name,
+        repeat(_parameter),
+        optional(_polymorphic_typed),
+        optional(seq("=", field(body, _sequence_expression))),
+        repeat(item_attribute),
+    )
+}
+
+rule class_initializer {
+    seq(
+        "initializer",
+        field(initializer, _sequence_expression),
+        repeat(item_attribute),
+    )
+}
+
+rule let_open_class_expression {
+    seq("let", open_module, "in", field(body, _class_expression))
+}
+
+rule parenthesized_class_expression { u::parens(_class_expression) }
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+rule _typed { seq(":", field(type, _type)) }
+rule _simple_typed { seq(":", field(type, _simple_type)) }
+rule _polymorphic_typed { seq(":", field(type, _polymorphic_type)) }
+
+rule _polymorphic_type { choice(polymorphic_type, _type) }
+
+rule polymorphic_type {
+    seq(
+        choice(repeat1(type_variable), alias(_abstract_type, abstract_type)),
+        ".",
+        field(type, _type),
+    )
+}
+
+rule _abstract_type { seq("type", repeat1(_type_constructor)) }
+
+rule _parenthesized_abstract_type { u::parens(_abstract_type) }
+
+rule _simple_type {
+    choice(
+        type_variable, type_constructor_path, constructed_type,
+        local_open_type, polymorphic_variant_type, package_type,
+        hash_type, object_type, parenthesized_type, _extension,
+    )
+}
+
+rule _type {
+    choice(
+        _simple_type,
+        alias(_proper_tuple_type, tuple_type),
+        alias(_labeled_tuple_type, tuple_type),
+        function_type, aliased_type,
+    )
+}
+
+rule function_type {
+    seq(field(domain, _argument_type), "->", field(codomain, _type))
+}
+
+rule _argument_type {
+    choice(
+        _simple_type,
+        alias(_proper_tuple_type, tuple_type),
+        labeled_argument_type,
+    )
+}
+
+rule labeled_argument_type {
+    seq(optional("?"), _label_name, ":", field(type, _argument_type))
+}
+
+rule _proper_tuple_type {
+    seq(_simple_type, "*", _tuple_type_rhs)
+}
+
+rule _labeled_tuple_type {
+    seq(labeled_tuple_element_type, "*", _tuple_type_rhs)
+}
+
+rule labeled_tuple_element_type {
+    seq(_label_name, ":", field(type, _simple_type))
+}
+
+rule _tuple_type_rhs {
+    seq(
+        choice(_simple_type, labeled_tuple_element_type),
+        optional(seq("*", choice(_tuple_type_rhs))),
+    )
+}
+
+rule constructed_type {
+    seq(
+        choice(_simple_type, u::parens(u::sep1(",", _type))),
+        type_constructor_path,
+    )
+}
+
+rule aliased_type {
+    seq(field(type, _type), "as", field(alias, type_variable))
+}
+
+rule local_open_type {
+    seq(
+        extended_module_path,
+        ".",
+        choice(
+            u::parens(field(type, _type)),
+            field(type, package_type),
+            field(type, polymorphic_variant_type),
+        ),
+    )
+}
+
+rule polymorphic_variant_type {
+    choice(
+        seq("[", tag_specification, "]"),
+        seq("[", optional(_tag_spec), "|", u::sep1("|", _tag_spec), "]"),
+        seq("[>", optional("|"), u::sep("|", _tag_spec), "]"),
+        seq(
+            "[<", optional("|"), u::sep1("|", _tag_spec),
+            optional(seq(">", repeat1(tag))),
+            "]",
+        ),
+    )
+}
+
+rule _tag_spec { choice(_type, tag_specification) }
+
+rule tag_specification {
+    seq(
+        tag,
+        optional(seq("of", optional("&"), u::sep1("&", _type))),
+    )
+}
+
+rule package_type {
+    u::parens(seq("module", optional(_attribute), _module_type))
+}
+
+rule object_type {
+    seq(
+        "<",
+        optional(choice(
+            seq(
+                u::sep1(";", choice(method_type, _simple_type)),
+                optional(seq(";", optional(".."))),
+            ),
+            "..",
+        )),
+        ">",
+    )
+}
+
+rule method_type { seq(_method_name, _polymorphic_typed) }
+
+rule hash_type {
+    seq(
+        optional(choice(_simple_type, u::parens(u::sep1(",", _type)))),
+        "#",
+        class_type_path,
+    )
+}
+
+rule parenthesized_type { u::parens(_type) }
+
+// ---------------------------------------------------------------------------
+// Expressions
+// ---------------------------------------------------------------------------
+
+rule _simple_expression {
+    choice(
+        value_path, _constant, typed_expression, constructor_path, tag,
+        list_expression, array_expression, record_expression,
+        prefix_expression, hash_expression, field_get_expression,
+        array_get_expression, string_get_expression, bigarray_get_expression,
+        coercion_expression, local_open_expression, package_expression,
+        new_expression, object_copy_expression, method_invocation,
+        object_expression, parenthesized_expression, ocamlyacc_value,
+        _extension,
+    )
+}
+
+rule _expression {
+    choice(
+        _simple_expression,
+        alias(_tuple_expression, tuple_expression),
+        cons_expression, application_expression, infix_expression,
+        sign_expression, set_expression, if_expression, while_expression,
+        for_expression, match_expression, function_expression,
+        fun_expression, try_expression, let_expression, assert_expression,
+        lazy_expression, let_module_expression, let_open_expression,
+        let_exception_expression,
+    )
+}
+
+rule _sequence_expression {
+    choice(_expression, alias(_sequence_expression_anonymous, sequence_expression))
+}
+
+rule typed_expression {
+    u::parens(seq(field(expression, _sequence_expression), _typed))
+}
+
+rule labeled_tuple_element {
+    choice(
+        _tuple_label,
+        seq(
+            _tuple_label,
+            token_immediate(":"),
+            field(expression, _simple_expression),
+        ),
+        seq("~", "(", _label_name, _typed, ")"),
+    )
+}
+
+rule _tuple_expression {
+    prec_right("tuple", seq(
+        choice(_expression, labeled_tuple_element),
+        ",",
+        choice(_expression, labeled_tuple_element, _tuple_expression),
+    ))
+}
+
+rule cons_expression {
+    prec_right("cons", seq(
+        field(left, _expression),
+        "::",
+        field(right, _expression),
+    ))
+}
+
+rule list_expression {
+    seq(
+        "[",
+        optional(seq(u::sep1(";", _expression), optional(";"))),
+        "]",
+    )
+}
+
+rule array_expression {
+    seq(
+        "[|",
+        optional(seq(u::sep1(";", _expression), optional(";"))),
+        "|]",
+    )
+}
+
+rule record_expression {
+    seq(
+        "{",
+        optional(seq(field(record, _simple_expression), "with")),
+        u::sep1(";", field_expression),
+        optional(";"),
+        "}",
+    )
+}
+
+rule field_expression {
+    seq(
+        field_path,
+        optional(_typed),
+        optional(seq("=", field(body, _expression))),
+    )
+}
+
+rule application_expression {
+    prec("app", seq(
+        field(function, _simple_expression),
+        repeat1(field(argument, _argument)),
+    ))
+}
+
+rule _argument { choice(_simple_expression, labeled_argument) }
+
+rule labeled_argument {
+    choice(
+        _label,
+        seq(
+            _label,
+            token_immediate(":"),
+            field(expression, _simple_expression),
+        ),
+        seq(choice("~", "?"), "(", _label_name, _typed, ")"),
+    )
+}
+
+rule prefix_expression {
+    prec("prefix", seq(
+        field(operator, prefix_operator),
+        field(expression, _simple_expression),
+    ))
+}
+
+rule sign_expression {
+    prec("sign", seq(
+        field(operator, sign_operator),
+        field(expression, _expression),
+    ))
+}
+
+rule hash_expression {
+    prec_left("hash", seq(
+        field(left, _simple_expression),
+        field(operator, hash_operator),
+        field(right, _simple_expression),
+    ))
+}
+
+// Infix expressions: operator/precedence/associativity table from
+// grammar.js's `infix_expression` rule. Order must match the JS choice order
+// since tree-sitter conflict resolution cares about declaration order. JS
+// uses prec[associativity] dynamic dispatch over a mixed-assoc table; our
+// DSL has no equivalent, so each arm is written out.
+rule infix_expression {
+    choice(
+        prec_right("pow", seq(
+            field(left, _expression),
+            field(operator, pow_operator),
+            field(right, _expression),
+        )),
+        prec_left("mult", seq(
+            field(left, _expression),
+            field(operator, mult_operator),
+            field(right, _expression),
+        )),
+        prec_left("add", seq(
+            field(left, _expression),
+            field(operator, add_operator),
+            field(right, _expression),
+        )),
+        prec_right("concat", seq(
+            field(left, _expression),
+            field(operator, concat_operator),
+            field(right, _expression),
+        )),
+        prec_left("rel", seq(
+            field(left, _expression),
+            field(operator, rel_operator),
+            field(right, _expression),
+        )),
+        prec_right("and", seq(
+            field(left, _expression),
+            field(operator, and_operator),
+            field(right, _expression),
+        )),
+        prec_right("or", seq(
+            field(left, _expression),
+            field(operator, or_operator),
+            field(right, _expression),
+        )),
+        prec_right("assign", seq(
+            field(left, _expression),
+            field(operator, assign_operator),
+            field(right, _expression),
+        )),
+    )
+}
+
+rule field_get_expression {
+    prec_left("dot", seq(
+        field(record, _simple_expression),
+        ".",
+        field(field, field_path),
+    ))
+}
+
+rule array_get_expression {
+    prec("dot", seq(
+        field(array, _simple_expression),
+        ".",
+        optional(field(operator, indexing_operator_path)),
+        "(",
+        field(index, _sequence_expression),
+        ")",
+    ))
+}
+
+rule string_get_expression {
+    prec("dot", seq(
+        field(string, _simple_expression),
+        ".",
+        optional(field(operator, indexing_operator_path)),
+        "[",
+        field(index, _sequence_expression),
+        "]",
+    ))
+}
+
+rule bigarray_get_expression {
+    prec("dot", seq(
+        field(array, _simple_expression),
+        ".",
+        optional(field(operator, indexing_operator_path)),
+        "{",
+        field(index, _sequence_expression),
+        "}",
+    ))
+}
+
+rule set_expression {
+    prec("set", seq(
+        choice(
+            field_get_expression, array_get_expression,
+            string_get_expression, bigarray_get_expression,
+            _instance_variable_name,
+        ),
+        "<-",
+        field(body, _expression),
+    ))
+}
+
+rule if_expression {
+    prec_right(0, seq(
+        "if",
+        optional(_attribute),
+        field(condition, _sequence_expression),
+        then_clause,
+        optional(else_clause),
+    ))
+}
+
+rule then_clause {
+    prec("if", seq("then", field(expression, _expression)))
+}
+
+rule else_clause {
+    prec("if", seq("else", field(expression, _expression)))
+}
+
+rule while_expression {
+    seq(
+        "while",
+        optional(_attribute),
+        field(condition, _sequence_expression),
+        do_clause,
+    )
+}
+
+rule do_clause {
+    seq("do", optional(_sequence_expression), "done")
+}
+
+rule for_expression {
+    seq(
+        "for",
+        optional(_attribute),
+        field(name, _value_pattern),
+        "=",
+        field(from, _sequence_expression),
+        choice("to", "downto"),
+        field(to, _sequence_expression),
+        do_clause,
+    )
+}
+
+rule _sequence_expression_anonymous {
+    prec_right("seq", seq(
+        _expression,
+        ";",
+        optional(seq(
+            optional(_attribute),
+            choice(_expression, _sequence_expression_anonymous),
+        )),
+    ))
+}
+
+rule match_expression {
+    seq(
+        choice(
+            seq("match", optional(_attribute)),
+            match_operator,
+        ),
+        field(expression, _sequence_expression),
+        "with",
+        _match_cases,
+    )
+}
+
+rule _match_cases {
+    prec_right(0, seq(optional("|"), u::sep1("|", match_case)))
+}
+
+rule match_case {
+    seq(
+        field(pattern, _pattern),
+        optional(guard),
+        "->",
+        field(body, choice(_sequence_expression, refutation_case)),
+    )
+}
+
+rule guard { seq("when", field(expression, _sequence_expression)) }
+
+rule refutation_case { "." }
+
+rule function_expression {
+    seq("function", optional(_attribute), _match_cases)
+}
+
+rule fun_expression {
+    seq(
+        "fun",
+        optional(_attribute),
+        repeat1(_parameter),
+        optional(_simple_typed),
+        "->",
+        field(body, _sequence_expression),
+    )
+}
+
+rule try_expression {
+    seq(
+        "try",
+        optional(_attribute),
+        field(expression, _sequence_expression),
+        "with",
+        _match_cases,
+    )
+}
+
+rule let_expression {
+    seq(value_definition, "in", field(body, _sequence_expression))
+}
+
+rule coercion_expression {
+    u::parens(seq(
+        field(expression, _sequence_expression),
+        optional(_typed),
+        ":>",
+        field(coercion, _type),
+    ))
+}
+
+rule assert_expression {
+    seq("assert", optional(_attribute), field(expression, _simple_expression))
+}
+
+rule lazy_expression {
+    seq("lazy", optional(_attribute), field(expression, _simple_expression))
+}
+
+rule let_module_expression {
+    seq("let", module_definition, "in", field(body, _sequence_expression))
+}
+
+rule let_open_expression {
+    seq("let", open_module, "in", field(body, _sequence_expression))
+}
+
+rule local_open_expression {
+    seq(
+        module_path,
+        ".",
+        choice(
+            u::parens(optional(field(expression, _sequence_expression))),
+            field(expression, list_expression),
+            field(expression, array_expression),
+            field(expression, record_expression),
+            field(expression, object_copy_expression),
+            field(expression, package_expression),
+        ),
+    )
+}
+
+rule package_expression {
+    u::parens(seq(
+        "module",
+        optional(_attribute),
+        field(module, _module_expression),
+        optional(_module_typed),
+    ))
+}
+
+rule let_exception_expression {
+    seq("let", exception_definition, "in", field(body, _sequence_expression))
+}
+
+rule new_expression {
+    seq("new", optional(_attribute), class_path)
+}
+
+rule object_copy_expression {
+    seq("{<", u::sep(";", instance_variable_expression), optional(";"), ">}")
+}
+
+rule instance_variable_expression {
+    seq(
+        _instance_variable_name,
+        optional(seq("=", field(expression, _expression))),
+    )
+}
+
+rule method_invocation {
+    prec("method", seq(
+        field(object, _simple_expression),
+        "#",
+        field(method, _method_name),
+    ))
+}
+
+rule object_expression {
+    seq(
+        "object",
+        optional(_attribute),
+        optional(u::parens(seq(field(self, _pattern), optional(_typed)))),
+        repeat(choice(_class_field, floating_attribute)),
+        "end",
+    )
+}
+
+rule parenthesized_expression {
+    choice(
+        seq(
+            "begin",
+            optional(_attribute),
+            field(expression, _sequence_expression),
+            "end",
+        ),
+        u::parens(field(expression, _sequence_expression)),
+    )
+}
+
+rule ocamlyacc_value { regexp(r"\$[0-9]+") }
+
+// ---------------------------------------------------------------------------
+// Patterns
+// ---------------------------------------------------------------------------
+
+rule _simple_pattern {
+    choice(
+        _value_pattern, _signed_constant, typed_pattern, constructor_path,
+        tag, polymorphic_variant_pattern, record_pattern, list_pattern,
+        array_pattern, local_open_pattern, package_pattern,
+        parenthesized_pattern, _extension,
+    )
+}
+
+rule _effect_pattern {
+    choice(_simple_pattern, constructor_pattern, tag_pattern, lazy_pattern)
+}
+
+rule _pattern {
+    choice(
+        _effect_pattern,
+        alias_pattern,
+        alias(_or_pattern_anonymous, or_pattern),
+        alias(_tuple_pattern, tuple_pattern),
+        cons_pattern, range_pattern, exception_pattern, effect_pattern,
+    )
+}
+
+rule _simple_binding_pattern {
+    choice(
+        _value_name, _signed_constant,
+        alias(typed_binding_pattern, typed_pattern),
+        constructor_path, tag, polymorphic_variant_pattern,
+        alias(record_binding_pattern, record_pattern),
+        alias(list_binding_pattern, list_pattern),
+        alias(array_binding_pattern, array_pattern),
+        alias(local_open_binding_pattern, local_open_pattern),
+        package_pattern,
+        alias(parenthesized_binding_pattern, parenthesized_pattern),
+        _extension,
+    )
+}
+
+rule _binding_pattern {
+    choice(
+        _simple_binding_pattern,
+        alias(alias_binding_pattern, alias_pattern),
+        alias(_or_binding_pattern_anonymous, or_pattern),
+        alias(constructor_binding_pattern, constructor_pattern),
+        alias(tag_binding_pattern, tag_pattern),
+        alias(_tuple_binding_pattern, tuple_pattern),
+        alias(cons_binding_pattern, cons_pattern),
+        range_pattern,
+        alias(lazy_binding_pattern, lazy_pattern),
+    )
+}
+
+rule alias_pattern {
+    prec("alias_pattern", seq(
+        field(pattern, _pattern),
+        "as",
+        field(alias, _value_pattern),
+    ))
+}
+
+rule alias_binding_pattern {
+    prec("alias_pattern", seq(
+        field(pattern, _binding_pattern),
+        "as",
+        field(alias, _value_name),
+    ))
+}
+
+rule typed_pattern {
+    u::parens(seq(field(pattern, _pattern), _typed))
+}
+
+rule typed_binding_pattern {
+    u::parens(seq(field(pattern, _binding_pattern), _typed))
+}
+
+rule _or_pattern_anonymous {
+    prec_right("or_pattern", seq(
+        _pattern,
+        "|",
+        choice(_pattern, _or_pattern_anonymous),
+    ))
+}
+
+rule _or_binding_pattern_anonymous {
+    prec_right("or_pattern", seq(
+        _binding_pattern,
+        "|",
+        choice(_binding_pattern, _or_binding_pattern_anonymous),
+    ))
+}
+
+rule constructor_pattern {
+    prec("constructor_pattern", seq(
+        constructor_path,
+        optional(alias(_parenthesized_abstract_type, abstract_type)),
+        field(pattern, _pattern),
+    ))
+}
+
+rule constructor_binding_pattern {
+    prec("constructor_pattern", seq(
+        constructor_path,
+        optional(alias(_parenthesized_abstract_type, abstract_type)),
+        field(pattern, _binding_pattern),
+    ))
+}
+
+rule tag_pattern {
+    prec("constructor_pattern", seq(tag, field(pattern, _pattern)))
+}
+
+rule tag_binding_pattern {
+    prec("constructor_pattern", seq(tag, field(pattern, _binding_pattern)))
+}
+
+rule polymorphic_variant_pattern {
+    seq("#", type_constructor_path)
+}
+
+rule labeled_tuple_element_pattern {
+    choice(
+        _tuple_label,
+        seq(
+            _tuple_label,
+            token_immediate(":"),
+            field(pattern, _simple_pattern),
+        ),
+        seq("~", "(", _label_name, _typed, ")"),
+    )
+}
+
+rule _tuple_pattern {
+    prec_right("tuple_pattern", seq(
+        choice(_pattern, labeled_tuple_element_pattern),
+        ",",
+        choice(_pattern, labeled_tuple_element_pattern, _tuple_pattern),
+    ))
+}
+
+rule labeled_tuple_element_binding_pattern {
+    choice(
+        _tuple_label,
+        seq(
+            _tuple_label,
+            token_immediate(":"),
+            field(pattern, _simple_binding_pattern),
+        ),
+        seq("~", "(", _label_name, _typed, ")"),
+    )
+}
+
+rule _tuple_binding_pattern {
+    prec_right("tuple_pattern", seq(
+        choice(_binding_pattern, labeled_tuple_element_binding_pattern),
+        ",",
+        choice(_binding_pattern, labeled_tuple_element_binding_pattern, _tuple_binding_pattern),
+    ))
+}
+
+rule record_pattern {
+    seq(
+        "{",
+        u::sep1(";", field_pattern),
+        optional(seq(";", "_")),
+        optional(";"),
+        "}",
+    )
+}
+
+rule field_pattern {
+    seq(
+        field_path,
+        optional(_typed),
+        optional(seq("=", field(pattern, _pattern))),
+    )
+}
+
+rule record_binding_pattern {
+    seq(
+        "{",
+        u::sep1(";", alias(field_binding_pattern, field_pattern)),
+        optional(seq(";", "_")),
+        optional(";"),
+        "}",
+    )
+}
+
+rule field_binding_pattern {
+    seq(
+        field_path,
+        optional(_typed),
+        optional(seq("=", field(pattern, _binding_pattern))),
+    )
+}
+
+rule list_pattern {
+    seq(
+        "[",
+        optional(seq(u::sep1(";", _pattern), optional(";"))),
+        "]",
+    )
+}
+
+rule list_binding_pattern {
+    seq(
+        "[",
+        optional(seq(u::sep1(";", _binding_pattern), optional(";"))),
+        "]",
+    )
+}
+
+rule cons_pattern {
+    prec_right("cons_pattern", seq(
+        field(left, _pattern),
+        "::",
+        field(right, _pattern),
+    ))
+}
+
+rule cons_binding_pattern {
+    prec_right("cons_pattern", seq(
+        field(left, _binding_pattern),
+        "::",
+        field(right, _binding_pattern),
+    ))
+}
+
+rule array_pattern {
+    seq(
+        "[|",
+        optional(seq(u::sep1(";", _pattern), optional(";"))),
+        "|]",
+    )
+}
+
+rule array_binding_pattern {
+    seq(
+        "[|",
+        optional(seq(u::sep1(";", _binding_pattern), optional(";"))),
+        "|]",
+    )
+}
+
+rule range_pattern {
+    prec("range_pattern", seq(
+        field(left, _signed_constant),
+        "..",
+        field(right, _signed_constant),
+    ))
+}
+
+rule lazy_pattern {
+    prec("lazy_pattern", seq(
+        "lazy",
+        optional(_attribute),
+        field(pattern, _pattern),
+    ))
+}
+
+rule lazy_binding_pattern {
+    prec("lazy_pattern", seq(
+        "lazy",
+        optional(_attribute),
+        field(pattern, _binding_pattern),
+    ))
+}
+
+rule local_open_pattern {
+    seq(
+        module_path,
+        ".",
+        choice(
+            u::parens(optional(field(pattern, _pattern))),
+            field(pattern, list_pattern),
+            field(pattern, array_pattern),
+            field(pattern, record_pattern),
+        ),
+    )
+}
+
+rule local_open_binding_pattern {
+    seq(
+        module_path,
+        ".",
+        choice(
+            u::parens(optional(field(pattern, _binding_pattern))),
+            field(pattern, list_binding_pattern),
+            field(pattern, array_binding_pattern),
+            field(pattern, record_binding_pattern),
+        ),
+    )
+}
+
+rule package_pattern {
+    u::parens(seq(
+        "module",
+        optional(_attribute),
+        choice(_module_name, alias("_", module_name)),
+        optional(_module_typed),
+    ))
+}
+
+rule parenthesized_pattern { u::parens(_pattern) }
+
+rule parenthesized_binding_pattern { u::parens(_binding_pattern) }
+
+rule exception_pattern {
+    prec("exception_pattern", seq(
+        "exception",
+        optional(_attribute),
+        field(pattern, _pattern),
+    ))
+}
+
+rule effect_pattern {
+    seq(
+        "effect",
+        field(effect, _effect_pattern),
+        ",",
+        field(continuation, _simple_pattern),
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Attributes and extensions
+// ---------------------------------------------------------------------------
+
+rule attribute {
+    seq(
+        alias(regexp(r"\[@"), "[@"),
+        attribute_id,
+        optional(attribute_payload),
+        "]",
+    )
+}
+
+rule item_attribute {
+    seq("[@@", attribute_id, optional(attribute_payload), "]")
+}
+
+rule floating_attribute {
+    seq("[@@@", attribute_id, optional(attribute_payload), "]")
+}
+
+rule attribute_payload {
+    choice(
+        _structure,
+        seq(":", optional(choice(_type, _signature))),
+        seq("?", _pattern, optional(guard)),
+    )
+}
+
+rule _extension { choice(extension, quoted_extension) }
+
+rule extension {
+    seq("[%", attribute_id, optional(attribute_payload), "]")
+}
+
+rule quoted_extension {
+    seq(
+        "{%",
+        attribute_id,
+        optional(regexp(r"\s+")),
+        _quoted_string,
+        "}",
+    )
+}
+
+rule _item_extension { choice(item_extension, quoted_item_extension) }
+
+rule item_extension {
+    seq(
+        "[%%",
+        attribute_id,
+        optional(attribute_payload),
+        "]",
+        repeat(item_attribute),
+    )
+}
+
+rule quoted_item_extension {
+    seq(
+        "{%%",
+        attribute_id,
+        optional(regexp(r"\s+")),
+        _quoted_string,
+        "}",
+        repeat(item_attribute),
+    )
+}
+
+rule _attribute { seq("%", attribute_id) }
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+rule _constant {
+    choice(number, character, string, quoted_string, boolean, unit)
+}
+
+rule _signed_constant { choice(_constant, signed_number) }
+
+rule number { NUMBER }
+
+rule signed_number { seq(regexp(r"[+-]"), NUMBER) }
+
+rule character {
+    seq("'", character_content, token_immediate("'"))
+}
+
+rule character_content {
+    choice(
+        token_immediate(regexp(r"\r*\n")),
+        token_immediate(regexp(r"[^\\'\r\n]")),
+        _null,
+        escape_sequence,
+    )
+}
+
+rule string { seq("\"", optional(string_content), "\"") }
+
+rule string_content {
+    repeat1(choice(
+        token_immediate(regexp(r"\s")),
+        token_immediate(regexp(r"\[@")),
+        regexp(r#"[^\\"%@]+|%|@"#),
+        _null,
+        escape_sequence,
+        alias(regexp(r"\\u\{[0-9A-Fa-f]+\}"), escape_sequence),
+        alias(regexp(r"\\\r*\n[\t ]*"), escape_sequence),
+        conversion_specification,
+        pretty_printing_indication,
+    ))
+}
+
+rule quoted_string { seq("{", _quoted_string, "}") }
+
+rule _quoted_string {
+    seq(
+        _left_quoted_string_delimiter,
+        optional(quoted_string_content),
+        _right_quoted_string_delimiter,
+    )
+}
+
+rule quoted_string_content {
+    repeat1(choice(
+        token_immediate(regexp(r"\s")),
+        token_immediate(regexp(r"\[@")),
+        regexp(r"[^%@|]+|%|@|\|"),
+        _null,
+        conversion_specification,
+        pretty_printing_indication,
+    ))
+}
+
+rule escape_sequence {
+    choice(
+        regexp(r#"\\[\\"'ntbr ]"#),
+        regexp(r"\\[0-9][0-9][0-9]"),
+        regexp(r"\\x[0-9A-Fa-f][0-9A-Fa-f]"),
+        regexp(r"\\o[0-3][0-7][0-7]"),
+    )
+}
+
+rule conversion_specification {
+    token(seq(
+        "%",
+        optional(regexp(r"[\-0+ #]")),
+        optional(regexp(r"[1-9][0-9]*|\*")),
+        optional(regexp(r"\.([0-9]*|\*)")),
+        choice(
+            regexp(r"[diunlLNxXosScCfFeEgGhHbBat!%@,]"),
+            regexp(r"[lnL][diuxXo]"),
+        ),
+    ))
+}
+
+rule pretty_printing_indication {
+    regexp(r"@([\[\], ;.{}?]|\\n|<[0-9]+>)")
+}
+
+rule boolean { choice("true", "false") }
+
+rule unit { choice(seq("(", ")"), seq("begin", "end")) }
+
+// ---------------------------------------------------------------------------
+// Operators
+// ---------------------------------------------------------------------------
+
+rule prefix_operator {
+    token(choice(
+        seq("!", choice(optional(regexp(r"[#!$%&*+\-./:<>?@^|~]")), u::repeat2(HASH_OP_CHAR))),
+        seq(regexp(r"[~?]"), repeat1(HASH_OP_CHAR)),
+    ))
+}
+
+rule sign_operator { choice(regexp(r"[+-]"), regexp(r"[+-]\.")) }
+
+rule _infix_operator {
+    choice(
+        pow_operator, mult_operator, add_operator, concat_operator,
+        rel_operator, and_operator, or_operator, assign_operator,
+    )
+}
+
+rule hash_operator { token(seq("#", repeat1(HASH_OP_CHAR))) }
+
+rule pow_operator {
+    choice("lsl", "lsr", "asr", token(seq("**", repeat(OP_CHAR))))
+}
+
+rule mult_operator {
+    choice("mod", "land", "lor", "lxor", token(seq(regexp(r"[*/%]"), repeat(OP_CHAR))))
+}
+
+rule add_operator {
+    choice(
+        regexp(r"[+-]"), regexp(r"[+-]\."),
+        token(choice(
+            seq("+", repeat1(OP_CHAR)),
+            seq("-", choice(repeat1(regexp(r"[!$%&*+\-./:<=?@^|~]")), u::repeat2(OP_CHAR))),
+        )),
+    )
+}
+
+rule concat_operator {
+    token(seq(regexp(r"[@^]"), repeat(OP_CHAR)))
+}
+
+rule rel_operator {
+    token(choice(
+        seq(regexp(r"[=>$]"), repeat(OP_CHAR)),
+        seq("<", choice(optional(regexp(r"[!$%&*+./:<=>?@^|~]")), u::repeat2(OP_CHAR))),
+        seq("&", choice(regexp(r"[!$%*+\-./:<=>?@^|~]"), u::repeat2(OP_CHAR))),
+        seq("|", choice(regexp(r"[!$%&*+\-./:<=>?@^~]"), u::repeat2(OP_CHAR))),
+        "!=",
+    ))
+}
+
+rule and_operator { choice("&", "&&") }
+
+rule or_operator { choice("or", "||") }
+
+rule assign_operator { regexp(r":=") }
+
+rule indexing_operator {
+    token(seq(regexp(r"[!$%&*+\-/:=>?@^|]"), repeat(OP_CHAR)))
+}
+
+rule indexing_operator_path { u::path(module_path, indexing_operator) }
+
+rule let_operator {
+    token(seq("let", regexp(r"[$&*+\-/<=>@^|]"), repeat(OP_CHAR)))
+}
+
+rule let_and_operator {
+    token(seq("and", regexp(r"[$&*+\-/<=>@^|]"), repeat(OP_CHAR)))
+}
+
+rule match_operator {
+    token(seq("match", regexp(r"[$&*+\-/<=>@^|]"), repeat(OP_CHAR)))
+}
+
+// ---------------------------------------------------------------------------
+// Names
+// ---------------------------------------------------------------------------
+
+rule _value_name {
+    choice(alias(_lowercase_identifier, value_name), parenthesized_operator)
+}
+
+rule _simple_value_pattern {
+    alias(_lowercase_identifier, value_pattern)
+}
+
+rule _value_pattern {
+    choice(_simple_value_pattern, parenthesized_operator)
+}
+
+rule parenthesized_operator {
+    u::parens(choice(
+        prefix_operator,
+        _infix_operator,
+        hash_operator,
+        seq(
+            ".",
+            indexing_operator,
+            choice(
+                seq("(", optional(seq(";", "..")), ")"),
+                seq("[", optional(seq(";", "..")), "]"),
+                seq("{", optional(seq(";", "..")), "}"),
+            ),
+            optional("<-"),
+        ),
+        let_operator,
+        let_and_operator,
+        match_operator,
+    ))
+}
+
+rule value_path { u::path(module_path, _value_name) }
+
+rule module_path { u::path(module_path, _module_name) }
+
+rule extended_module_path {
+    choice(
+        u::path(extended_module_path, _module_name),
+        seq(extended_module_path, u::parens(extended_module_path)),
+    )
+}
+
+rule module_type_path { u::path(extended_module_path, _module_type_name) }
+
+rule field_path { u::path(module_path, _field_name) }
+
+rule constructor_path { u::path(module_path, _constructor_name) }
+
+rule type_constructor_path { u::path(extended_module_path, _type_constructor) }
+
+rule class_path { u::path(module_path, _class_name) }
+
+rule class_type_path { u::path(extended_module_path, _class_type_name) }
+
+rule _label_name { alias(_lowercase_identifier, label_name) }
+rule _field_name { alias(_lowercase_identifier, field_name) }
+rule _class_name { alias(_lowercase_identifier, class_name) }
+rule _class_type_name { alias(_lowercase_identifier, class_type_name) }
+rule _method_name { alias(_lowercase_identifier, method_name) }
+rule _type_constructor { alias(_lowercase_identifier, type_constructor) }
+rule _instance_variable_name { alias(_lowercase_identifier, instance_variable_name) }
+
+rule _module_name { alias(_uppercase_identifier, module_name) }
+
+rule _module_type_name {
+    alias(choice(_uppercase_identifier, _lowercase_identifier), module_type_name)
+}
+
+rule _constructor_name {
+    choice(
+        alias(_uppercase_identifier, constructor_name),
+        u::parens(alias("::", constructor_name)),
+    )
+}
+
+rule _lowercase_identifier { regexp(r"(\\#)?[\p{Ll}_][\p{XID_Continue}']*") }
+rule _uppercase_identifier { regexp(r"[\p{Lu}][\p{XID_Continue}']*") }
+
+rule _label { seq(choice("~", "?"), _label_name) }
+rule _tuple_label { seq("~", _label_name) }
+
+rule directive { seq(regexp(r"#"), choice(_lowercase_identifier, _uppercase_identifier)) }
+
+rule type_variable { seq(regexp(r"'"), choice(_lowercase_identifier, _uppercase_identifier)) }
+
+rule tag { seq(regexp(r"`"), choice(_lowercase_identifier, _uppercase_identifier)) }
+
+rule attribute_id {
+    u::sep1(regexp(r"\."), choice(
+        reserved("attribute_id", _lowercase_identifier),
+        _uppercase_identifier,
+    ))
+}
