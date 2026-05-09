@@ -48,7 +48,7 @@
   "scripts": {
     "install": "node-gyp-build",
     "lint": "eslint grammars/*/grammar.js",
-    "generate": "for dir in grammars/ocaml grammars/interface grammars/type; do cd $dir; tree-sitter generate; cd -; done",
+    "generate": "for dir in grammars/ocaml grammars/interface grammars/type; do cd $dir; tree-sitter generate --abi 14; cd -; done",
     "prestart": "tree-sitter build grammars/ocaml --wasm -o grammars/ocaml/tree-sitter-ocaml.wasm",
     "start": "tree-sitter playground --grammar-path grammars/ocaml",
     "test": "node --test bindings/node/*_test.js",
