@@ -2308,7 +2308,6 @@ export default grammar({
     ),
 
     _lowercase_identifier: $ => /(\\#)?[\p{Ll}_][\p{XID_Continue}']*/,
-    _lowercase_identifier_trailing_hash: $ => seq($._lowercase_identifier, token.immediate('#')),
     _uppercase_identifier: $ => /[\p{Lu}][\p{XID_Continue}']*/,
 
     _label: $ => seq(choice('~', '?'), $._label_name),
