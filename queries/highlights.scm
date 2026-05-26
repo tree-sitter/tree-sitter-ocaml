@@ -3,10 +3,10 @@
 
 [
   "," "." ";" ":" "=" "|" "~" "?" "+" "-" "!" ">" "&"
-  "->" ";;" ":>" "+=" ":=" ".."
+  "->" ";;" ":>" "+=" ":=" ".." ".#"
 ] @punctuation.delimiter
 
-["(" ")" "[" "]" "{" "}" "[|" "|]" "[<" "[>"] @punctuation.bracket
+["(" ")" "[" "]" "{" "}" "[|" "|]" "[<" "[>" "#(" "#{"] @punctuation.bracket
 
 (object_type ["<" ">"] @punctuation.bracket)
 
@@ -27,8 +27,8 @@
   "and" "as" "assert" "begin" "class" "constraint" "do" "done" "downto" "effect"
   "else" "end" "exception" "external" "for" "fun" "function" "functor" "if" "in"
   "include" "inherit" "initializer" "lazy" "let" "match" "method" "module"
-  "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig" "struct"
-  "then" "to" "try" "type" "val" "virtual" "when" "while" "with"
+  "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig" "stack_"
+  "struct" "then" "to" "try" "type" "val" "virtual" "when" "while" "with"
 ] @keyword
 
 ; Operators
@@ -123,12 +123,18 @@
 ; Types
 ;------
 
-[(class_name) (class_type_name) (type_constructor)] @type
+[
+  (class_name)
+  (class_type_name)
+  (type_constructor)
+] @type
 
 (
   (type_constructor) @type.builtin
-  (#match? @type.builtin "^(int|char|bytes|string|float|bool|unit|exn|array|list|option|int32|int64|nativeint|format6|lazy_t)$")
+  (#match? @type.builtin "^(int|char|bytes|string|float|float32|bool|unit|exn|eff|continuation|array|floatarray|iarray|list|option|nativeint|int(8|16|32|64)|lazy_t|extension_constructor|lexing_position|atomic_loc|or_null|idx_imm|idx_mut|nativeint#|int(8|16|32|64)#|float#|float32#|int(8|16|32|64)x(8|16|32|64)#|float(16|32|64)x(8|16|32)#|char#|bool#|unit#)$")
 )
+
+(block_access ["idx_imm" "idx_mut"] @type.builtin)
 
 [(constructor_name) (tag)] @constructor
 
