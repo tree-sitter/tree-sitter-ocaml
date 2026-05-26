@@ -291,6 +291,9 @@ stack_ x;;
 stack_ A x;;
 stack_ function x -> x;;
 stack_ a + b;;
+exclave_ x; y;;
+type 'a t = { global_ global : 'a }
+type ('a, 'b) t = A of global_ 'a * 'b
 
 ---
 
@@ -320,4 +323,29 @@ stack_ a + b;;
           (value_name)))
       operator: (add_operator)
       right: (value_path
-        (value_name)))))
+        (value_name))))
+  (expression_item
+    (exclave_expression
+      expression: (sequence_expression
+        (value_path
+          (value_name))
+        (value_path
+          (value_name)))))
+  (type_definition
+    (type_binding
+      (type_variable)
+      name: (type_constructor)
+      body: (record_declaration
+        (field_declaration
+          (field_name)
+          type: (type_variable)))))
+  (type_definition
+    (type_binding
+      (type_variable)
+      (type_variable)
+      name: (type_constructor)
+      body: (variant_declaration
+        (constructor_declaration
+          (constructor_name)
+          (type_variable)
+          (type_variable))))))

@@ -107,12 +107,14 @@ export default grammar({
       'else',
       'end',
       'exception',
+      // 'exclave_', // OxCaml
       'external',
       'false',
       'for',
       'fun',
       'function',
       'functor',
+      // 'global_', // OxCaml
       'if',
       'in',
       'include',
@@ -133,6 +135,7 @@ export default grammar({
       'private',
       'rec',
       'sig',
+      // 'stack_', // OxCaml
       'struct',
       'then',
       'to',
@@ -416,7 +419,7 @@ export default grammar({
     ),
 
     _constructor_argument: $ => choice(
-      sep1('*', $._simple_type),
+      sep1('*', seq(optional('global_'), $._simple_type)),
       $.record_declaration,
     ),
 
@@ -428,7 +431,7 @@ export default grammar({
     ),
 
     field_declaration: $ => seq(
-      optional('mutable'),
+      optional(choice('mutable', 'global_')),
       $._field_name,
       $._maybe_polymorphic_typed,
     ),
@@ -1126,6 +1129,7 @@ export default grammar({
       $.assert_expression,
       $.lazy_expression,
       $.stack_expression,
+      $.exclave_expression,
     ),
 
     _sequence_expression: $ => choice(
@@ -1528,6 +1532,11 @@ export default grammar({
       'stack_',
       field('expression', $._expression),
     )),
+
+    exclave_expression: $ => seq(
+      'exclave_',
+      field('expression', $._sequence_expression),
+    ),
 
     local_open_expression: $ => seq(
       $.module_path,
