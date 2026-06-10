@@ -9,10 +9,10 @@ let OP_CHAR = regexp(r"[!$%&*+\-./:<=>?@^|~]")
 let HASH_OP_CHAR = regexp(r"[#!$%&*+\-./:<=>?@^|~]")
 
 let NUMBER = token(choice(
-    regexp(r"[0-9][0-9_]*(\.[0-9_]*)?([eE][+\-]?[0-9][0-9_]*)?[g-zG-Z]?"),
-    regexp(r"0[xX][0-9A-Fa-f][0-9A-Fa-f_]*(\.[0-9A-Fa-f_]*)?([pP][+\-]?[0-9][0-9_]*)?[g-zG-Z]?"),
-    regexp(r"0[oO][0-7][0-7_]*[g-zG-Z]?"),
-    regexp(r"0[bB][01][01_]*[g-zG-Z]?"),
+    regexp(r"#?[0-9][0-9_]*(\.[0-9_]*)?([eE][+\-]?[0-9][0-9_]*)?[g-zG-Z]?"),
+    regexp(r"#?0[xX][0-9A-Fa-f][0-9A-Fa-f_]*(\.[0-9A-Fa-f_]*)?([pP][+\-]?[0-9][0-9_]*)?[g-zG-Z]?"),
+    regexp(r"#?0[oO][0-7][0-7_]*[g-zG-Z]?"),
+    regexp(r"#?0[bB][01][01_]*[g-zG-Z]?"),
 ))
 
 let RESERVED_GLOBAL: list_t<str_t> = [
@@ -42,7 +42,7 @@ grammar {
     inline: [
         _parameter, _argument, _extension, _item_extension,
         _value_pattern, _label_name, _field_name, _class_name,
-        _class_type_name, _method_name, _type_constructor,
+        _class_type_name, _method_name,
         _module_name, _module_type_name, _argument_type, _label,
         _tuple_label,
     ],
@@ -79,14 +79,15 @@ grammar {
     },
 
     supertypes: [
-        _structure_item, _signature_item, _parameter,
+        _local_structure_item, _structure_item, _signature_item,
         _module_type, _simple_module_expression, _module_expression,
         _simple_class_type, _class_type, _class_field_specification,
         _simple_class_expression, _class_expression, _class_field,
-        _polymorphic_type, _simple_type, _type,
-        _simple_expression, _expression, _sequence_expression,
-        _simple_pattern, _effect_pattern, _pattern,
-        _simple_binding_pattern, _binding_pattern,
+        _polymorphic_type, _delimited_type, _simple_type, _type,
+        _delimited_expression, _simple_expression, _expression, _sequence_expression,
+        _delimited_pattern, _simple_pattern, _effect_pattern, _pattern,
+        _delimited_binding_pattern, _simple_binding_pattern,
+        _effect_binding_pattern, _binding_pattern, _binding_pattern_no_exn,
         _constant, _signed_constant, _infix_operator,
     ],
 
@@ -145,13 +146,17 @@ rule toplevel_directive {
 // Module implementation
 // ---------------------------------------------------------------------------
 
-rule _structure_item {
+rule _local_structure_item {
     choice(
-        value_definition, r#external, type_definition, exception_definition,
-        module_definition, module_type_definition, open_module, include_module,
+        r#external, type_definition, exception_definition,
+        module_definition, module_type_definition, open_module,
         class_definition, class_type_definition, floating_attribute,
         _item_extension,
     )
+}
+
+rule _structure_item {
+    choice(_local_structure_item, value_definition, value_specification, include_module)
 }
 
 rule value_definition {
@@ -163,11 +168,11 @@ rule value_definition {
 
 rule let_binding {
     seq(
-        field(pattern, _binding_pattern),
+        field(pattern, _binding_pattern_no_exn),
         optional(seq(
             repeat(_parameter),
-            optional(_polymorphic_typed),
-            optional(seq(":>", field(coercion, _type))),
+            optional(_maybe_polymorphic_typed),
+            optional(_coerced),
             "=",
             field(body, _sequence_expression),
         )),
@@ -187,15 +192,21 @@ rule parameter {
         seq(
             choice("~", "?"), "(",
             field(pattern, _simple_value_pattern),
-            optional(_typed),
+            optional(_maybe_polymorphic_typed),
             optional(seq("=", field(default, _sequence_expression))),
             ")",
         ),
         seq(
             _label, token_immediate(":"), "(",
             field(pattern, _pattern),
-            optional(_typed),
+            optional(_maybe_polymorphic_typed),
             seq("=", field(default, _sequence_expression)),
+            ")",
+        ),
+        seq(
+            optional(seq(_label, token_immediate(":"))), "(",
+            field(pattern, _pattern),
+            _polymorphic_typed,
             ")",
         ),
     )
@@ -206,9 +217,9 @@ rule r#external {
         "external",
         optional(_attribute),
         _value_name,
-        _polymorphic_typed,
+        _maybe_polymorphic_typed,
         "=",
-        repeat1(string),
+        repeat1(choice(string, quoted_string)),
         repeat(item_attribute),
     )
 }
@@ -227,13 +238,24 @@ rule type_binding {
         optional(_type_params),
         choice(
             seq(
-                field(name, _type_constructor),
-                optional(_type_equation),
+                field(name, type_constructor),
                 optional(seq(
-                    "=",
-                    optional("private"),
-                    field(body, choice(variant_declaration, record_declaration, "..")),
+                    choice("=", ":="),
+                    choice(
+                        seq(optional("private"), field(body, _type)),
+                        seq(
+                            optional(seq(field(synonym, _type), "=")),
+                            optional("private"),
+                            field(body, choice(variant_declaration, record_declaration, "..")),
+                        ),
+                    ),
                 )),
+                repeat(type_constraint),
+            ),
+            seq(
+                field(name, type_constructor),
+                "=",
+                field(body, external_declaration),
                 repeat(type_constraint),
             ),
             seq(
@@ -255,17 +277,9 @@ rule _type_params {
 
 rule _type_param {
     seq(
-        optional(choice(
-            seq("+", optional("!")),
-            seq("-", optional("!")),
-            seq("!", optional(choice("+", "-"))),
-        )),
+        repeat(choice("+", "-", "!")),
         choice(type_variable, alias("_", type_variable)),
     )
-}
-
-rule _type_equation {
-    seq(choice("=", ":="), optional("private"), field(equation, _type))
 }
 
 rule variant_declaration {
@@ -279,7 +293,7 @@ rule constructor_declaration {
     seq(
         choice(
             _constructor_name,
-            alias(choice(seq("[", "]"), seq("(", ")"), "true", "false"), constructor_name),
+            alias(_constructor_declaration_name, constructor_name),
         ),
         optional(choice(
             seq("of", _constructor_argument),
@@ -294,16 +308,27 @@ rule constructor_declaration {
     )
 }
 
+rule _constructor_declaration_name {
+    choice(seq("[", "]"), seq("(", ")"), "true", "false")
+}
+
 rule _constructor_argument {
-    choice(u::sep1("*", _simple_type), record_declaration)
+    choice(
+        u::sep1("*", seq(optional("global_"), _simple_type)),
+        record_declaration,
+    )
 }
 
 rule record_declaration {
-    seq("{", u::sep1(";", field_declaration), optional(";"), "}")
+    seq(choice("{", "#{"), u::sep1(";", field_declaration), optional(";"), "}")
 }
 
 rule field_declaration {
-    seq(optional("mutable"), _field_name, _polymorphic_typed)
+    seq(optional(choice("mutable", "global_")), _field_name, _maybe_polymorphic_typed)
+}
+
+rule external_declaration {
+    seq("external", choice(string, quoted_string))
 }
 
 rule type_constraint {
@@ -370,11 +395,15 @@ rule open_module {
 
 rule include_module {
     seq(
-        "include",
+        _include_or_include_functor,
         optional(_attribute),
         field(module, _module_expression),
         repeat(item_attribute),
     )
+}
+
+rule _include_or_include_functor {
+    prec_right(0, seq("include", optional("functor")))
 }
 
 rule class_definition {
@@ -432,14 +461,14 @@ rule value_specification {
         "val",
         optional(_attribute),
         _value_name,
-        _polymorphic_typed,
+        _maybe_polymorphic_typed,
         repeat(item_attribute),
     )
 }
 
 rule include_module_type {
     seq(
-        "include",
+        _include_or_include_functor,
         optional(_attribute),
         field(module_type, _module_type),
         repeat(item_attribute),
@@ -465,7 +494,10 @@ rule module_type_constraint {
     prec_right(0, seq(
         field(module_type, _module_type),
         "with",
-        u::sep1("and", choice(constrain_type, constrain_module, constrain_module_type)),
+        u::sep1("and", choice(
+            constrain_type, constrain_module, constrain_module_type,
+            extended_module_path,
+        )),
     ))
 }
 
@@ -474,7 +506,9 @@ rule constrain_type {
         "type",
         optional(_type_params),
         type_constructor_path,
-        _type_equation,
+        choice("=", ":="),
+        optional("private"),
+        field(equation, _type),
         repeat(type_constraint),
     )
 }
@@ -619,7 +653,7 @@ rule method_specification {
         "method",
         repeat(choice("private", "virtual")),
         _method_name,
-        _polymorphic_typed,
+        _maybe_polymorphic_typed,
         repeat(item_attribute),
     )
 }
@@ -712,8 +746,7 @@ rule instance_variable_definition {
         optional("!"),
         repeat(choice("mutable", "virtual")),
         _instance_variable_name,
-        optional(_typed),
-        optional(seq(":>", field(coercion, _type))),
+        optional(_type_constrained),
         optional(seq("=", field(body, _sequence_expression))),
         repeat(item_attribute),
     )
@@ -726,7 +759,7 @@ rule method_definition {
         repeat(choice("private", "virtual")),
         _method_name,
         repeat(_parameter),
-        optional(_polymorphic_typed),
+        optional(_maybe_polymorphic_typed),
         optional(seq("=", field(body, _sequence_expression))),
         repeat(item_attribute),
     )
@@ -752,7 +785,15 @@ rule parenthesized_class_expression { u::parens(_class_expression) }
 
 rule _typed { seq(":", field(type, _type)) }
 rule _simple_typed { seq(":", field(type, _simple_type)) }
-rule _polymorphic_typed { seq(":", field(type, _polymorphic_type)) }
+rule _polymorphic_typed { seq(":", field(type, polymorphic_type)) }
+
+rule _maybe_polymorphic_typed { seq(":", field(type, _polymorphic_type)) }
+
+rule _coerced { seq(":>", field(coercion, _type)) }
+
+rule _type_constrained {
+    choice(seq(_typed, optional(_coerced)), _coerced)
+}
 
 rule _polymorphic_type { choice(polymorphic_type, _type) }
 
@@ -764,15 +805,22 @@ rule polymorphic_type {
     )
 }
 
-rule _abstract_type { seq("type", repeat1(_type_constructor)) }
+rule _abstract_type { seq("type", repeat1(type_constructor)) }
 
 rule _parenthesized_abstract_type { u::parens(_abstract_type) }
 
+rule _delimited_type {
+    choice(
+        alias(_unboxed_tuple_type, tuple_type),
+        polymorphic_variant_type, package_type, parenthesized_type,
+    )
+}
+
 rule _simple_type {
     choice(
+        _delimited_type,
         type_variable, type_constructor_path, constructed_type,
-        local_open_type, polymorphic_variant_type, package_type,
-        hash_type, object_type, parenthesized_type, _extension,
+        local_open_type, hash_type, object_type, _extension,
     )
 }
 
@@ -794,6 +842,7 @@ rule _argument_type {
         _simple_type,
         alias(_proper_tuple_type, tuple_type),
         labeled_argument_type,
+        u::parens(polymorphic_type),
     )
 }
 
@@ -820,6 +869,10 @@ rule _tuple_type_rhs {
     )
 }
 
+rule _unboxed_tuple_type {
+    seq("#(", choice(_proper_tuple_type, _labeled_tuple_type), ")")
+}
+
 rule constructed_type {
     seq(
         choice(_simple_type, u::parens(u::sep1(",", _type))),
@@ -832,15 +885,7 @@ rule aliased_type {
 }
 
 rule local_open_type {
-    seq(
-        extended_module_path,
-        ".",
-        choice(
-            u::parens(field(type, _type)),
-            field(type, package_type),
-            field(type, polymorphic_variant_type),
-        ),
-    )
+    seq(extended_module_path, ".", field(type, _delimited_type))
 }
 
 rule polymorphic_variant_type {
@@ -866,7 +911,12 @@ rule tag_specification {
 }
 
 rule package_type {
-    u::parens(seq("module", optional(_attribute), _module_type))
+    u::parens(seq(
+        "module",
+        optional(_attribute),
+        optional(seq(field(module, _module_name), ":")),
+        field(module_type, _module_type),
+    ))
 }
 
 rule object_type {
@@ -883,7 +933,7 @@ rule object_type {
     )
 }
 
-rule method_type { seq(_method_name, _polymorphic_typed) }
+rule method_type { seq(_method_name, _maybe_polymorphic_typed) }
 
 rule hash_type {
     seq(
@@ -899,15 +949,24 @@ rule parenthesized_type { u::parens(_type) }
 // Expressions
 // ---------------------------------------------------------------------------
 
+rule _delimited_expression {
+    choice(
+        unit, list_expression, array_expression, iarray_expression,
+        record_expression, package_expression, object_copy_expression,
+        parenthesized_expression,
+    )
+}
+
 rule _simple_expression {
     choice(
+        _delimited_expression,
         value_path, _constant, typed_expression, constructor_path, tag,
-        list_expression, array_expression, record_expression,
+        alias(_unboxed_tuple_expression, tuple_expression),
         prefix_expression, hash_expression, field_get_expression,
         array_get_expression, string_get_expression, bigarray_get_expression,
-        coercion_expression, local_open_expression, package_expression,
-        new_expression, object_copy_expression, method_invocation,
-        object_expression, parenthesized_expression, ocamlyacc_value,
+        block_index_expression, local_open_expression,
+        new_expression, method_invocation,
+        object_expression, ocamlyacc_value,
         _extension,
     )
 }
@@ -920,8 +979,7 @@ rule _expression {
         sign_expression, set_expression, if_expression, while_expression,
         for_expression, match_expression, function_expression,
         fun_expression, try_expression, let_expression, assert_expression,
-        lazy_expression, let_module_expression, let_open_expression,
-        let_exception_expression,
+        lazy_expression, stack_expression, exclave_expression,
     )
 }
 
@@ -930,7 +988,7 @@ rule _sequence_expression {
 }
 
 rule typed_expression {
-    u::parens(seq(field(expression, _sequence_expression), _typed))
+    u::parens(seq(field(expression, _sequence_expression), _type_constrained))
 }
 
 rule labeled_tuple_element {
@@ -941,7 +999,7 @@ rule labeled_tuple_element {
             token_immediate(":"),
             field(expression, _simple_expression),
         ),
-        seq("~", "(", _label_name, _typed, ")"),
+        seq("~", "(", _label_name, _type_constrained, ")"),
     )
 }
 
@@ -953,6 +1011,10 @@ rule _tuple_expression {
     ))
 }
 
+rule _unboxed_tuple_expression {
+    seq("#(", _tuple_expression, ")")
+}
+
 rule cons_expression {
     prec_right("cons", seq(
         field(left, _expression),
@@ -962,24 +1024,62 @@ rule cons_expression {
 }
 
 rule list_expression {
-    seq(
-        "[",
-        optional(seq(u::sep1(";", _expression), optional(";"))),
-        "]",
-    )
+    seq("[", optional(_sequence_expression_content), "]")
 }
 
 rule array_expression {
+    seq("[|", optional(_sequence_expression_content), "|]")
+}
+
+rule iarray_expression {
+    seq("[:", optional(_sequence_expression_content), ":]")
+}
+
+rule _sequence_expression_content {
+    choice(
+        seq(u::sep1(";", _expression), optional(";")),
+        comprehension,
+    )
+}
+
+rule comprehension {
+    seq(field(expression, _expression), repeat1(_comprehension_clause))
+}
+
+rule _comprehension_clause { choice(comprehension_iterator, comprehension_guard) }
+
+rule comprehension_iterator {
+    seq("for", u::sep1("and", comprehension_binding))
+}
+
+rule comprehension_binding {
     seq(
-        "[|",
-        optional(seq(u::sep1(";", _expression), optional(";"))),
-        "|]",
+        field(name, _pattern),
+        choice(
+            seq("=", field(from, _expression), choice("to", "downto"), field(to, _expression)),
+            seq("in", field(in, _expression)),
+        ),
+    )
+}
+
+rule comprehension_guard { seq("when", _expression) }
+
+rule _sequence_content {
+    seq(u::sep1(";", _expression), optional(";"))
+}
+
+rule block_index_expression { u::parens(repeat1(block_access)) }
+
+rule block_access {
+    choice(
+        seq(choice(".", ".#"), field(field, field_path)),
+        seq(".", choice("idx_imm", "idx_mut"), u::parens(field(index, _sequence_expression))),
     )
 }
 
 rule record_expression {
     seq(
-        "{",
+        choice("{", "#{"),
         optional(seq(field(record, _simple_expression), "with")),
         u::sep1(";", field_expression),
         optional(";"),
@@ -990,7 +1090,7 @@ rule record_expression {
 rule field_expression {
     seq(
         field_path,
-        optional(_typed),
+        optional(_type_constrained),
         optional(seq("=", field(body, _expression))),
     )
 }
@@ -1012,7 +1112,7 @@ rule labeled_argument {
             token_immediate(":"),
             field(expression, _simple_expression),
         ),
-        seq(choice("~", "?"), "(", _label_name, _typed, ")"),
+        seq(choice("~", "?"), "(", _label_name, _type_constrained, ")"),
     )
 }
 
@@ -1091,7 +1191,7 @@ rule infix_expression {
 rule field_get_expression {
     prec_left("dot", seq(
         field(record, _simple_expression),
-        ".",
+        choice(".", ".#"),
         field(field, field_path),
     ))
 }
@@ -1176,7 +1276,7 @@ rule for_expression {
     seq(
         "for",
         optional(_attribute),
-        field(name, _value_pattern),
+        field(name, _pattern),
         "=",
         field(from, _sequence_expression),
         choice("to", "downto"),
@@ -1251,16 +1351,11 @@ rule try_expression {
 }
 
 rule let_expression {
-    seq(value_definition, "in", field(body, _sequence_expression))
-}
-
-rule coercion_expression {
-    u::parens(seq(
-        field(expression, _sequence_expression),
-        optional(_typed),
-        ":>",
-        field(coercion, _type),
-    ))
+    seq(
+        choice(value_definition, seq("let", optional(_attribute), _local_structure_item)),
+        "in",
+        field(body, _sequence_expression),
+    )
 }
 
 rule assert_expression {
@@ -1271,27 +1366,16 @@ rule lazy_expression {
     seq("lazy", optional(_attribute), field(expression, _simple_expression))
 }
 
-rule let_module_expression {
-    seq("let", module_definition, "in", field(body, _sequence_expression))
+rule stack_expression {
+    prec("app", seq("stack_", field(expression, _expression)))
 }
 
-rule let_open_expression {
-    seq("let", open_module, "in", field(body, _sequence_expression))
+rule exclave_expression {
+    seq("exclave_", field(expression, _sequence_expression))
 }
 
 rule local_open_expression {
-    seq(
-        module_path,
-        ".",
-        choice(
-            u::parens(optional(field(expression, _sequence_expression))),
-            field(expression, list_expression),
-            field(expression, array_expression),
-            field(expression, record_expression),
-            field(expression, object_copy_expression),
-            field(expression, package_expression),
-        ),
-    )
+    seq(module_path, ".", field(expression, _delimited_expression))
 }
 
 rule package_expression {
@@ -1301,10 +1385,6 @@ rule package_expression {
         field(module, _module_expression),
         optional(_module_typed),
     ))
-}
-
-rule let_exception_expression {
-    seq("let", exception_definition, "in", field(body, _sequence_expression))
 }
 
 rule new_expression {
@@ -1358,12 +1438,20 @@ rule ocamlyacc_value { regexp(r"\$[0-9]+") }
 // Patterns
 // ---------------------------------------------------------------------------
 
+rule _delimited_pattern {
+    choice(
+        unit, record_pattern, list_pattern, array_pattern,
+        iarray_pattern, parenthesized_pattern,
+    )
+}
+
 rule _simple_pattern {
     choice(
+        _delimited_pattern,
         _value_pattern, _signed_constant, typed_pattern, constructor_path,
-        tag, polymorphic_variant_pattern, record_pattern, list_pattern,
-        array_pattern, local_open_pattern, package_pattern,
-        parenthesized_pattern, _extension,
+        tag, polymorphic_variant_pattern,
+        alias(_unboxed_tuple_pattern, tuple_pattern),
+        local_open_pattern, package_pattern, _extension,
     )
 }
 
@@ -1381,32 +1469,59 @@ rule _pattern {
     )
 }
 
-rule _simple_binding_pattern {
+rule _delimited_binding_pattern {
     choice(
-        _value_name, _signed_constant,
-        alias(typed_binding_pattern, typed_pattern),
-        constructor_path, tag, polymorphic_variant_pattern,
+        unit,
         alias(record_binding_pattern, record_pattern),
         alias(list_binding_pattern, list_pattern),
         alias(array_binding_pattern, array_pattern),
-        alias(local_open_binding_pattern, local_open_pattern),
-        package_pattern,
+        alias(iarray_binding_pattern, iarray_pattern),
         alias(parenthesized_binding_pattern, parenthesized_pattern),
-        _extension,
+    )
+}
+
+rule _simple_binding_pattern {
+    choice(
+        _delimited_binding_pattern,
+        _value_name, _signed_constant,
+        alias(typed_binding_pattern, typed_pattern),
+        constructor_path, tag, polymorphic_variant_pattern,
+        alias(_unboxed_tuple_binding_pattern, tuple_pattern),
+        alias(local_open_binding_pattern, local_open_pattern),
+        package_pattern, _extension,
+    )
+}
+
+rule _effect_binding_pattern {
+    choice(
+        _simple_binding_pattern,
+        alias(constructor_binding_pattern, constructor_pattern),
+        alias(tag_binding_pattern, tag_pattern),
+        alias(lazy_binding_pattern, lazy_pattern),
+    )
+}
+
+rule _binding_pattern_no_exn {
+    choice(
+        _effect_binding_pattern,
+        alias(alias_binding_pattern_no_exn, alias_pattern),
+        alias(_or_binding_pattern_no_exn_anonymous, or_pattern),
+        alias(_tuple_binding_pattern_no_exn, tuple_pattern),
+        alias(cons_binding_pattern_no_exn, cons_pattern),
+        range_pattern,
     )
 }
 
 rule _binding_pattern {
     choice(
-        _simple_binding_pattern,
+        _effect_binding_pattern,
         alias(alias_binding_pattern, alias_pattern),
         alias(_or_binding_pattern_anonymous, or_pattern),
-        alias(constructor_binding_pattern, constructor_pattern),
-        alias(tag_binding_pattern, tag_pattern),
         alias(_tuple_binding_pattern, tuple_pattern),
         alias(cons_binding_pattern, cons_pattern),
         range_pattern,
-        alias(lazy_binding_pattern, lazy_pattern),
+        alias(exception_binding_pattern, exception_pattern),
+        alias(effect_binding_pattern, effect_pattern),
     )
 }
 
@@ -1415,6 +1530,14 @@ rule alias_pattern {
         field(pattern, _pattern),
         "as",
         field(alias, _value_pattern),
+    ))
+}
+
+rule alias_binding_pattern_no_exn {
+    prec("alias_pattern", seq(
+        field(pattern, _binding_pattern_no_exn),
+        "as",
+        field(alias, _value_name),
     ))
 }
 
@@ -1439,6 +1562,14 @@ rule _or_pattern_anonymous {
         _pattern,
         "|",
         choice(_pattern, _or_pattern_anonymous),
+    ))
+}
+
+rule _or_binding_pattern_no_exn_anonymous {
+    prec_right("or_pattern", seq(
+        _binding_pattern_no_exn,
+        "|",
+        choice(_binding_pattern, _or_binding_pattern_anonymous),
     ))
 }
 
@@ -1494,7 +1625,7 @@ rule _tuple_pattern {
     prec_right("tuple_pattern", seq(
         choice(_pattern, labeled_tuple_element_pattern),
         ",",
-        choice(_pattern, labeled_tuple_element_pattern, _tuple_pattern),
+        choice(_pattern, labeled_tuple_element_pattern, _tuple_pattern, ".."),
     ))
 }
 
@@ -1510,17 +1641,33 @@ rule labeled_tuple_element_binding_pattern {
     )
 }
 
+rule _tuple_binding_pattern_no_exn {
+    prec_right("tuple_pattern", seq(
+        choice(_binding_pattern_no_exn, labeled_tuple_element_binding_pattern),
+        ",",
+        choice(_binding_pattern, labeled_tuple_element_binding_pattern, _tuple_binding_pattern, ".."),
+    ))
+}
+
 rule _tuple_binding_pattern {
     prec_right("tuple_pattern", seq(
         choice(_binding_pattern, labeled_tuple_element_binding_pattern),
         ",",
-        choice(_binding_pattern, labeled_tuple_element_binding_pattern, _tuple_binding_pattern),
+        choice(_binding_pattern, labeled_tuple_element_binding_pattern, _tuple_binding_pattern, ".."),
     ))
+}
+
+rule _unboxed_tuple_pattern {
+    seq("#(", _tuple_pattern, ")")
+}
+
+rule _unboxed_tuple_binding_pattern {
+    seq("$(", optional(_tuple_binding_pattern), ")")
 }
 
 rule record_pattern {
     seq(
-        "{",
+        choice("{", "#{"),
         u::sep1(";", field_pattern),
         optional(seq(";", "_")),
         optional(";"),
@@ -1538,7 +1685,7 @@ rule field_pattern {
 
 rule record_binding_pattern {
     seq(
-        "{",
+        choice("{", "#{"),
         u::sep1(";", alias(field_binding_pattern, field_pattern)),
         optional(seq(";", "_")),
         optional(";"),
@@ -1555,19 +1702,11 @@ rule field_binding_pattern {
 }
 
 rule list_pattern {
-    seq(
-        "[",
-        optional(seq(u::sep1(";", _pattern), optional(";"))),
-        "]",
-    )
+    seq("[", optional(_sequence_pattern_content), "]")
 }
 
 rule list_binding_pattern {
-    seq(
-        "[",
-        optional(seq(u::sep1(";", _binding_pattern), optional(";"))),
-        "]",
-    )
+    seq("[", optional(_sequence_binding_pattern_content), "]")
 }
 
 rule cons_pattern {
@@ -1575,6 +1714,14 @@ rule cons_pattern {
         field(left, _pattern),
         "::",
         field(right, _pattern),
+    ))
+}
+
+rule cons_binding_pattern_no_exn {
+    prec_right("cons_pattern", seq(
+        field(left, _binding_pattern_no_exn),
+        "::",
+        field(right, _binding_pattern),
     ))
 }
 
@@ -1587,19 +1734,27 @@ rule cons_binding_pattern {
 }
 
 rule array_pattern {
-    seq(
-        "[|",
-        optional(seq(u::sep1(";", _pattern), optional(";"))),
-        "|]",
-    )
+    seq("[|", optional(_sequence_pattern_content), "|]")
 }
 
 rule array_binding_pattern {
-    seq(
-        "[|",
-        optional(seq(u::sep1(";", _binding_pattern), optional(";"))),
-        "|]",
-    )
+    seq("[|", optional(_sequence_binding_pattern_content), "|]")
+}
+
+rule iarray_pattern {
+    seq("[:", optional(_sequence_pattern_content), ":]")
+}
+
+rule iarray_binding_pattern {
+    seq("[:", optional(_sequence_binding_pattern_content), ":]")
+}
+
+rule _sequence_pattern_content {
+    seq(u::sep1(";", _pattern), optional(";"))
+}
+
+rule _sequence_binding_pattern_content {
+    seq(u::sep1(";", _binding_pattern), optional(";"))
 }
 
 rule range_pattern {
@@ -1627,29 +1782,11 @@ rule lazy_binding_pattern {
 }
 
 rule local_open_pattern {
-    seq(
-        module_path,
-        ".",
-        choice(
-            u::parens(optional(field(pattern, _pattern))),
-            field(pattern, list_pattern),
-            field(pattern, array_pattern),
-            field(pattern, record_pattern),
-        ),
-    )
+    seq(module_path, ".", field(pattern, _delimited_pattern))
 }
 
 rule local_open_binding_pattern {
-    seq(
-        module_path,
-        ".",
-        choice(
-            u::parens(optional(field(pattern, _binding_pattern))),
-            field(pattern, list_binding_pattern),
-            field(pattern, array_binding_pattern),
-            field(pattern, record_binding_pattern),
-        ),
-    )
+    seq(module_path, ".", field(pattern, _delimited_binding_pattern))
 }
 
 rule package_pattern {
@@ -1673,12 +1810,29 @@ rule exception_pattern {
     ))
 }
 
+rule exception_binding_pattern {
+    prec("exception_pattern", seq(
+        "exception",
+        optional(_attribute),
+        field(pattern, _binding_pattern),
+    ))
+}
+
 rule effect_pattern {
     seq(
         "effect",
         field(effect, _effect_pattern),
         ",",
         field(continuation, _simple_pattern),
+    )
+}
+
+rule effect_binding_pattern {
+    seq(
+        "effect",
+        field(effect, _effect_binding_pattern),
+        ",",
+        field(continuation, _simple_binding_pattern),
     )
 }
 
@@ -1757,7 +1911,7 @@ rule _attribute { seq("%", attribute_id) }
 // ---------------------------------------------------------------------------
 
 rule _constant {
-    choice(number, character, string, quoted_string, boolean, unit)
+    choice(number, character, string, quoted_string, boolean)
 }
 
 rule _signed_constant { choice(_constant, signed_number) }
@@ -1767,7 +1921,7 @@ rule number { NUMBER }
 rule signed_number { seq(regexp(r"[+-]"), NUMBER) }
 
 rule character {
-    seq("'", character_content, token_immediate("'"))
+    seq(choice("'", "#'"), character_content, token_immediate("'"))
 }
 
 rule character_content {
@@ -1842,9 +1996,14 @@ rule pretty_printing_indication {
     regexp(r"@([\[\], ;.{}?]|\\n|<[0-9]+>)")
 }
 
-rule boolean { choice("true", "false") }
+rule boolean { choice("true", "false", "#true", "#false") }
 
-rule unit { choice(seq("(", ")"), seq("begin", "end")) }
+rule unit {
+    choice(
+        seq(choice("(", "#("), ")"),
+        seq("begin", optional(_attribute), "end"),
+    )
+}
 
 // ---------------------------------------------------------------------------
 // Operators
@@ -1978,7 +2137,7 @@ rule field_path { u::path(module_path, _field_name) }
 
 rule constructor_path { u::path(module_path, _constructor_name) }
 
-rule type_constructor_path { u::path(extended_module_path, _type_constructor) }
+rule type_constructor_path { u::path(extended_module_path, type_constructor) }
 
 rule class_path { u::path(module_path, _class_name) }
 
@@ -1989,7 +2148,7 @@ rule _field_name { alias(_lowercase_identifier, field_name) }
 rule _class_name { alias(_lowercase_identifier, class_name) }
 rule _class_type_name { alias(_lowercase_identifier, class_type_name) }
 rule _method_name { alias(_lowercase_identifier, method_name) }
-rule _type_constructor { alias(_lowercase_identifier, type_constructor) }
+rule type_constructor { seq(_lowercase_identifier, optional(token_immediate("#"))) }
 rule _instance_variable_name { alias(_lowercase_identifier, instance_variable_name) }
 
 rule _module_name { alias(_uppercase_identifier, module_name) }
