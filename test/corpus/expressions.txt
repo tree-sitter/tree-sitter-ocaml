@@ -242,7 +242,7 @@ x :: x :: xs;;
 
 (compilation_unit
   (expression_item
-    (list_expression))
+    (empty_list))
   (expression_item
     (list_expression
       (value_path

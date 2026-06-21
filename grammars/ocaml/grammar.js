@@ -247,9 +247,12 @@ export default grammar({
     toplevel_directive: $ => seq(
       $.directive,
       optional(choice(
-        $._constant,
+        $.string,
+        $.quoted_string,
+        $.number,
         $.value_path,
         $.module_path,
+        $.boolean,
       )),
     ),
 
@@ -1086,7 +1089,7 @@ export default grammar({
     // Expressions
 
     _delimited_expression: $ => choice(
-      alias($._extra_constructor_path, $.constructor_path),
+      $._extra_constructor,
       $.list_expression,
       $.array_expression,
       $.iarray_expression,
@@ -1613,7 +1616,7 @@ export default grammar({
     // Patterns
 
     _delimited_pattern: $ => choice(
-      alias($._extra_constructor_path, $.constructor_path),
+      $._extra_constructor,
       $.record_pattern,
       $.list_pattern,
       $.array_pattern,
@@ -1654,7 +1657,7 @@ export default grammar({
     ),
 
     _delimited_binding_pattern: $ => choice(
-      alias($._extra_constructor_path, $.constructor_path),
+      $._extra_constructor,
       alias($.record_binding_pattern, $.record_pattern),
       alias($.list_binding_pattern, $.list_pattern),
       alias($.array_binding_pattern, $.array_pattern),
@@ -2083,8 +2086,8 @@ export default grammar({
       $.character,
       $.string,
       $.quoted_string,
-      $.unboxed_boolean,
-      $.unboxed_unit,
+      alias($._unboxed_boolean, $.boolean),
+      alias($._unboxed_unit, $.unit),
     ),
 
     _signed_constant: $ => choice(
@@ -2160,9 +2163,9 @@ export default grammar({
 
     pretty_printing_indication: $ => /@([\[\], ;.{}?]|\\n|<[0-9]+>)/,
 
-    unboxed_boolean: $ => choice('#true', '#false'),
+    _unboxed_boolean: $ => choice('#true', '#false'),
 
-    unboxed_unit: $ => seq('#(', ')'),
+    _unboxed_unit: $ => seq('#(', ')'),
 
     // Operators
 
@@ -2291,10 +2294,8 @@ export default grammar({
 
     _constructor_path: $ => choice(
       $.constructor_path,
-      alias($._extra_constructor_path, $.constructor_path),
+      $._extra_constructor,
     ),
-
-    _extra_constructor_path: $ => alias($._extra_constructor_name, $.constructor_name),
 
     type_constructor_path: $ => path($.extended_module_path, $.type_constructor),
 
@@ -2322,16 +2323,20 @@ export default grammar({
     ),
     _constructor_name: $ => choice(
       $._simple_constructor_name,
-      alias($._extra_constructor_name, $.constructor_name),
+      $._extra_constructor,
     ),
 
-    _extra_constructor_name: $ => choice(
-      seq('[', ']'),
+    _extra_constructor: $ => choice(
+      $.unit,
+      $.boolean,
+      $.empty_list,
+    ),
+    unit: $ => choice(
       seq('(', ')'),
       seq('begin', optional($._attribute), 'end'),
-      'true',
-      'false',
     ),
+    boolean: $ => choice('true', 'false'),
+    empty_list: $ => seq('[', ']'),
 
     _lowercase_identifier: $ => /(\\#)?[\p{Ll}_][\p{XID_Continue}']*/,
     _uppercase_identifier: $ => /[\p{Lu}][\p{XID_Continue}']*/,

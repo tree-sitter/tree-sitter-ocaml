@@ -118,7 +118,7 @@ type t = t = ..
               type: (type_constructor_path
                 (type_constructor)))))
         (constructor_declaration
-          (constructor_name)))))
+          (empty_list)))))
   (type_definition
     (type_binding
       (type_variable)

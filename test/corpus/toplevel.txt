@@ -6,6 +6,7 @@ Toplevel directives
 #use "file.ml"
 #show_module M
 #show x
+#labels true
 
 ---
 
@@ -23,7 +24,10 @@ Toplevel directives
   (toplevel_directive
     (directive)
     (value_path
-      (value_name))))
+      (value_name)))
+  (toplevel_directive
+    (directive)
+    (boolean)))
 
 ==============================
 Line number directives
