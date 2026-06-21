@@ -868,6 +868,7 @@ export default grammar({
       $._method_name,
       repeat($._parameter),
       optional($._maybe_polymorphic_typed),
+      optional($._coerced),
       optional(seq('=', field('body', $._sequence_expression))),
       repeat($.item_attribute),
     ),
