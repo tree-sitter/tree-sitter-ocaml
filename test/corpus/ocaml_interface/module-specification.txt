@@ -9,6 +9,7 @@ include M.M
 include M.t
 include M.M.M
 include M.M.t
+include functor () -> M
 
 ---
 
@@ -42,4 +43,9 @@ include M.M.t
         (extended_module_path
           (module_name))
         (module_name))
-      (module_type_name))))
+      (module_type_name)))
+  (include_module_type
+    module_type: (functor_type
+      (module_parameter)
+      codomain: (module_type_path
+        (module_type_name)))))

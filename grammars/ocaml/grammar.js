@@ -23,6 +23,7 @@ export default grammar({
   inline: $ => [
     $._parameter,
     $._argument,
+    $._argument_type,
     $._extension,
     $._item_extension,
     $._value_pattern,
@@ -33,13 +34,16 @@ export default grammar({
     $._method_name,
     $._module_name,
     $._module_type_name,
-    $._argument_type,
+    $._simple_constructor_name,
+    $._constructor_name,
+    $._constructor_path,
     $._label,
     $._tuple_label,
   ],
 
   conflicts: $ => [
     [$._proper_tuple_type, $.labeled_tuple_element_type],
+    [$._include_or_include_functor],
   ],
 
   precedences: $ => [
@@ -71,8 +75,10 @@ export default grammar({
       'set',
       'if',
       'seq',
-      $._expression,
       $._sequence_expression,
+      $._expression,
+      $._simple_expression,
+      $._delimited_expression,
     ],
     [
       'range_pattern',
@@ -84,10 +90,13 @@ export default grammar({
       'alias_pattern',
       'exception_pattern',
       $._pattern,
-      $._simple_binding_pattern,
       $._binding_pattern,
+      $._simple_pattern,
+      $._simple_binding_pattern,
+      $._delimited_pattern,
+      $._delimited_binding_pattern,
     ],
-    [$.module_path, $._constructor_name],
+    [$.module_path, $.constructor_path],
   ],
 
   word: $ => $._lowercase_identifier,
@@ -395,10 +404,7 @@ export default grammar({
     ),
 
     constructor_declaration: $ => seq(
-      choice(
-        $._constructor_name,
-        alias($._constructor_declaration_name, $.constructor_name),
-      ),
+      $._constructor_name,
       optional(choice(
         seq('of', $._constructor_argument),
         seq(
@@ -407,15 +413,8 @@ export default grammar({
           optional(seq($._constructor_argument, '->')),
           $._simple_type,
         ),
-        seq('=', $.constructor_path),
+        seq('=', $._constructor_path),
       )),
-    ),
-
-    _constructor_declaration_name: $ => choice(
-      seq('[', ']'),
-      seq('(', ')'),
-      'true',
-      'false',
     ),
 
     _constructor_argument: $ => choice(
@@ -496,9 +495,7 @@ export default grammar({
       repeat($.item_attribute),
     ),
 
-    _include_or_include_functor: $ => prec.right(
-      seq('include', optional('functor')),
-    ),
+    _include_or_include_functor: $ => seq('include', optional('functor')),
 
     class_definition: $ => seq(
       'class', optional($._attribute),
@@ -1077,7 +1074,7 @@ export default grammar({
     // Expressions
 
     _delimited_expression: $ => choice(
-      $.unit,
+      alias($._extra_constructor_path, $.constructor_path),
       $.list_expression,
       $.array_expression,
       $.iarray_expression,
@@ -1092,7 +1089,7 @@ export default grammar({
       $.value_path,
       $._constant,
       $.typed_expression,
-      $.constructor_path,
+      $._constructor_path,
       $.tag,
       alias($._unboxed_tuple_expression, $.tuple_expression),
       $.prefix_expression,
@@ -1172,7 +1169,7 @@ export default grammar({
 
     list_expression: $ => seq(
       '[',
-      optional($._sequence_expression_content),
+      $._sequence_expression_content,
       ']',
     ),
 
@@ -1604,7 +1601,7 @@ export default grammar({
     // Patterns
 
     _delimited_pattern: $ => choice(
-      $.unit,
+      alias($._extra_constructor_path, $.constructor_path),
       $.record_pattern,
       $.list_pattern,
       $.array_pattern,
@@ -1617,7 +1614,7 @@ export default grammar({
       $._value_pattern,
       $._signed_constant,
       $.typed_pattern,
-      $.constructor_path,
+      $._constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
       alias($._unboxed_tuple_pattern, $.tuple_pattern),
@@ -1645,7 +1642,7 @@ export default grammar({
     ),
 
     _delimited_binding_pattern: $ => choice(
-      $.unit,
+      alias($._extra_constructor_path, $.constructor_path),
       alias($.record_binding_pattern, $.record_pattern),
       alias($.list_binding_pattern, $.list_pattern),
       alias($.array_binding_pattern, $.array_pattern),
@@ -1658,7 +1655,7 @@ export default grammar({
       $._value_name,
       $._signed_constant,
       alias($.typed_binding_pattern, $.typed_pattern),
-      $.constructor_path,
+      $._constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
       alias($._unboxed_tuple_binding_pattern, $.tuple_pattern),
@@ -1741,13 +1738,13 @@ export default grammar({
     )),
 
     constructor_pattern: $ => prec('constructor_pattern', seq(
-      $.constructor_path,
+      $._constructor_path,
       optional(alias($._parenthesized_abstract_type, $.abstract_type)),
       field('pattern', $._pattern),
     )),
 
     constructor_binding_pattern: $ => prec('constructor_pattern', seq(
-      $.constructor_path,
+      $._constructor_path,
       optional(alias($._parenthesized_abstract_type, $.abstract_type)),
       field('pattern', $._binding_pattern),
     )),
@@ -1862,13 +1859,13 @@ export default grammar({
 
     list_pattern: $ => seq(
       '[',
-      optional($._sequence_pattern_content),
+      $._sequence_pattern_content,
       ']',
     ),
 
     list_binding_pattern: $ => seq(
       '[',
-      optional($._sequence_binding_pattern_content),
+      $._sequence_binding_pattern_content,
       ']',
     ),
 
@@ -2075,7 +2072,8 @@ export default grammar({
       $.character,
       $.string,
       $.quoted_string,
-      $.boolean,
+      $.unboxed_boolean,
+      $.unboxed_unit,
     ),
 
     _signed_constant: $ => choice(
@@ -2151,12 +2149,9 @@ export default grammar({
 
     pretty_printing_indication: $ => /@([\[\], ;.{}?]|\\n|<[0-9]+>)/,
 
-    boolean: $ => choice('true', 'false', '#true', '#false'),
+    unboxed_boolean: $ => choice('#true', '#false'),
 
-    unit: $ => choice(
-      seq(choice('(', '#('), ')'),
-      seq('begin', optional($._attribute), 'end'),
-    ),
+    unboxed_unit: $ => seq('#(', ')'),
 
     // Operators
 
@@ -2281,7 +2276,14 @@ export default grammar({
 
     field_path: $ => path($.module_path, $._field_name),
 
-    constructor_path: $ => path($.module_path, $._constructor_name),
+    constructor_path: $ => path($.module_path, $._simple_constructor_name),
+
+    _constructor_path: $ => choice(
+      $.constructor_path,
+      alias($._extra_constructor_path, $.constructor_path),
+    ),
+
+    _extra_constructor_path: $ => alias($._extra_constructor_name, $.constructor_name),
 
     type_constructor_path: $ => path($.extended_module_path, $.type_constructor),
 
@@ -2302,9 +2304,22 @@ export default grammar({
 
     _module_name: $ => alias($._uppercase_identifier, $.module_name),
     _module_type_name: $ => alias(choice($._uppercase_identifier, $._lowercase_identifier), $.module_type_name),
-    _constructor_name: $ => choice(
+
+    _simple_constructor_name: $ => choice(
       alias($._uppercase_identifier, $.constructor_name),
       parenthesize(alias('::', $.constructor_name)),
+    ),
+    _constructor_name: $ => choice(
+      $._simple_constructor_name,
+      alias($._extra_constructor_name, $.constructor_name),
+    ),
+
+    _extra_constructor_name: $ => choice(
+      seq('[', ']'),
+      seq('(', ')'),
+      seq('begin', optional($._attribute), 'end'),
+      'true',
+      'false',
     ),
 
     _lowercase_identifier: $ => /(\\#)?[\p{Ll}_][\p{XID_Continue}']*/,
