@@ -625,7 +625,7 @@ export default grammar({
       field('constraint', $.extended_module_path),
     ),
 
-    constrain_module_type: $ => prec.left(seq(
+    constrain_module_type: $ => prec.right(seq(
       'module', 'type',
       $.module_type_path,
       choice('=', ':='),
