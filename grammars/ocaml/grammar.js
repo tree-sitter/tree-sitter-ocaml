@@ -462,8 +462,11 @@ export default grammar({
     module_binding: $ => seq(
       choice($._module_name, alias('_', $.module_name)),
       repeat($.module_parameter),
-      optional($._module_typed),
-      optional(seq(choice('=', ':='), field('body', $._module_expression))),
+      choice(
+        seq(optional($._module_typed), '=', field('body', $._module_expression)),
+        $._module_typed,
+        seq(':=', field('body', $.extended_module_path)),
+      ),
       repeat($.item_attribute),
     ),
 
@@ -543,7 +546,7 @@ export default grammar({
       $.exception_definition,
       $.module_definition,
       $.module_type_definition,
-      $.open_module,
+      $.open_module_signature,
       $.include_module_type,
       $.class_definition,
       $.class_type_definition,
@@ -556,6 +559,14 @@ export default grammar({
       optional($._attribute),
       $._value_name,
       $._maybe_polymorphic_typed,
+      repeat($.item_attribute),
+    ),
+
+    open_module_signature: $ => seq(
+      'open',
+      optional('!'),
+      optional($._attribute),
+      field('module', $.extended_module_path),
       repeat($.item_attribute),
     ),
 

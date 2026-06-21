@@ -213,7 +213,6 @@ Module definition
 :language(ocaml_interface)
 ==============================
 
-module M
 module M : T
 module M (M : T) : E
 module rec M : T and M : T
@@ -229,9 +228,6 @@ module _ (_ : T) = M
 ---
 
 (compilation_unit
-  (module_definition
-    (module_binding
-      (module_name)))
   (module_definition
     (module_binding
       (module_name)
@@ -263,7 +259,7 @@ module _ (_ : T) = M
   (module_definition
     (module_binding
       (module_name)
-      body: (module_path
+      body: (extended_module_path
         (module_name))))
   (module_definition
     (module_binding
@@ -320,26 +316,3 @@ module type T := T
     (module_type_name)
     body: (module_type_path
       (module_type_name))))
-
-==============================
-Open
-:language(ocaml)
-:language(ocaml_interface)
-==============================
-
-open M
-open! M
-open ! M
-
----
-
-(compilation_unit
-  (open_module
-    module: (module_path
-      (module_name)))
-  (open_module
-    module: (module_path
-      (module_name)))
-  (open_module
-    module: (module_path
-      (module_name))))

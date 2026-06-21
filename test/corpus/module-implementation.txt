@@ -195,3 +195,23 @@ include M(M)
       argument: (parenthesized_module_expression
         (module_path
           (module_name))))))
+
+==============================
+Open
+==============================
+
+open M
+open! M
+open struct end
+
+---
+
+(compilation_unit
+  (open_module
+    module: (module_path
+      (module_name)))
+  (open_module
+    module: (module_path
+      (module_name)))
+  (open_module
+    module: (structure)))
