@@ -14,6 +14,7 @@ let+ x = a and+ y = b
 let%ext x
 let* x and* y
 let f (x : 'a . 'a) ~l:(x : 'a . 'a) ?(x : 'a . 'a = y) ?l:(x : 'a . 'a = y) = x
+let f 'a' .. 'z' = x
 
 ---
 
@@ -158,6 +159,17 @@ let f (x : 'a . 'a) ~l:(x : 'a . 'a) ?(x : 'a . 'a = y) ?l:(x : 'a . 'a = y) = x
           type: (type_variable))
         default: (value_path
           (value_name)))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (range_pattern
+          left: (character
+            (character_content))
+          right: (character
+            (character_content))))
       body: (value_path
         (value_name)))))
 
