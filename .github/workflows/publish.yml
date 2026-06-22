@@ -2,7 +2,9 @@ name: Publish packages
 
 on:
   push:
-    tags: ["*"]
+    tags:
+      - "*"
+      - "!*-abi*"
 
 permissions:
   contents: write
