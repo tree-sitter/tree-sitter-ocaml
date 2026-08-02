@@ -33,7 +33,7 @@ export default grammar({
     $._class_name,
     $._class_type_name,
     $._method_name,
-    $._module_name,
+    $._simple_module_name,
     $._module_type_name,
     $._simple_constructor_name,
     $._constructor_name,
@@ -464,7 +464,7 @@ export default grammar({
     ),
 
     module_binding: $ => seq(
-      choice($._module_name, alias('_', $.module_name)),
+      $._module_name,
       repeat($.module_parameter),
       choice(
         seq(optional($._module_typed), '=', field('body', $._module_expression)),
@@ -475,7 +475,7 @@ export default grammar({
     ),
 
     module_parameter: $ => parenthesize(optional(seq(
-      choice($._module_name, alias('_', $.module_name)),
+      $._module_name,
       $._module_typed,
     ))),
 
@@ -1052,7 +1052,7 @@ export default grammar({
     package_type: $ => parenthesize(seq(
       'module',
       optional($._attribute),
-      optional(seq(field('module', $._module_name), ':')),
+      optional(seq(field('module', $._simple_module_name), ':')),
       field('module_type', $._module_type),
     )),
 
@@ -1981,7 +1981,7 @@ export default grammar({
     package_pattern: $ => parenthesize(seq(
       'module',
       optional($._attribute),
-      choice($._module_name, alias('_', $.module_name)),
+      $._module_name,
       optional($._module_typed),
     )),
 
@@ -2289,10 +2289,10 @@ export default grammar({
 
     value_path: $ => path($.module_path, $._value_name),
 
-    module_path: $ => path($.module_path, $._module_name),
+    module_path: $ => path($.module_path, $._simple_module_name),
 
     extended_module_path: $ => choice(
-      path($.extended_module_path, $._module_name),
+      path($.extended_module_path, $._simple_module_name),
       seq(
         $.extended_module_path,
         parenthesize($.extended_module_path),
@@ -2327,7 +2327,11 @@ export default grammar({
     ),
     _instance_variable_name: $ => alias($._lowercase_identifier, $.instance_variable_name),
 
-    _module_name: $ => alias($._uppercase_identifier, $.module_name),
+    _simple_module_name: $ => alias($._uppercase_identifier, $.module_name),
+    _module_name: $ => choice(
+      $._simple_module_name,
+      alias('_', $.module_name),
+    ),
     _module_type_name: $ => alias(choice($._uppercase_identifier, $._lowercase_identifier), $.module_type_name),
 
     _simple_constructor_name: $ => choice(
