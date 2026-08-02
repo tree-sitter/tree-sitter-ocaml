@@ -295,6 +295,7 @@ Exception patterns
 ============================
 
 function exception e -> ();;
+function exception false, _ -> ();;
 let (exception e) = ();;
 
 ---
@@ -305,6 +306,14 @@ let (exception e) = ();;
       (match_case
         pattern: (exception_pattern
           pattern: (value_pattern))
+        body: (unit))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (tuple_pattern
+          (exception_pattern
+            pattern: (boolean))
+          (value_pattern))
         body: (unit))))
   (value_definition
     (let_binding

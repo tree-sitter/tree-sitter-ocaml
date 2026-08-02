@@ -82,13 +82,11 @@ export default grammar({
     ],
     [
       'range_pattern',
-      'lazy_pattern',
       'constructor_pattern',
       'cons_pattern',
       'tuple_pattern',
       'or_pattern',
       'alias_pattern',
-      'exception_pattern',
       $._pattern,
       $._binding_pattern,
       $._simple_pattern,
@@ -1941,13 +1939,13 @@ export default grammar({
       field('right', $._signed_constant),
     )),
 
-    lazy_pattern: $ => prec('lazy_pattern', seq(
+    lazy_pattern: $ => prec('constructor_pattern', seq(
       'lazy',
       optional($._attribute),
       field('pattern', $._pattern),
     )),
 
-    lazy_binding_pattern: $ => prec('lazy_pattern', seq(
+    lazy_binding_pattern: $ => prec('constructor_pattern', seq(
       'lazy',
       optional($._attribute),
       field('pattern', $._binding_pattern),
@@ -1976,13 +1974,13 @@ export default grammar({
 
     parenthesized_binding_pattern: $ => parenthesize($._binding_pattern),
 
-    exception_pattern: $ => prec('exception_pattern', seq(
+    exception_pattern: $ => prec('constructor_pattern', seq(
       'exception',
       optional($._attribute),
       field('pattern', $._pattern),
     )),
 
-    exception_binding_pattern: $ => prec('exception_pattern', seq(
+    exception_binding_pattern: $ => prec('constructor_pattern', seq(
       'exception',
       optional($._attribute),
       field('pattern', $._binding_pattern),
