@@ -975,11 +975,11 @@ export default grammar({
       field('type', $._argument_type),
     ),
 
-    _proper_tuple_type: $ => seq(
+    _proper_tuple_type: $ => prec.dynamic(1, seq(
       $._simple_type,
       '*',
       $._tuple_type_rhs,
-    ),
+    )),
 
     _labeled_tuple_type: $ => seq(
       $.labeled_tuple_element_type,
