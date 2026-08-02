@@ -905,7 +905,8 @@ let x = (x)
 Precedence
 ===========================
 
-let x = x in if x then x <- x := ! x . x ## x # x x x lsl x ** x * x mod x + x - x :: x :: x @ x ^ x < x > x & x && x or x || x, x, x; x; x
+let x = x in if x then x <- x := ! x . x ## x # x x x lsl x ** x * x mod x + x - x :: x :: x @ x ^ x < x > x & x && x or x || x, x, x; x; x;;
+x.x <- stack_ function x -> . :: x, x;;
 
 ---
 
@@ -1016,4 +1017,22 @@ let x = x in if x then x <- x := ! x . x ## x # x x x lsl x ** x * x mod x + x -
         (value_path
           (value_name))
         (value_path
-          (value_name))))))
+          (value_name)))))
+  (expression_item
+    (tuple_expression
+      (cons_expression
+        left: (set_expression
+          (field_get_expression
+            record: (value_path
+              (value_name))
+            field: (field_path
+              (field_name)))
+          body: (stack_expression
+            expression: (function_expression
+              (match_case
+                pattern: (value_pattern)
+                body: (refutation_case)))))
+        right: (value_path
+          (value_name)))
+      (value_path
+        (value_name)))))

@@ -24,6 +24,7 @@ export default grammar({
     $._parameter,
     $._argument,
     $._argument_type,
+    $._inline_expression,
     $._extension,
     $._item_extension,
     $._value_pattern,
@@ -77,6 +78,7 @@ export default grammar({
       'seq',
       $._sequence_expression,
       $._expression,
+      $._non_function_expression,
       $._simple_expression,
       $._delimited_expression,
     ],
@@ -193,6 +195,7 @@ export default grammar({
     $._type,
     $._delimited_expression,
     $._simple_expression,
+    $._non_function_expression,
     $._expression,
     $._sequence_expression,
     $._delimited_pattern,
@@ -1120,7 +1123,7 @@ export default grammar({
       $._extension,
     ),
 
-    _expression: $ => choice(
+    _non_function_expression: $ => choice(
       $._simple_expression,
       alias($._tuple_expression, $.tuple_expression),
       $.cons_expression,
@@ -1132,7 +1135,6 @@ export default grammar({
       $.while_expression,
       $.for_expression,
       $.match_expression,
-      $.function_expression,
       $.fun_expression,
       $.try_expression,
       $.let_expression,
@@ -1141,6 +1143,14 @@ export default grammar({
       $.stack_expression,
       $.exclave_expression,
     ),
+
+    _inline_expression: $ => choice(
+      $._non_function_expression,
+      alias($._stack_function_expression, $.stack_expression),
+      $.function_expression,
+    ),
+
+    _expression: $ => $._inline_expression,
 
     _sequence_expression: $ => choice(
       $._expression,
@@ -1163,9 +1173,9 @@ export default grammar({
     ),
 
     _tuple_expression: $ => prec.right('tuple', seq(
-      choice($._expression, $.labeled_tuple_element),
+      choice($._inline_expression, $.labeled_tuple_element),
       ',',
-      choice($._expression, $.labeled_tuple_element, $._tuple_expression),
+      choice($._inline_expression, $.labeled_tuple_element, $._tuple_expression),
     )),
 
     _unboxed_tuple_expression: $ => seq(
@@ -1175,9 +1185,9 @@ export default grammar({
     ),
 
     cons_expression: $ => prec.right('cons', seq(
-      field('left', $._expression),
+      field('left', $._non_function_expression),
       '::',
-      field('right', $._expression),
+      field('right', $._inline_expression),
     )),
 
     list_expression: $ => seq(
@@ -1294,7 +1304,7 @@ export default grammar({
 
     sign_expression: $ => prec('sign', seq(
       field('operator', $.sign_operator),
-      field('expression', $._expression),
+      field('expression', $._inline_expression),
     )),
 
     hash_expression: $ => prec.left('hash', seq(
@@ -1349,9 +1359,9 @@ export default grammar({
 
       return choice(...table.map(({operator, precedence, associativity}) =>
         prec[associativity](precedence, seq(
-          field('left', $._expression),
+          field('left', $._non_function_expression),
           field('operator', operator),
-          field('right', $._expression),
+          field('right', $._inline_expression),
         )),
       ));
     },
@@ -1398,7 +1408,7 @@ export default grammar({
         $._instance_variable_name,
       ),
       '<-',
-      field('body', $._expression),
+      field('body', $._inline_expression),
     )),
 
     block_index_expression: $ => parenthesize(
@@ -1424,12 +1434,12 @@ export default grammar({
 
     then_clause: $ => prec('if', seq(
       'then',
-      field('expression', $._expression),
+      field('expression', $._inline_expression),
     )),
 
     else_clause: $ => prec('if', seq(
       'else',
-      field('expression', $._expression),
+      field('expression', $._inline_expression),
     )),
 
     while_expression: $ => seq(
@@ -1540,7 +1550,12 @@ export default grammar({
 
     stack_expression: $ => prec('app', seq(
       'stack_',
-      field('expression', $._expression),
+      field('expression', $._non_function_expression),
+    )),
+
+    _stack_function_expression: $ => prec('app', seq(
+      'stack_',
+      field('expression', $.function_expression),
     )),
 
     exclave_expression: $ => seq(
