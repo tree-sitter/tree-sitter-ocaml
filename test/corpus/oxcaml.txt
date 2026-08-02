@@ -620,3 +620,72 @@ let _ = fun x @ mode -> _
         mode: (mode)
         body: (value_path
           (value_name))))))
+
+===========================
+Modalities
+:language(ocaml_interface)
+===========================
+
+@@ modality1 modality2
+include T @@ modality
+type t = A of t @@ modality * t @@ modality | B of {x : t @@ modality}
+val x : t @@ modality
+external x : t -> t @@ modality = "x"
+module rec (M @@ modality) : T @@ modality and N : T @@ modality
+
+---
+
+(compilation_unit
+  modality: (modality)
+  modality: (modality)
+  (include_module_type
+    module_type: (module_type_path
+      (module_type_name))
+    modality: (modality))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (variant_declaration
+        (constructor_declaration
+          (constructor_name)
+          (type_constructor_path
+            (type_constructor))
+          modality: (modality)
+          (type_constructor_path
+            (type_constructor))
+          modality: (modality))
+        (constructor_declaration
+          (constructor_name)
+          (record_declaration
+            (field_declaration
+              (field_name)
+              type: (type_constructor_path
+                (type_constructor))
+              modality: (modality)))))))
+  (value_specification
+    (value_name)
+    type: (type_constructor_path
+      (type_constructor))
+    modality: (modality))
+  (external
+    (value_name)
+    type: (function_type
+      domain: (type_constructor_path
+        (type_constructor))
+      codomain: (type_constructor_path
+        (type_constructor)))
+    modality: (modality)
+    (string
+      (string_content)))
+  (module_definition
+    (module_binding
+      (module_name)
+      modality: (modality)
+      module_type: (module_type_path
+        (module_type_name))
+      modality: (modality))
+    (module_binding
+      (module_name)
+      module_type: (module_type_path
+        (module_type_name))
+      modality: (modality))))
