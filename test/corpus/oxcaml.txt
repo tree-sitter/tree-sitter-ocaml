@@ -189,6 +189,7 @@ type t = #{f : float#; s : string}
 let f #(x, ~lbl:y) = #(x, ~lbl:y);;
 let f #{f; s} = #{f = #1.0; s};;
 let f x = x.#s;;
+function M.#(_, _) -> ();;
 
 ---
 
@@ -261,7 +262,17 @@ let f x = x.#s;;
         record: (value_path
           (value_name))
         field: (field_path
-          (field_name))))))
+          (field_name)))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (local_open_pattern
+          (module_path
+            (module_name))
+          pattern: (tuple_pattern
+            (value_pattern)
+            (value_pattern)))
+        body: (unit)))))
 
 ===========================
 Block indices

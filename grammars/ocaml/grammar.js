@@ -1622,6 +1622,7 @@ export default grammar({
       $.array_pattern,
       $.iarray_pattern,
       $.parenthesized_pattern,
+      alias($._unboxed_tuple_pattern, $.tuple_pattern),
     ),
 
     _simple_pattern: $ => choice(
@@ -1632,7 +1633,6 @@ export default grammar({
       $._constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
-      alias($._unboxed_tuple_pattern, $.tuple_pattern),
       $.range_pattern,
       $.local_open_pattern,
       $.package_pattern,
@@ -1663,6 +1663,7 @@ export default grammar({
       alias($.array_binding_pattern, $.array_pattern),
       alias($.iarray_binding_pattern, $.iarray_pattern),
       alias($.parenthesized_binding_pattern, $.parenthesized_pattern),
+      alias($._unboxed_tuple_binding_pattern, $.tuple_pattern),
     ),
 
     _simple_binding_pattern: $ => choice(
@@ -1673,7 +1674,6 @@ export default grammar({
       $._constructor_path,
       $.tag,
       $.polymorphic_variant_pattern,
-      alias($._unboxed_tuple_binding_pattern, $.tuple_pattern),
       $.range_pattern,
       alias($.local_open_binding_pattern, $.local_open_pattern),
       $.package_pattern,
@@ -1838,8 +1838,8 @@ export default grammar({
     ),
 
     _unboxed_tuple_binding_pattern: $ => seq(
-      '$(',
-      optional($._tuple_binding_pattern),
+      '#(',
+      $._tuple_binding_pattern,
       ')',
     ),
 
