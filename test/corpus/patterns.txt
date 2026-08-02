@@ -23,7 +23,7 @@ function \#function -> ();;
 Constant patterns
 ============================
 
-function 1 | +1.0 | - 0b1 | 'x' | "x" | {|x|} | true | () -> ()
+function 1 | +1.0 | - 0b1 | 'x' | "x" | {|x|} -> ()
 
 ---
 
@@ -40,9 +40,7 @@ function 1 | +1.0 | - 0b1 | 'x' | "x" | {|x|} | true | () -> ()
           (string
             (string_content))
           (quoted_string
-            (quoted_string_content))
-          (boolean)
-          (unit))
+            (quoted_string_content)))
         body: (unit)))))
 
 ============================
@@ -67,7 +65,7 @@ function (x : t) -> ()
 Constructors and tags
 ============================
 
-function A x | A | `A | `A x -> ()
+function A x | A | `A | `A x | true | false x | () -> ()
 
 ---
 
@@ -85,7 +83,12 @@ function A x | A | `A | `A x -> ()
           (tag)
           (tag_pattern
             (tag)
-            pattern: (value_pattern)))
+            pattern: (value_pattern))
+          (boolean)
+          (constructor_pattern
+            (boolean)
+            pattern: (value_pattern))
+          (unit))
         body: (unit)))))
 
 ============================
@@ -292,6 +295,7 @@ Exception patterns
 ============================
 
 function exception e -> ();;
+function exception false, _ -> ();;
 let (exception e) = ();;
 
 ---
@@ -302,6 +306,14 @@ let (exception e) = ();;
       (match_case
         pattern: (exception_pattern
           pattern: (value_pattern))
+        body: (unit))))
+  (expression_item
+    (function_expression
+      (match_case
+        pattern: (tuple_pattern
+          (exception_pattern
+            pattern: (boolean))
+          (value_pattern))
         body: (unit))))
   (value_definition
     (let_binding

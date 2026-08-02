@@ -47,6 +47,9 @@ Constraints
 
 module M : T with type t = t and module M := M and module type T = T
 module M : T with type t = t -> t
+module M : T with type t = t as 'a -> t
+module M : T with module type T = T -> T
+module M : T with module type T := T -> T
 
 ---
 
@@ -85,7 +88,51 @@ module M : T with type t = t -> t
             domain: (type_constructor_path
               (type_constructor))
             codomain: (type_constructor_path
-              (type_constructor))))))))
+              (type_constructor)))))))
+  (module_definition
+    (module_binding
+      (module_name)
+      module_type: (functor_type
+        domain: (module_type_constraint
+          module_type: (module_type_path
+            (module_type_name))
+          (constrain_type
+            (type_constructor_path
+              (type_constructor))
+            equation: (aliased_type
+              type: (type_constructor_path
+                (type_constructor))
+              alias: (type_variable))))
+        codomain: (module_type_path
+          (module_type_name)))))
+  (module_definition
+    (module_binding
+      (module_name)
+      module_type: (module_type_constraint
+        module_type: (module_type_path
+          (module_type_name))
+        (constrain_module_type
+          (module_type_path
+            (module_type_name))
+          constraint: (functor_type
+            domain: (module_type_path
+              (module_type_name))
+            codomain: (module_type_path
+              (module_type_name)))))))
+  (module_definition
+    (module_binding
+      (module_name)
+      module_type: (module_type_constraint
+        module_type: (module_type_path
+          (module_type_name))
+        (constrain_module_type
+          (module_type_path
+            (module_type_name))
+          constraint: (functor_type
+            domain: (module_type_path
+              (module_type_name))
+            codomain: (module_type_path
+              (module_type_name))))))))
 
 ==============================
 Module type of
