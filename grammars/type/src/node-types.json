@@ -672,20 +672,6 @@
     ]
   },
   {
-    "type": "_polymorphic_type",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "_type",
-        "named": true
-      },
-      {
-        "type": "polymorphic_type",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "_sequence_expression",
     "named": true,
     "subtypes": [
@@ -1335,16 +1321,6 @@
     "type": "array_get_expression",
     "named": true,
     "fields": {
-      "array": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_simple_expression",
-            "named": true
-          }
-        ]
-      },
       "index": {
         "multiple": false,
         "required": true,
@@ -1361,6 +1337,16 @@
         "types": [
           {
             "type": "indexing_operator_path",
+            "named": true
+          }
+        ]
+      },
+      "sequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_simple_expression",
             "named": true
           }
         ]
@@ -1440,7 +1426,18 @@
   {
     "type": "attribute_payload",
     "named": true,
-    "fields": {},
+    "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -1480,16 +1477,6 @@
     "type": "bigarray_get_expression",
     "named": true,
     "fields": {
-      "array": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_simple_expression",
-            "named": true
-          }
-        ]
-      },
       "index": {
         "multiple": false,
         "required": true,
@@ -1506,6 +1493,16 @@
         "types": [
           {
             "type": "indexing_operator_path",
+            "named": true
+          }
+        ]
+      },
+      "sequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_simple_expression",
             "named": true
           }
         ]
@@ -1764,17 +1761,9 @@
         ]
       },
       "domain": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "_simple_type",
             "named": true
@@ -2190,7 +2179,18 @@
   {
     "type": "constructor_declaration",
     "named": true,
-    "fields": {},
+    "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -2505,12 +2505,26 @@
     "type": "external",
     "named": true,
     "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -2570,12 +2584,26 @@
     "type": "field_declaration",
     "named": true,
     "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -2806,6 +2834,16 @@
           }
         ]
       },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": false,
@@ -2870,17 +2908,9 @@
         ]
       },
       "domain": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "_simple_type",
             "named": true
@@ -2895,6 +2925,16 @@
           },
           {
             "type": "tuple_type",
+            "named": true
+          }
+        ]
+      },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
             "named": true
           }
         ]
@@ -2947,6 +2987,16 @@
         "types": [
           {
             "type": "_module_type",
+            "named": true
+          }
+        ]
+      },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
             "named": true
           }
         ]
@@ -3110,6 +3160,16 @@
     "type": "include_module",
     "named": true,
     "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      },
       "module": {
         "multiple": false,
         "required": true,
@@ -3140,6 +3200,16 @@
     "type": "include_module_type",
     "named": true,
     "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      },
       "module_type": {
         "multiple": false,
         "required": true,
@@ -3556,17 +3626,9 @@
     "named": true,
     "fields": {
       "type": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
           {
             "type": "_simple_type",
             "named": true
@@ -3821,9 +3883,19 @@
           }
         ]
       },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "_binding_pattern_no_exn",
@@ -3836,7 +3908,11 @@
         "required": false,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -3856,6 +3932,14 @@
         },
         {
           "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "parenthesized_operator",
+          "named": true
+        },
+        {
+          "type": "value_name",
           "named": true
         }
       ]
@@ -4196,7 +4280,11 @@
         "required": false,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -4260,7 +4348,11 @@
         "required": true,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -4290,7 +4382,11 @@
         "required": true,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -4351,6 +4447,26 @@
           }
         ]
       },
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "module_type": {
         "multiple": false,
         "required": false,
@@ -4404,6 +4520,16 @@
     "type": "module_parameter",
     "named": true,
     "fields": {
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "module_type": {
         "multiple": false,
         "required": false,
@@ -4899,6 +5025,16 @@
           }
         ]
       },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
         "required": true,
@@ -4918,7 +5054,11 @@
         "required": false,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -5444,7 +5584,18 @@
   {
     "type": "signature",
     "named": true,
-    "fields": {},
+    "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -5543,7 +5694,7 @@
           }
         ]
       },
-      "string": {
+      "sequence": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6044,6 +6195,16 @@
           }
         ]
       },
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": false,
@@ -6060,6 +6221,16 @@
     "type": "typed_module_expression",
     "named": true,
     "fields": {
+      "mode": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "mode",
+            "named": true
+          }
+        ]
+      },
       "module": {
         "multiple": false,
         "required": true,
@@ -6072,7 +6243,7 @@
       },
       "module_type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "_module_type",
@@ -6181,12 +6352,26 @@
     "type": "value_specification",
     "named": true,
     "fields": {
+      "modality": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "modality",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "_polymorphic_type",
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "polymorphic_type",
             "named": true
           }
         ]
@@ -6402,6 +6587,14 @@
   },
   {
     "type": "?",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "@@",
     "named": false
   },
   {
@@ -6677,6 +6870,14 @@
   {
     "type": "mod",
     "named": false
+  },
+  {
+    "type": "modality",
+    "named": true
+  },
+  {
+    "type": "mode",
+    "named": true
   },
   {
     "type": "module",
