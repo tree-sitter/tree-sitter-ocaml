@@ -1374,32 +1374,32 @@ export default grammar({
       field('field', $.field_path),
     )),
 
-    array_get_expression: $ => prec('dot', seq(
-      field('array', $._simple_expression),
+    _indexing_prefix: $ => prec('dot', seq(
+      field('sequence', $._simple_expression),
       '.',
       optional(field('operator', $.indexing_operator_path)),
+    )),
+
+    array_get_expression: $ => seq(
+      $._indexing_prefix,
       '(',
       field('index', $._sequence_expression),
       ')',
-    )),
+    ),
 
-    string_get_expression: $ => prec('dot', seq(
-      field('string', $._simple_expression),
-      '.',
-      optional(field('operator', $.indexing_operator_path)),
+    string_get_expression: $ => seq(
+      $._indexing_prefix,
       '[',
       field('index', $._sequence_expression),
       ']',
-    )),
+    ),
 
-    bigarray_get_expression: $ => prec('dot', seq(
-      field('array', $._simple_expression),
-      '.',
-      optional(field('operator', $.indexing_operator_path)),
+    bigarray_get_expression: $ => seq(
+      $._indexing_prefix,
       '{',
       field('index', $._sequence_expression),
       '}',
-    )),
+    ),
 
     set_expression: $ => prec('set', seq(
       choice(
