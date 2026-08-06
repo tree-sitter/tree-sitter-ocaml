@@ -23,7 +23,6 @@ export default grammar({
   inline: $ => [
     $._parameter,
     $._argument,
-    $._argument_type,
     $._inline_expression,
     $._extension,
     $._item_extension,
@@ -33,10 +32,9 @@ export default grammar({
     $._class_name,
     $._class_type_name,
     $._method_name,
-    $._module_name,
+    $._simple_module_name,
     $._module_type_name,
     $._simple_constructor_name,
-    $._constructor_name,
     $._constructor_path,
     $._label,
     $._tuple_label,
@@ -45,6 +43,8 @@ export default grammar({
   conflicts: $ => [
     [$._proper_tuple_type, $.labeled_tuple_element_type],
     [$._include_or_include_functor],
+    [$._module_typed, $.functor_type],
+    [$._type, $._argument_type],
   ],
 
   precedences: $ => [
@@ -189,7 +189,6 @@ export default grammar({
     $._simple_class_expression,
     $._class_expression,
     $._class_field,
-    $._polymorphic_type,
     $._delimited_type,
     $._simple_type,
     $._type,
@@ -240,7 +239,12 @@ export default grammar({
 
     _signature: $ => choice(
       repeat1(';;'),
-      seq(repeat1(seq(repeat(';;'), $._signature_item)), repeat(';;')),
+      seq($._at_at_modality, repeat(';;')),
+      seq(
+        optional($._at_at_modality),
+        repeat1(seq(repeat(';;'), $._signature_item)),
+        repeat(';;'),
+      ),
     ),
 
     // Toplevel
@@ -285,11 +289,15 @@ export default grammar({
     ),
 
     let_binding: $ => seq(
-      field('pattern', $._binding_pattern_no_exn),
+      choice(
+        field('pattern', $._binding_pattern_no_exn),
+        parenthesize(seq($._value_name, $._at_mode)),
+      ),
       optional(seq(
         repeat($._parameter),
-        optional($._maybe_polymorphic_typed),
+        optional($._polymorphic_typed),
         optional($._coerced),
+        optional($._at_mode),
         '=',
         field('body', $._sequence_expression),
       )),
@@ -315,7 +323,8 @@ export default grammar({
         choice('~', '?'),
         '(',
         field('pattern', $._simple_value_pattern),
-        optional($._maybe_polymorphic_typed),
+        optional($._polymorphic_typed),
+        optional($._at_mode),
         optional(seq('=', field('default', $._sequence_expression))),
         ')',
       ),
@@ -323,15 +332,32 @@ export default grammar({
         seq($._label, token.immediate(':')),
         '(',
         field('pattern', $._pattern),
-        optional($._maybe_polymorphic_typed),
-        seq('=', field('default', $._sequence_expression)),
+        optional($._typed),
+        choice(
+          seq(
+            optional($._at_mode),
+            seq('=', field('default', $._sequence_expression))
+          ),
+          $._at_mode,
+        ),
         ')',
       ),
       seq(
-        optional(seq($._label, token.immediate(':'))),
+        seq($._label, token.immediate(':')),
         '(',
         field('pattern', $._pattern),
-        $._polymorphic_typed,
+        $._strictly_polymorphic_typed,
+        optional($._at_mode),
+        optional(seq('=', field('default', $._sequence_expression))),
+        ')',
+      ),
+      seq(
+        '(',
+        field('pattern', $._pattern),
+        choice(
+          seq($._strictly_polymorphic_typed, optional($._at_mode)),
+          seq(optional($._typed), $._at_mode),
+        ),
         ')',
       ),
     ),
@@ -340,7 +366,8 @@ export default grammar({
       'external',
       optional($._attribute),
       $._value_name,
-      $._maybe_polymorphic_typed,
+      $._polymorphic_typed,
+      optional($._at_at_modality),
       '=',
       repeat1(choice($.string, $.quoted_string)),
       repeat($.item_attribute),
@@ -422,7 +449,10 @@ export default grammar({
     ),
 
     _constructor_argument: $ => choice(
-      sep1('*', seq(optional('global_'), $._simple_type)),
+      sep1(
+        '*',
+        seq(optional('global_'), $._simple_type, optional($._at_at_modality)),
+      ),
       $.record_declaration,
     ),
 
@@ -436,7 +466,8 @@ export default grammar({
     field_declaration: $ => seq(
       optional(choice('mutable', 'global_')),
       $._field_name,
-      $._maybe_polymorphic_typed,
+      $._polymorphic_typed,
+      optional($._at_at_modality),
     ),
 
     external_declaration: $ => seq(
@@ -464,19 +495,32 @@ export default grammar({
     ),
 
     module_binding: $ => seq(
-      choice($._module_name, alias('_', $.module_name)),
+      choice(
+        $._module_name,
+        parenthesize(seq(
+          $._module_name,
+          choice($._at_mode, $._at_at_modality),
+        )),
+      ),
       repeat($.module_parameter),
       choice(
-        seq(optional($._module_typed), '=', field('body', $._module_expression)),
-        $._module_typed,
+        seq(
+          optional($._module_typed),
+          optional($._at_mode),
+          '=',
+          field('body', $._module_expression),
+        ),
+        seq($._module_typed, optional($._at_mode)),
         seq(':=', field('body', $.extended_module_path)),
       ),
+      optional($._at_at_modality),
       repeat($.item_attribute),
     ),
 
     module_parameter: $ => parenthesize(optional(seq(
-      choice($._module_name, alias('_', $.module_name)),
+      $._module_name,
       $._module_typed,
+      optional($._at_mode),
     ))),
 
     module_type_definition: $ => seq(
@@ -499,6 +543,7 @@ export default grammar({
       $._include_or_include_functor,
       optional($._attribute),
       field('module', $._module_expression),
+      optional($._at_at_modality),
       repeat($.item_attribute),
     ),
 
@@ -562,7 +607,8 @@ export default grammar({
       'val',
       optional($._attribute),
       $._value_name,
-      $._maybe_polymorphic_typed,
+      $._polymorphic_typed,
+      optional($._at_at_modality),
       repeat($.item_attribute),
     ),
 
@@ -579,6 +625,7 @@ export default grammar({
       optional($._attribute),
       field('module_type', $._module_type),
       repeat($.item_attribute),
+      optional($._at_at_modality),
     ),
 
     // Module types
@@ -641,14 +688,14 @@ export default grammar({
       field('module', $._module_expression),
     ),
 
-    functor_type: $ => prec.right(seq(
+    functor_type: $ => prec.dynamic(1, prec.right(seq(
       choice(
-        seq(optional('functor'), repeat($.module_parameter)),
-        field('domain', $._module_type),
+        seq(optional('functor'), repeat1($.module_parameter)),
+        seq(field('domain', $._module_type), optional($._at_mode)),
       ),
       '->',
-      field('codomain', $._module_type),
-    )),
+      seq(field('codomain', $._module_type), optional($._at_mode)),
+    ))),
 
     parenthesized_module_type: $ => parenthesize($._module_type),
 
@@ -692,7 +739,10 @@ export default grammar({
 
     typed_module_expression: $ => parenthesize(seq(
       field('module', $._module_expression),
-      $._module_typed,
+      choice(
+        seq($._module_typed, optional($._at_mode)),
+        $._at_mode,
+      ),
     )),
 
     packed_module: $ => parenthesize(seq(
@@ -764,7 +814,7 @@ export default grammar({
       'method',
       repeat(choice('private', 'virtual')),
       $._method_name,
-      $._maybe_polymorphic_typed,
+      $._polymorphic_typed,
       repeat($.item_attribute),
     ),
 
@@ -871,7 +921,7 @@ export default grammar({
       repeat(choice('private', 'virtual')),
       $._method_name,
       repeat($._parameter),
-      optional($._maybe_polymorphic_typed),
+      optional($._polymorphic_typed),
       optional($._coerced),
       optional(seq('=', field('body', $._sequence_expression))),
       repeat($.item_attribute),
@@ -898,6 +948,16 @@ export default grammar({
 
     _simple_typed: $ => seq(':', field('type', $._simple_type)),
 
+    _strictly_polymorphic_typed: $ => seq(
+      ':',
+      field('type', alias($._polymorphic_type, $.polymorphic_type)),
+    ),
+
+    _polymorphic_typed: $ => choice(
+      $._typed,
+      $._strictly_polymorphic_typed,
+    ),
+
     _coerced: $ => seq(':>', field('coercion', $._type)),
 
     _type_constrained: $ => choice(
@@ -905,16 +965,7 @@ export default grammar({
       $._coerced,
     ),
 
-    _maybe_polymorphic_typed: $ => seq(':', field('type', $._polymorphic_type)),
-
-    _polymorphic_typed: $ => seq(':', field('type', $.polymorphic_type)),
-
-    _polymorphic_type: $ => choice(
-      $.polymorphic_type,
-      $._type,
-    ),
-
-    polymorphic_type: $ => seq(
+    _polymorphic_type: $ => seq(
       choice(
         repeat1($.type_variable),
         alias($._abstract_type, $.abstract_type),
@@ -922,6 +973,8 @@ export default grammar({
       '.',
       field('type', $._type),
     ),
+
+    _parenthesized_polymorphic_type: $ => parenthesize($._polymorphic_type),
 
     _abstract_type: $ => seq(
       'type',
@@ -956,17 +1009,19 @@ export default grammar({
       $.aliased_type,
     ),
 
-    function_type: $ => seq(
+    function_type: $ => prec.dynamic(1, prec.right(seq(
       field('domain', $._argument_type),
+      optional($._at_mode),
       '->',
       field('codomain', $._type),
-    ),
+      optional($._at_mode),
+    ))),
 
     _argument_type: $ => choice(
       $._simple_type,
       alias($._proper_tuple_type, $.tuple_type),
       $.labeled_argument_type,
-      parenthesize($.polymorphic_type),
+      alias($._parenthesized_polymorphic_type, $.polymorphic_type),
     ),
 
     labeled_argument_type: $ => seq(
@@ -1052,7 +1107,7 @@ export default grammar({
     package_type: $ => parenthesize(seq(
       'module',
       optional($._attribute),
-      optional(seq(field('module', $._module_name), ':')),
+      optional(seq(field('module', $._simple_module_name), ':')),
       field('module_type', $._module_type),
     )),
 
@@ -1073,7 +1128,7 @@ export default grammar({
 
     method_type: $ => seq(
       $._method_name,
-      $._maybe_polymorphic_typed,
+      $._polymorphic_typed,
     ),
 
     hash_type: $ => seq(
@@ -1159,7 +1214,10 @@ export default grammar({
 
     typed_expression: $ => parenthesize(seq(
       field('expression', $._sequence_expression),
-      $._type_constrained,
+      choice(
+        seq($._type_constrained, optional($._at_mode)),
+        seq(':', $._at_mode),
+      ),
     )),
 
     labeled_tuple_element: $ => choice(
@@ -1372,32 +1430,32 @@ export default grammar({
       field('field', $.field_path),
     )),
 
-    array_get_expression: $ => prec('dot', seq(
-      field('array', $._simple_expression),
+    _indexing_prefix: $ => prec('dot', seq(
+      field('sequence', $._simple_expression),
       '.',
       optional(field('operator', $.indexing_operator_path)),
+    )),
+
+    array_get_expression: $ => seq(
+      $._indexing_prefix,
       '(',
       field('index', $._sequence_expression),
       ')',
-    )),
+    ),
 
-    string_get_expression: $ => prec('dot', seq(
-      field('string', $._simple_expression),
-      '.',
-      optional(field('operator', $.indexing_operator_path)),
+    string_get_expression: $ => seq(
+      $._indexing_prefix,
       '[',
       field('index', $._sequence_expression),
       ']',
-    )),
+    ),
 
-    bigarray_get_expression: $ => prec('dot', seq(
-      field('array', $._simple_expression),
-      '.',
-      optional(field('operator', $.indexing_operator_path)),
+    bigarray_get_expression: $ => seq(
+      $._indexing_prefix,
       '{',
       field('index', $._sequence_expression),
       '}',
-    )),
+    ),
 
     set_expression: $ => prec('set', seq(
       choice(
@@ -1514,7 +1572,7 @@ export default grammar({
       'fun',
       optional($._attribute),
       repeat1($._parameter),
-      optional($._simple_typed),
+      optional(choice($._simple_typed, $._at_mode)),
       '->',
       field('body', $._sequence_expression),
     ),
@@ -1981,7 +2039,7 @@ export default grammar({
     package_pattern: $ => parenthesize(seq(
       'module',
       optional($._attribute),
-      choice($._module_name, alias('_', $.module_name)),
+      $._module_name,
       optional($._module_typed),
     )),
 
@@ -2254,6 +2312,12 @@ export default grammar({
       seq('match', /[$&*+\-/<=>@^|]/, repeat(OP_CHAR)),
     ),
 
+    // Modes
+
+    _at_mode: $ => seq('@', field('mode', repeat1($._mode))),
+
+    _at_at_modality: $ => seq('@@', field('modality', repeat1($._modality))),
+
     // Names
 
     _value_name: $ => choice(
@@ -2289,10 +2353,10 @@ export default grammar({
 
     value_path: $ => path($.module_path, $._value_name),
 
-    module_path: $ => path($.module_path, $._module_name),
+    module_path: $ => path($.module_path, $._simple_module_name),
 
     extended_module_path: $ => choice(
-      path($.extended_module_path, $._module_name),
+      path($.extended_module_path, $._simple_module_name),
       seq(
         $.extended_module_path,
         parenthesize($.extended_module_path),
@@ -2326,8 +2390,14 @@ export default grammar({
       optional(token.immediate('#')),
     ),
     _instance_variable_name: $ => alias($._lowercase_identifier, $.instance_variable_name),
+    _mode: $ => alias($._lowercase_identifier, $.mode),
+    _modality: $ => alias($._lowercase_identifier, $.modality),
 
-    _module_name: $ => alias($._uppercase_identifier, $.module_name),
+    _simple_module_name: $ => alias($._uppercase_identifier, $.module_name),
+    _module_name: $ => choice(
+      $._simple_module_name,
+      alias('_', $.module_name),
+    ),
     _module_type_name: $ => alias(choice($._uppercase_identifier, $._lowercase_identifier), $.module_type_name),
 
     _simple_constructor_name: $ => choice(

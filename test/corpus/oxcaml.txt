@@ -360,3 +360,332 @@ type ('a, 'b) t = A of global_ 'a * 'b
           (constructor_name)
           (type_variable)
           (type_variable))))))
+
+===========================
+Modes
+===========================
+
+let x @ mode = _
+let x @ mode1 mode2 = _
+let (x @ mode) = _
+let x : t @ mode = _
+let x : t * t @ mode = _
+let x : 'a . t @ mode = _
+let x : type t . t @ mode -> t = _
+let f x @ mode = _
+let f x : t @ mode = _
+let f x : t @ mode -> t @ mode = _
+let f (x @ mode) = _
+let f (x : t @ mode) = _
+let f ~(x @ mode) = _
+let f ~(x : t @ mode) = _
+let f ~x:(x @ mode) = _
+let f ~x:(x : t @ mode) = _
+module F (P : T @ mode) @ mode = M
+module (F @ mode) (P : T @ mode) : T @ mode = M
+module M = (M @ mode)
+module M = (M : T @ mode)
+let _ = (x : t @ mode)
+let _ = (x : @ mode)
+let _ = fun (x @ mode) : t -> _
+let _ = fun x @ mode -> _
+
+---
+
+(compilation_unit
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      mode: (mode)
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      (value_name)
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      type: (type_constructor_path
+        (type_constructor))
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      type: (tuple_type
+        (type_constructor_path
+          (type_constructor))
+        (type_constructor_path
+          (type_constructor)))
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      type: (polymorphic_type
+        (type_variable)
+        type: (type_constructor_path
+          (type_constructor)))
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      type: (polymorphic_type
+        (abstract_type
+          (type_constructor))
+        type: (function_type
+          domain: (type_constructor_path
+            (type_constructor))
+          mode: (mode)
+          codomain: (type_constructor_path
+            (type_constructor))))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      type: (type_constructor_path
+        (type_constructor))
+      mode: (mode)
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      type: (function_type
+        domain: (type_constructor_path
+          (type_constructor))
+        mode: (mode)
+        codomain: (type_constructor_path
+          (type_constructor))
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        type: (type_constructor_path
+          (type_constructor))
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        type: (type_constructor_path
+          (type_constructor))
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        (label_name)
+        pattern: (value_pattern)
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        (label_name)
+        pattern: (value_pattern)
+        type: (type_constructor_path
+          (type_constructor))
+        mode: (mode))
+      body: (value_path
+        (value_name))))
+  (module_definition
+    (module_binding
+      (module_name)
+      (module_parameter
+        (module_name)
+        module_type: (module_type_path
+          (module_type_name))
+        mode: (mode))
+      mode: (mode)
+      body: (module_path
+        (module_name))))
+  (module_definition
+    (module_binding
+      (module_name)
+      mode: (mode)
+      (module_parameter
+        (module_name)
+        module_type: (module_type_path
+          (module_type_name))
+        mode: (mode))
+      module_type: (module_type_path
+        (module_type_name))
+      mode: (mode)
+      body: (module_path
+        (module_name))))
+  (module_definition
+    (module_binding
+      (module_name)
+      body: (typed_module_expression
+        module: (module_path
+          (module_name))
+        mode: (mode))))
+  (module_definition
+    (module_binding
+      (module_name)
+      body: (typed_module_expression
+        module: (module_path
+          (module_name))
+        module_type: (module_type_path
+          (module_type_name))
+        mode: (mode))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      body: (typed_expression
+        expression: (value_path
+          (value_name))
+        type: (type_constructor_path
+          (type_constructor))
+        mode: (mode))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      body: (typed_expression
+        expression: (value_path
+          (value_name))
+        mode: (mode))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      body: (fun_expression
+        (parameter
+          pattern: (value_pattern)
+          mode: (mode))
+        type: (type_constructor_path
+          (type_constructor))
+        body: (value_path
+          (value_name)))))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      body: (fun_expression
+        (parameter
+          pattern: (value_pattern))
+        mode: (mode)
+        body: (value_path
+          (value_name))))))
+
+===========================
+Modalities
+:language(ocaml_interface)
+===========================
+
+@@ modality1 modality2
+include T @@ modality
+type t = A of t @@ modality * t @@ modality | B of {x : t @@ modality}
+val x : t @@ modality
+external x : t -> t @@ modality = "x"
+module rec (M @@ modality) : T @@ modality and N : T @@ modality
+
+---
+
+(compilation_unit
+  modality: (modality)
+  modality: (modality)
+  (include_module_type
+    module_type: (module_type_path
+      (module_type_name))
+    modality: (modality))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (variant_declaration
+        (constructor_declaration
+          (constructor_name)
+          (type_constructor_path
+            (type_constructor))
+          modality: (modality)
+          (type_constructor_path
+            (type_constructor))
+          modality: (modality))
+        (constructor_declaration
+          (constructor_name)
+          (record_declaration
+            (field_declaration
+              (field_name)
+              type: (type_constructor_path
+                (type_constructor))
+              modality: (modality)))))))
+  (value_specification
+    (value_name)
+    type: (type_constructor_path
+      (type_constructor))
+    modality: (modality))
+  (external
+    (value_name)
+    type: (function_type
+      domain: (type_constructor_path
+        (type_constructor))
+      codomain: (type_constructor_path
+        (type_constructor)))
+    modality: (modality)
+    (string
+      (string_content)))
+  (module_definition
+    (module_binding
+      (module_name)
+      modality: (modality)
+      module_type: (module_type_path
+        (module_type_name))
+      modality: (modality))
+    (module_binding
+      (module_name)
+      module_type: (module_type_path
+        (module_type_name))
+      modality: (modality))))

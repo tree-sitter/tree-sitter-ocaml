@@ -315,9 +315,9 @@ x.%(0).M.%(0) <- x;;
   (expression_item
     (set_expression
       (bigarray_get_expression
-        array: (string_get_expression
-          string: (array_get_expression
-            array: (value_path
+        sequence: (string_get_expression
+          sequence: (array_get_expression
+            sequence: (value_path
               (value_name))
             index: (number))
           index: (number))
@@ -329,8 +329,8 @@ x.%(0).M.%(0) <- x;;
   (expression_item
     (set_expression
       (array_get_expression
-        array: (array_get_expression
-          array: (value_path
+        sequence: (array_get_expression
+          sequence: (value_path
             (value_name))
           operator: (indexing_operator_path
             (indexing_operator))
@@ -347,7 +347,7 @@ x.%(0).M.%(0) <- x;;
       left: (number)
       operator: (hash_operator)
       right: (array_get_expression
-        array: (value_path
+        sequence: (value_path
           (value_name))
         operator: (indexing_operator_path
           (indexing_operator))

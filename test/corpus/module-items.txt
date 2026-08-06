@@ -185,7 +185,6 @@ type t = t = ..
       synonym: (type_constructor_path
         (type_constructor)))))
 
-
 ==============================
 Exception definition
 :language(ocaml)
