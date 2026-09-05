@@ -40,15 +40,17 @@ grammar {
     ],
 
     inline: [
-        _parameter, _argument, _extension, _item_extension,
+        _parameter, _argument, _argument_type, _inline_expression,
+        _extension, _item_extension,
         _value_pattern, _label_name, _field_name, _class_name,
         _class_type_name, _method_name,
-        _module_name, _module_type_name, _argument_type, _label,
-        _tuple_label,
+        _module_name, _module_type_name, _simple_constructor_name,
+        _constructor_name, _constructor_path, _label, _tuple_label,
     ],
 
     conflicts: [
         [_proper_tuple_type, labeled_tuple_element_type],
+        [_include_or_include_functor],
     ],
 
     precedences: [
@@ -60,15 +62,16 @@ grammar {
             "prefix", "dot", "hash", "method", "app", "sign", "pow",
             "mult", "add", "cons", "concat", "rel", "and", "or",
             "tuple", "assign", "set", "if", "seq",
-            _expression, _sequence_expression,
+            _sequence_expression, _expression, _non_function_expression,
+            _simple_expression, _delimited_expression,
         ],
         [
-            "range_pattern", "lazy_pattern", "constructor_pattern",
+            "range_pattern", "constructor_pattern",
             "cons_pattern", "tuple_pattern", "or_pattern",
-            "alias_pattern", "exception_pattern",
-            _pattern, _simple_binding_pattern, _binding_pattern,
+            "alias_pattern", _pattern, _binding_pattern, _simple_pattern,
+            _simple_binding_pattern, _delimited_pattern, _delimited_binding_pattern,
         ],
-        [module_path, _constructor_name],
+        [module_path, constructor_path],
     ],
 
     word: _lowercase_identifier,
@@ -84,7 +87,8 @@ grammar {
         _simple_class_type, _class_type, _class_field_specification,
         _simple_class_expression, _class_expression, _class_field,
         _polymorphic_type, _delimited_type, _simple_type, _type,
-        _delimited_expression, _simple_expression, _expression, _sequence_expression,
+        _delimited_expression, _simple_expression, _non_function_expression,
+        _expression, _sequence_expression,
         _delimited_pattern, _simple_pattern, _effect_pattern, _pattern,
         _delimited_binding_pattern, _simple_binding_pattern,
         _effect_binding_pattern, _binding_pattern, _binding_pattern_no_exn,
@@ -139,7 +143,9 @@ rule _signature {
 // Toplevel
 
 rule toplevel_directive {
-    seq(directive, optional(choice(_constant, value_path, module_path)))
+    seq(directive, optional(choice(
+        string, quoted_string, number, value_path, module_path, boolean,
+    )))
 }
 
 // ---------------------------------------------------------------------------
@@ -161,7 +167,10 @@ rule _structure_item {
 
 rule value_definition {
     seq(
-        choice(seq("let", optional(_attribute), optional("rec")), let_operator),
+        choice(
+            seq("let", optional(_attribute), optional("mutable"), optional("rec")),
+            let_operator,
+        ),
         u::sep1(choice("and", let_and_operator), let_binding),
     )
 }
@@ -291,10 +300,7 @@ rule variant_declaration {
 
 rule constructor_declaration {
     seq(
-        choice(
-            _constructor_name,
-            alias(_constructor_declaration_name, constructor_name),
-        ),
+        _constructor_name,
         optional(choice(
             seq("of", _constructor_argument),
             seq(
@@ -303,13 +309,9 @@ rule constructor_declaration {
                 optional(seq(_constructor_argument, "->")),
                 _simple_type,
             ),
-            seq("=", constructor_path),
+            seq("=", _constructor_path),
         )),
     )
-}
-
-rule _constructor_declaration_name {
-    choice(seq("[", "]"), seq("(", ")"), "true", "false")
 }
 
 rule _constructor_argument {
@@ -360,8 +362,11 @@ rule module_binding {
     seq(
         choice(_module_name, alias("_", module_name)),
         repeat(module_parameter),
-        optional(_module_typed),
-        optional(seq(choice("=", ":="), field(body, _module_expression))),
+        choice(
+            seq(optional(_module_typed), "=", field(body, _module_expression)),
+            _module_typed,
+            seq(":=", field(body, extended_module_path)),
+        ),
         repeat(item_attribute),
     )
 }
@@ -403,7 +408,7 @@ rule include_module {
 }
 
 rule _include_or_include_functor {
-    prec_right(0, seq("include", optional("functor")))
+    seq("include", optional("functor"))
 }
 
 rule class_definition {
@@ -450,7 +455,7 @@ rule class_type_binding {
 rule _signature_item {
     choice(
         value_specification, r#external, type_definition, exception_definition,
-        module_definition, module_type_definition, open_module,
+        module_definition, module_type_definition, open_module_signature,
         include_module_type, class_definition, class_type_definition,
         floating_attribute, _item_extension,
     )
@@ -462,6 +467,14 @@ rule value_specification {
         optional(_attribute),
         _value_name,
         _maybe_polymorphic_typed,
+        repeat(item_attribute),
+    )
+}
+
+rule open_module_signature {
+    seq(
+        "open", optional("!"), optional(_attribute),
+        field(module, extended_module_path),
         repeat(item_attribute),
     )
 }
@@ -494,10 +507,12 @@ rule module_type_constraint {
     prec_right(0, seq(
         field(module_type, _module_type),
         "with",
-        u::sep1("and", choice(
-            constrain_type, constrain_module, constrain_module_type,
+        choice(
             extended_module_path,
-        )),
+            u::sep1("and", choice(
+                constrain_type, constrain_module, constrain_module_type,
+            )),
+        ),
     ))
 }
 
@@ -523,7 +538,7 @@ rule constrain_module {
 }
 
 rule constrain_module_type {
-    prec_left(0, seq(
+    prec_right(0, seq(
         "module", "type",
         module_type_path,
         choice("=", ":="),
@@ -760,6 +775,7 @@ rule method_definition {
         _method_name,
         repeat(_parameter),
         optional(_maybe_polymorphic_typed),
+        optional(_coerced),
         optional(seq("=", field(body, _sequence_expression))),
         repeat(item_attribute),
     )
@@ -851,7 +867,7 @@ rule labeled_argument_type {
 }
 
 rule _proper_tuple_type {
-    seq(_simple_type, "*", _tuple_type_rhs)
+    prec_dynamic(1, seq(_simple_type, "*", _tuple_type_rhs))
 }
 
 rule _labeled_tuple_type {
@@ -951,7 +967,7 @@ rule parenthesized_type { u::parens(_type) }
 
 rule _delimited_expression {
     choice(
-        unit, list_expression, array_expression, iarray_expression,
+        _extra_constructor, list_expression, array_expression, iarray_expression,
         record_expression, package_expression, object_copy_expression,
         parenthesized_expression,
     )
@@ -960,7 +976,7 @@ rule _delimited_expression {
 rule _simple_expression {
     choice(
         _delimited_expression,
-        value_path, _constant, typed_expression, constructor_path, tag,
+        value_path, _constant, typed_expression, _constructor_path, tag,
         alias(_unboxed_tuple_expression, tuple_expression),
         prefix_expression, hash_expression, field_get_expression,
         array_get_expression, string_get_expression, bigarray_get_expression,
@@ -971,17 +987,27 @@ rule _simple_expression {
     )
 }
 
-rule _expression {
+rule _non_function_expression {
     choice(
         _simple_expression,
         alias(_tuple_expression, tuple_expression),
         cons_expression, application_expression, infix_expression,
         sign_expression, set_expression, if_expression, while_expression,
-        for_expression, match_expression, function_expression,
+        for_expression, match_expression,
         fun_expression, try_expression, let_expression, assert_expression,
         lazy_expression, stack_expression, exclave_expression,
     )
 }
+
+rule _inline_expression {
+    choice(
+        _non_function_expression,
+        alias(_stack_function_expression, stack_expression),
+        function_expression,
+    )
+}
+
+rule _expression { _inline_expression }
 
 rule _sequence_expression {
     choice(_expression, alias(_sequence_expression_anonymous, sequence_expression))
@@ -1005,9 +1031,9 @@ rule labeled_tuple_element {
 
 rule _tuple_expression {
     prec_right("tuple", seq(
-        choice(_expression, labeled_tuple_element),
+        choice(_inline_expression, labeled_tuple_element),
         ",",
-        choice(_expression, labeled_tuple_element, _tuple_expression),
+        choice(_inline_expression, labeled_tuple_element, _tuple_expression),
     ))
 }
 
@@ -1017,14 +1043,14 @@ rule _unboxed_tuple_expression {
 
 rule cons_expression {
     prec_right("cons", seq(
-        field(left, _expression),
+        field(left, _non_function_expression),
         "::",
-        field(right, _expression),
+        field(right, _inline_expression),
     ))
 }
 
 rule list_expression {
-    seq("[", optional(_sequence_expression_content), "]")
+    seq("[", _sequence_expression_content, "]")
 }
 
 rule array_expression {
@@ -1073,7 +1099,7 @@ rule block_index_expression { u::parens(repeat1(block_access)) }
 rule block_access {
     choice(
         seq(choice(".", ".#"), field(field, field_path)),
-        seq(".", choice("idx_imm", "idx_mut"), u::parens(field(index, _sequence_expression))),
+        seq(".", _block_access_type, u::parens(field(index, _sequence_expression))),
     )
 }
 
@@ -1126,7 +1152,7 @@ rule prefix_expression {
 rule sign_expression {
     prec("sign", seq(
         field(operator, sign_operator),
-        field(expression, _expression),
+        field(expression, _inline_expression),
     ))
 }
 
@@ -1146,44 +1172,44 @@ rule hash_expression {
 rule infix_expression {
     choice(
         prec_right("pow", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, pow_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_left("mult", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, mult_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_left("add", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, add_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_right("concat", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, concat_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_left("rel", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, rel_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_right("and", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, and_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_right("or", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, or_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
         prec_right("assign", seq(
-            field(left, _expression),
+            field(left, _non_function_expression),
             field(operator, assign_operator),
-            field(right, _expression),
+            field(right, _inline_expression),
         )),
     )
 }
@@ -1196,37 +1222,38 @@ rule field_get_expression {
     ))
 }
 
-rule array_get_expression {
+rule _indexing_prefix {
     prec("dot", seq(
-        field(array, _simple_expression),
-        ".",
-        optional(field(operator, indexing_operator_path)),
+        field(sequence, _simple_expression),
+        choice(".", indexing_operator_path),
+    ))
+}
+
+rule array_get_expression {
+    seq(
+        _indexing_prefix,
         "(",
         field(index, _sequence_expression),
         ")",
-    ))
+    )
 }
 
 rule string_get_expression {
-    prec("dot", seq(
-        field(string, _simple_expression),
-        ".",
-        optional(field(operator, indexing_operator_path)),
+    seq(
+        _indexing_prefix,
         "[",
         field(index, _sequence_expression),
         "]",
-    ))
+    )
 }
 
 rule bigarray_get_expression {
-    prec("dot", seq(
-        field(array, _simple_expression),
-        ".",
-        optional(field(operator, indexing_operator_path)),
+    seq(
+        _indexing_prefix,
         "{",
         field(index, _sequence_expression),
         "}",
-    ))
+    )
 }
 
 rule set_expression {
@@ -1237,7 +1264,7 @@ rule set_expression {
             _instance_variable_name,
         ),
         "<-",
-        field(body, _expression),
+        field(body, _inline_expression),
     ))
 }
 
@@ -1252,11 +1279,11 @@ rule if_expression {
 }
 
 rule then_clause {
-    prec("if", seq("then", field(expression, _expression)))
+    prec("if", seq("then", field(expression, _inline_expression)))
 }
 
 rule else_clause {
-    prec("if", seq("else", field(expression, _expression)))
+    prec("if", seq("else", field(expression, _inline_expression)))
 }
 
 rule while_expression {
@@ -1367,7 +1394,11 @@ rule lazy_expression {
 }
 
 rule stack_expression {
-    prec("app", seq("stack_", field(expression, _expression)))
+    prec("app", seq("stack_", field(expression, _non_function_expression)))
+}
+
+rule _stack_function_expression {
+    prec("app", seq("stack_", field(expression, function_expression)))
 }
 
 rule exclave_expression {
@@ -1440,17 +1471,17 @@ rule ocamlyacc_value { regexp(r"\$[0-9]+") }
 
 rule _delimited_pattern {
     choice(
-        unit, record_pattern, list_pattern, array_pattern,
+        _extra_constructor, record_pattern, list_pattern, array_pattern,
         iarray_pattern, parenthesized_pattern,
+        alias(_unboxed_tuple_pattern, tuple_pattern),
     )
 }
 
 rule _simple_pattern {
     choice(
         _delimited_pattern,
-        _value_pattern, _signed_constant, typed_pattern, constructor_path,
-        tag, polymorphic_variant_pattern,
-        alias(_unboxed_tuple_pattern, tuple_pattern),
+        _value_pattern, _signed_constant, typed_pattern, _constructor_path,
+        tag, polymorphic_variant_pattern, range_pattern,
         local_open_pattern, package_pattern, _extension,
     )
 }
@@ -1465,18 +1496,19 @@ rule _pattern {
         alias_pattern,
         alias(_or_pattern_anonymous, or_pattern),
         alias(_tuple_pattern, tuple_pattern),
-        cons_pattern, range_pattern, exception_pattern, effect_pattern,
+        cons_pattern, exception_pattern, effect_pattern,
     )
 }
 
 rule _delimited_binding_pattern {
     choice(
-        unit,
+        _extra_constructor,
         alias(record_binding_pattern, record_pattern),
         alias(list_binding_pattern, list_pattern),
         alias(array_binding_pattern, array_pattern),
         alias(iarray_binding_pattern, iarray_pattern),
         alias(parenthesized_binding_pattern, parenthesized_pattern),
+        alias(_unboxed_tuple_binding_pattern, tuple_pattern),
     )
 }
 
@@ -1485,8 +1517,8 @@ rule _simple_binding_pattern {
         _delimited_binding_pattern,
         _value_name, _signed_constant,
         alias(typed_binding_pattern, typed_pattern),
-        constructor_path, tag, polymorphic_variant_pattern,
-        alias(_unboxed_tuple_binding_pattern, tuple_pattern),
+        _constructor_path, tag, polymorphic_variant_pattern,
+        range_pattern,
         alias(local_open_binding_pattern, local_open_pattern),
         package_pattern, _extension,
     )
@@ -1508,7 +1540,6 @@ rule _binding_pattern_no_exn {
         alias(_or_binding_pattern_no_exn_anonymous, or_pattern),
         alias(_tuple_binding_pattern_no_exn, tuple_pattern),
         alias(cons_binding_pattern_no_exn, cons_pattern),
-        range_pattern,
     )
 }
 
@@ -1519,7 +1550,6 @@ rule _binding_pattern {
         alias(_or_binding_pattern_anonymous, or_pattern),
         alias(_tuple_binding_pattern, tuple_pattern),
         alias(cons_binding_pattern, cons_pattern),
-        range_pattern,
         alias(exception_binding_pattern, exception_pattern),
         alias(effect_binding_pattern, effect_pattern),
     )
@@ -1583,7 +1613,7 @@ rule _or_binding_pattern_anonymous {
 
 rule constructor_pattern {
     prec("constructor_pattern", seq(
-        constructor_path,
+        _constructor_path,
         optional(alias(_parenthesized_abstract_type, abstract_type)),
         field(pattern, _pattern),
     ))
@@ -1591,7 +1621,7 @@ rule constructor_pattern {
 
 rule constructor_binding_pattern {
     prec("constructor_pattern", seq(
-        constructor_path,
+        _constructor_path,
         optional(alias(_parenthesized_abstract_type, abstract_type)),
         field(pattern, _binding_pattern),
     ))
@@ -1662,7 +1692,7 @@ rule _unboxed_tuple_pattern {
 }
 
 rule _unboxed_tuple_binding_pattern {
-    seq("$(", optional(_tuple_binding_pattern), ")")
+    seq("#(", _tuple_binding_pattern, ")")
 }
 
 rule record_pattern {
@@ -1702,11 +1732,11 @@ rule field_binding_pattern {
 }
 
 rule list_pattern {
-    seq("[", optional(_sequence_pattern_content), "]")
+    seq("[", _sequence_pattern_content, "]")
 }
 
 rule list_binding_pattern {
-    seq("[", optional(_sequence_binding_pattern_content), "]")
+    seq("[", _sequence_binding_pattern_content, "]")
 }
 
 rule cons_pattern {
@@ -1766,7 +1796,7 @@ rule range_pattern {
 }
 
 rule lazy_pattern {
-    prec("lazy_pattern", seq(
+    prec("constructor_pattern", seq(
         "lazy",
         optional(_attribute),
         field(pattern, _pattern),
@@ -1774,7 +1804,7 @@ rule lazy_pattern {
 }
 
 rule lazy_binding_pattern {
-    prec("lazy_pattern", seq(
+    prec("constructor_pattern", seq(
         "lazy",
         optional(_attribute),
         field(pattern, _binding_pattern),
@@ -1803,7 +1833,7 @@ rule parenthesized_pattern { u::parens(_pattern) }
 rule parenthesized_binding_pattern { u::parens(_binding_pattern) }
 
 rule exception_pattern {
-    prec("exception_pattern", seq(
+    prec("constructor_pattern", seq(
         "exception",
         optional(_attribute),
         field(pattern, _pattern),
@@ -1811,7 +1841,7 @@ rule exception_pattern {
 }
 
 rule exception_binding_pattern {
-    prec("exception_pattern", seq(
+    prec("constructor_pattern", seq(
         "exception",
         optional(_attribute),
         field(pattern, _binding_pattern),
@@ -1911,7 +1941,14 @@ rule _attribute { seq("%", attribute_id) }
 // ---------------------------------------------------------------------------
 
 rule _constant {
-    choice(number, character, string, quoted_string, boolean)
+    choice(
+        number,
+        character,
+        string,
+        quoted_string,
+        alias(_unboxed_boolean, boolean),
+        alias(_unboxed_unit, unit),
+    )
 }
 
 rule _signed_constant { choice(_constant, signed_number) }
@@ -1996,11 +2033,15 @@ rule pretty_printing_indication {
     regexp(r"@([\[\], ;.{}?]|\\n|<[0-9]+>)")
 }
 
-rule boolean { choice("true", "false", "#true", "#false") }
+rule _unboxed_boolean { choice("#true", "#false") }
+
+rule _unboxed_unit { seq("#(", ")") }
+
+rule boolean { choice("true", "false") }
 
 rule unit {
     choice(
-        seq(choice("(", "#("), ")"),
+        seq("(", ")"),
         seq("begin", optional(_attribute), "end"),
     )
 }
@@ -2066,10 +2107,12 @@ rule or_operator { choice("or", "||") }
 rule assign_operator { regexp(r":=") }
 
 rule indexing_operator {
-    token(seq(regexp(r"[!$%&*+\-/:=>?@^|]"), repeat(OP_CHAR)))
+    token(seq(".", regexp(r"[!$%&*+\-/:=>?@^|]"), repeat(OP_CHAR)))
 }
 
-rule indexing_operator_path { u::path(module_path, indexing_operator) }
+rule indexing_operator_path {
+    choice(indexing_operator, seq(".", module_path, indexing_operator))
+}
 
 rule let_operator {
     token(seq("let", regexp(r"[$&*+\-/<=>@^|]"), repeat(OP_CHAR)))
@@ -2105,7 +2148,6 @@ rule parenthesized_operator {
         _infix_operator,
         hash_operator,
         seq(
-            ".",
             indexing_operator,
             choice(
                 seq("(", optional(seq(";", "..")), ")"),
@@ -2135,7 +2177,9 @@ rule module_type_path { u::path(extended_module_path, _module_type_name) }
 
 rule field_path { u::path(module_path, _field_name) }
 
-rule constructor_path { u::path(module_path, _constructor_name) }
+rule constructor_path { u::path(module_path, _simple_constructor_name) }
+
+rule _constructor_path { choice(constructor_path, _extra_constructor) }
 
 rule type_constructor_path { u::path(extended_module_path, type_constructor) }
 
@@ -2157,12 +2201,22 @@ rule _module_type_name {
     alias(choice(_uppercase_identifier, _lowercase_identifier), module_type_name)
 }
 
-rule _constructor_name {
+rule _simple_constructor_name {
     choice(
         alias(_uppercase_identifier, constructor_name),
         u::parens(alias("::", constructor_name)),
     )
 }
+
+rule _constructor_name { choice(_simple_constructor_name, _extra_constructor) }
+
+rule _block_access_type {
+    alias(choice(_uppercase_identifier, _lowercase_identifier), block_access_type)
+}
+
+rule _extra_constructor { choice(unit, boolean, empty_list) }
+
+rule empty_list { seq("[", "]") }
 
 rule _lowercase_identifier { regexp(r"(\\#)?[\p{Ll}_][\p{XID_Continue}']*") }
 rule _uppercase_identifier { regexp(r"[\p{Lu}][\p{XID_Continue}']*") }
