@@ -433,6 +433,55 @@ let mutable x = 0 in x
         (value_name)))))
 
 ===========================
+Legacy modes
+===========================
+
+let f ~(local_ x) ~l:(local_ x) (local_ x) = local_ x
+type t = local_ t * t -> a:local_ t -> local_ ('a . t) -> local_ t
+
+---
+
+(compilation_unit
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      (parameter
+        (label_name)
+        pattern: (value_pattern))
+      (parameter
+        pattern: (value_pattern))
+      body: (local_expression
+        expression: (value_path
+          (value_name)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (function_type
+        domain: (local_type
+          (tuple_type
+            (type_constructor_path
+              (type_constructor))
+            (type_constructor_path
+              (type_constructor))))
+        codomain: (function_type
+          domain: (labeled_argument_type
+            (label_name)
+            type: (local_type
+              (type_constructor_path
+                (type_constructor))))
+          codomain: (function_type
+            domain: (local_type
+              (polymorphic_type
+                (type_variable)
+                type: (type_constructor_path
+                  (type_constructor))))
+            codomain: (local_type
+              (type_constructor_path
+                (type_constructor)))))))))
+
+===========================
 Modes
 ===========================
 

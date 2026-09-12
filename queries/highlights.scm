@@ -51,6 +51,7 @@
   "kind_"
   "lazy"
   "let"
+  "local_"
   "match"
   "method"
   "mod"
