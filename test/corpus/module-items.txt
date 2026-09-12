@@ -121,6 +121,7 @@ type t = t = ..
           (empty_list)))))
   (type_definition
     (type_binding
+      (type_variable)
       name: (type_constructor)
       body: (variant_declaration
         (constructor_declaration

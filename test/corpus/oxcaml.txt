@@ -283,8 +283,8 @@ function M.#(_, _) -> ();;
           (module_path
             (module_name))
           pattern: (tuple_pattern
-            (value_pattern)
-            (value_pattern)))
+            (any_pattern)
+            (any_pattern)))
         body: (unit)))))
 
 ===========================
@@ -429,29 +429,25 @@ let _ = fun x @ mode -> _
     (let_binding
       pattern: (value_name)
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
       mode: (mode)
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       (value_name)
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
       type: (type_constructor_path
         (type_constructor))
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -461,8 +457,7 @@ let _ = fun x @ mode -> _
         (type_constructor_path
           (type_constructor)))
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -471,8 +466,7 @@ let _ = fun x @ mode -> _
         type: (type_constructor_path
           (type_constructor)))
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -485,16 +479,14 @@ let _ = fun x @ mode -> _
           mode: (mode)
           codomain: (type_constructor_path
             (type_constructor))))
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
       (parameter
         pattern: (value_pattern))
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -503,8 +495,7 @@ let _ = fun x @ mode -> _
       type: (type_constructor_path
         (type_constructor))
       mode: (mode)
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -517,34 +508,14 @@ let _ = fun x @ mode -> _
         codomain: (type_constructor_path
           (type_constructor))
         mode: (mode))
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
       (parameter
         pattern: (value_pattern)
         mode: (mode))
-      body: (value_path
-        (value_name))))
-  (value_definition
-    (let_binding
-      pattern: (value_name)
-      (parameter
-        pattern: (value_pattern)
-        type: (type_constructor_path
-          (type_constructor))
-        mode: (mode))
-      body: (value_path
-        (value_name))))
-  (value_definition
-    (let_binding
-      pattern: (value_name)
-      (parameter
-        pattern: (value_pattern)
-        mode: (mode))
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -553,8 +524,23 @@ let _ = fun x @ mode -> _
         type: (type_constructor_path
           (type_constructor))
         mode: (mode))
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        mode: (mode))
+      body: (hole_expression)))
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern)
+        type: (type_constructor_path
+          (type_constructor))
+        mode: (mode))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -562,8 +548,7 @@ let _ = fun x @ mode -> _
         (label_name)
         pattern: (value_pattern)
         mode: (mode))
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (value_definition
     (let_binding
       pattern: (value_name)
@@ -573,8 +558,7 @@ let _ = fun x @ mode -> _
         type: (type_constructor_path
           (type_constructor))
         mode: (mode))
-      body: (value_path
-        (value_name))))
+      body: (hole_expression)))
   (module_definition
     (module_binding
       (module_name)
@@ -618,7 +602,7 @@ let _ = fun x @ mode -> _
         mode: (mode))))
   (value_definition
     (let_binding
-      pattern: (value_name)
+      pattern: (any_pattern)
       body: (typed_expression
         expression: (value_path
           (value_name))
@@ -627,31 +611,29 @@ let _ = fun x @ mode -> _
         mode: (mode))))
   (value_definition
     (let_binding
-      pattern: (value_name)
+      pattern: (any_pattern)
       body: (typed_expression
         expression: (value_path
           (value_name))
         mode: (mode))))
   (value_definition
     (let_binding
-      pattern: (value_name)
+      pattern: (any_pattern)
       body: (fun_expression
         (parameter
           pattern: (value_pattern)
           mode: (mode))
         type: (type_constructor_path
           (type_constructor))
-        body: (value_path
-          (value_name)))))
+        body: (hole_expression))))
   (value_definition
     (let_binding
-      pattern: (value_name)
+      pattern: (any_pattern)
       body: (fun_expression
         (parameter
           pattern: (value_pattern))
         mode: (mode)
-        body: (value_path
-          (value_name))))))
+        body: (hole_expression)))))
 
 ===========================
 Modalities
@@ -804,6 +786,7 @@ let f (type t : k) (type (t : k) (t : k)) (x : ('a : k) . t) = x
         (constructor_declaration
           (constructor_name)
           (kind_annotated_type_variable
+            (type_variable)
             kind: (kind_path
               (kind_name)))
           (type_constructor_path

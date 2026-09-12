@@ -37,6 +37,7 @@ export default grammar({
     $._module_type_name,
     $._simple_constructor_name,
     $._constructor_path,
+    $._type_variable,
     $._label,
     $._tuple_label,
     $._mode,
@@ -1254,6 +1255,7 @@ export default grammar({
       $.new_expression,
       $.method_invocation,
       $.object_expression,
+      $.hole_expression,
       $.ocamlyacc_value,
       $._extension,
     ),
@@ -1761,6 +1763,8 @@ export default grammar({
       parenthesize(field('expression', $._sequence_expression)),
     ),
 
+    hole_expression: $ => '_',
+
     ocamlyacc_value: $ => /\$[0-9]+/,
 
     // Patterns
@@ -1786,6 +1790,7 @@ export default grammar({
       $.range_pattern,
       $.local_open_pattern,
       $.package_pattern,
+      $.any_pattern,
       $._extension,
     ),
 
@@ -1827,6 +1832,7 @@ export default grammar({
       $.range_pattern,
       alias($.local_open_binding_pattern, $.local_open_pattern),
       $.package_pattern,
+      $.any_pattern,
       $._extension,
     ),
 
@@ -2121,6 +2127,8 @@ export default grammar({
       $._module_name,
       optional($._module_typed),
     )),
+
+    any_pattern: $ => '_',
 
     parenthesized_pattern: $ => parenthesize($._pattern),
 
@@ -2526,10 +2534,7 @@ export default grammar({
     _kind_name: $ => alias($._lowercase_identifier, $.kind_name),
 
     _simple_module_name: $ => alias($._uppercase_identifier, $.module_name),
-    _module_name: $ => choice(
-      $._simple_module_name,
-      alias('_', $.module_name),
-    ),
+    _module_name: $ => choice($._simple_module_name, alias('_', $.module_name)),
     _module_type_name: $ => alias(choice($._uppercase_identifier, $._lowercase_identifier), $.module_type_name),
 
     _simple_constructor_name: $ => choice(
@@ -2551,7 +2556,7 @@ export default grammar({
       choice($._lowercase_identifier, $._uppercase_identifier),
     ),
 
-    _type_variable: $ => choice($.type_variable, '_'),
+    _type_variable: $ => choice($.type_variable, alias('_', $.type_variable)),
 
     _extra_constructor: $ => choice(
       $.unit,
