@@ -752,7 +752,7 @@ let f (type t : k) (type (t : k) (t : k)) (x : ('a : k) . t) = x
       (scannable_axes_kind
         (kind_path
           (kind_name))
-        (mode))
+        (scannable_axis))
       (scannable_axes_kind
         (parenthesized_kind
           (product_kind
@@ -760,7 +760,7 @@ let f (type t : k) (type (t : k) (t : k)) (x : ('a : k) . t) = x
               (kind_name))
             (kind_path
               (kind_name))))
-        (mode))))
+        (scannable_axis))))
   (kind_definition
     (kind_name)
     body: (kind_of_kind

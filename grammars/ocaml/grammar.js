@@ -2438,7 +2438,7 @@ export default grammar({
 
     scannable_axes_kind: $ => seq(
       choice($.kind_path, $.parenthesized_kind),
-      repeat1($._mode),
+      repeat1($._scannable_axis),
     ),
 
     kind_of_kind: $ => seq(
@@ -2532,6 +2532,7 @@ export default grammar({
     _mode: $ => alias($._lowercase_identifier, $.mode),
     _modality: $ => alias($._lowercase_identifier, $.modality),
     _kind_name: $ => alias($._lowercase_identifier, $.kind_name),
+    _scannable_axis: $ => alias($._lowercase_identifier, $.scannable_axis),
 
     _simple_module_name: $ => alias($._uppercase_identifier, $.module_name),
     _module_name: $ => choice($._simple_module_name, alias('_', $.module_name)),
