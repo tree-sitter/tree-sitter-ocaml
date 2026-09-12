@@ -376,6 +376,45 @@ type ('a, 'b) t = A of global_ 'a * 'b
           (type_variable))))))
 
 ===========================
+Borrowing
+===========================
+
+let x = borrow_ x in x;;
+f (borrow_ x);;
+match borrow_ x with _ -> x;;
+
+---
+
+(compilation_unit
+  (expression_item
+    (let_expression
+      (value_definition
+        (let_binding
+          pattern: (value_name)
+          body: (borrow_expression
+            expression: (value_path
+              (value_name)))))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (application_expression
+      function: (value_path
+        (value_name))
+      argument: (parenthesized_expression
+        expression: (borrow_expression
+          expression: (value_path
+            (value_name))))))
+  (expression_item
+    (match_expression
+      expression: (borrow_expression
+        expression: (value_path
+          (value_name)))
+      (match_case
+        pattern: (any_pattern)
+        body: (value_path
+          (value_name))))))
+
+===========================
 Let mutable
 ===========================
 

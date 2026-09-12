@@ -119,6 +119,7 @@ export default grammar({
       'as',
       'assert',
       'begin',
+      // 'borrow_', // OxCaml
       'class',
       'constraint',
       'do',
@@ -1278,6 +1279,7 @@ export default grammar({
       $.assert_expression,
       $.lazy_expression,
       $.stack_expression,
+      $.borrow_expression,
       $.exclave_expression,
     ),
 
@@ -1696,6 +1698,11 @@ export default grammar({
       'stack_',
       field('expression', $.function_expression),
     )),
+
+    borrow_expression: $ => seq(
+      'borrow_',
+      field('expression', $._simple_expression),
+    ),
 
     exclave_expression: $ => seq(
       'exclave_',
