@@ -26,9 +26,10 @@
 [
   "and" "as" "assert" "begin" "class" "constraint" "do" "done" "downto" "effect"
   "else" "end" "exception" "external" "for" "fun" "function" "functor" "if" "in"
-  "include" "inherit" "initializer" "lazy" "let" "match" "method" "module"
-  "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig" "stack_"
-  "struct" "then" "to" "try" "type" "val" "virtual" "when" "while" "with"
+  "include" "inherit" "initializer" "kind_" "lazy" "let" "match" "method" "mod"
+  "module" "mutable" "new" "nonrec" "object" "of" "open" "private" "rec" "sig"
+  "stack_" "struct" "then" "to" "try" "type" "val" "virtual" "when" "while"
+  "with"
 ] @keyword
 
 ; Operators
@@ -128,6 +129,9 @@
   (class_type_name)
   (type_constructor)
   (block_access_type)
+  (mode)
+  (modality)
+  (kind_name)
 ] @type
 
 (

@@ -313,7 +313,7 @@ let (exception e) = ();;
         pattern: (tuple_pattern
           (exception_pattern
             pattern: (boolean))
-          (value_pattern))
+          (any_pattern))
         body: (unit))))
   (value_definition
     (let_binding
