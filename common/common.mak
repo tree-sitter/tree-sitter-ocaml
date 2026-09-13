@@ -1,6 +1,6 @@
 LANGUAGE_NAME := tree-sitter-$(PARSER_NAME)
 HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-ocaml
-VERSION := 0.25.0
+VERSION := 0.26.0
 
 # repository
 SRC_DIR := src

@@ -6,7 +6,7 @@ require github.com/tree-sitter/go-tree-sitter v0.25.0
 
 require (
 	github.com/mattn/go-pointer v0.0.1 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
+	github.com/stretchr/testify v1.12.1 // indirect
 	github.com/tree-sitter/tree-sitter-c v0.24.2 // indirect
 	github.com/tree-sitter/tree-sitter-embedded-template v0.25.0 // indirect
 	github.com/tree-sitter/tree-sitter-go v0.25.0 // indirect
