@@ -376,6 +376,45 @@ type ('a, 'b) t = A of global_ 'a * 'b
           (type_variable))))))
 
 ===========================
+Borrowing
+===========================
+
+let x = borrow_ x in x;;
+f (borrow_ x);;
+match borrow_ x with _ -> x;;
+
+---
+
+(compilation_unit
+  (expression_item
+    (let_expression
+      (value_definition
+        (let_binding
+          pattern: (value_name)
+          body: (borrow_expression
+            expression: (value_path
+              (value_name)))))
+      body: (value_path
+        (value_name))))
+  (expression_item
+    (application_expression
+      function: (value_path
+        (value_name))
+      argument: (parenthesized_expression
+        expression: (borrow_expression
+          expression: (value_path
+            (value_name))))))
+  (expression_item
+    (match_expression
+      expression: (borrow_expression
+        expression: (value_path
+          (value_name)))
+      (match_case
+        pattern: (any_pattern)
+        body: (value_path
+          (value_name))))))
+
+===========================
 Let mutable
 ===========================
 
@@ -392,6 +431,55 @@ let mutable x = 0 in x
           body: (number)))
       body: (value_path
         (value_name)))))
+
+===========================
+Legacy modes
+===========================
+
+let f ~(local_ x) ~l:(local_ x) (local_ x) = local_ x
+type t = local_ t * t -> a:local_ t -> local_ ('a . t) -> local_ t
+
+---
+
+(compilation_unit
+  (value_definition
+    (let_binding
+      pattern: (value_name)
+      (parameter
+        pattern: (value_pattern))
+      (parameter
+        (label_name)
+        pattern: (value_pattern))
+      (parameter
+        pattern: (value_pattern))
+      body: (local_expression
+        expression: (value_path
+          (value_name)))))
+  (type_definition
+    (type_binding
+      name: (type_constructor)
+      body: (function_type
+        domain: (local_type
+          (tuple_type
+            (type_constructor_path
+              (type_constructor))
+            (type_constructor_path
+              (type_constructor))))
+        codomain: (function_type
+          domain: (labeled_argument_type
+            (label_name)
+            type: (local_type
+              (type_constructor_path
+                (type_constructor))))
+          codomain: (function_type
+            domain: (local_type
+              (polymorphic_type
+                (type_variable)
+                type: (type_constructor_path
+                  (type_constructor))))
+            codomain: (local_type
+              (type_constructor_path
+                (type_constructor)))))))))
 
 ===========================
 Modes

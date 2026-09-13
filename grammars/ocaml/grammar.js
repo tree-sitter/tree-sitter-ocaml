@@ -119,6 +119,7 @@ export default grammar({
       'as',
       'assert',
       'begin',
+      // 'borrow_', // OxCaml
       'class',
       'constraint',
       'do',
@@ -144,6 +145,7 @@ export default grammar({
       // 'kind_', // OxCaml
       'lazy',
       'let',
+      // 'local_', // OxCaml
       'match',
       'method',
       'module',
@@ -345,6 +347,7 @@ export default grammar({
       seq(
         choice('~', '?'),
         '(',
+        repeat('local_'),
         field('pattern', $._simple_value_pattern),
         optional($._polymorphic_typed),
         optional($._at_mode),
@@ -359,10 +362,20 @@ export default grammar({
         choice(
           seq(
             optional($._at_mode),
-            seq('=', field('default', $._sequence_expression))
+            seq('=', field('default', $._sequence_expression)),
           ),
           $._at_mode,
         ),
+        ')',
+      ),
+      seq(
+        optional(seq($._label, token.immediate(':'))),
+        '(',
+        repeat1('local_'),
+        field('pattern', $._pattern),
+        optional($._polymorphic_typed),
+        optional($._at_mode),
+        optional(seq('=', field('default', $._sequence_expression))),
         ')',
       ),
       seq(
@@ -1067,10 +1080,10 @@ export default grammar({
     ),
 
     function_type: $ => prec.dynamic(1, prec.right(seq(
-      field('domain', $._argument_type),
+      field('domain', choice($._argument_type, $.local_type)),
       optional($._at_mode),
       '->',
-      field('codomain', $._type),
+      field('codomain', choice($._type, $.local_type)),
       optional($._at_mode),
     ))),
 
@@ -1081,11 +1094,21 @@ export default grammar({
       alias($._parenthesized_polymorphic_type, $.polymorphic_type),
     ),
 
+    local_type: $ => seq(
+      repeat1('local_'),
+      choice(
+        $._simple_type,
+        alias($._proper_tuple_type, $.tuple_type),
+        alias($._labeled_tuple_type, $.tuple_type),
+        alias($._parenthesized_polymorphic_type, $.polymorphic_type),
+      ),
+    ),
+
     labeled_argument_type: $ => seq(
       optional('?'),
       $._label_name,
       ':',
-      field('type', $._argument_type),
+      field('type', choice($._argument_type, $.local_type)),
     ),
 
     _proper_tuple_type: $ => prec.dynamic(1, seq(
@@ -1278,6 +1301,8 @@ export default grammar({
       $.assert_expression,
       $.lazy_expression,
       $.stack_expression,
+      $.borrow_expression,
+      $.local_expression,
       $.exclave_expression,
     ),
 
@@ -1696,6 +1721,16 @@ export default grammar({
       'stack_',
       field('expression', $.function_expression),
     )),
+
+    borrow_expression: $ => seq(
+      'borrow_',
+      field('expression', $._simple_expression),
+    ),
+
+    local_expression: $ => seq(
+      'local_',
+      field('expression', $._sequence_expression),
+    ),
 
     exclave_expression: $ => seq(
       'exclave_',
