@@ -32,3 +32,11 @@ type x = < x : int >
 type (-'a, +'b) func = 'a -> 'b
    (* ^ punctuation.delimiter *)
         (* ^ punctuation.delimiter *)
+
+type x = int8 * int16# * float# * int8x16 * float16x32# * int64x4
+      (* ^ type.builtin *)
+             (* ^ type.builtin *)
+                      (* ^ type.builtin *)
+                               (* ^ type.builtin *)
+                                         (* ^ type.builtin *)
+                                                       (* ^ type.builtin *)
